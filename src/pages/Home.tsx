@@ -119,6 +119,7 @@ export default function Home() {
             )
           })}
         </div>
+        <p className="capabilities-note reveal">{profile.capabilitiesNote}</p>
       </section>
 
       <section className="section" aria-labelledby="tool-title">

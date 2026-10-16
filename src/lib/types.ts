@@ -64,4 +64,6 @@ export interface Profile {
   principles: { title: string; text: string }[]
   process: { step: string; text: string }[]
   capabilities: { title: string; text: string; example: string }[]
+  /** One line under the capabilities: the wider range of things Ritesh builds. */
+  capabilitiesNote: string
 }
