@@ -8,7 +8,7 @@ stack: [Node.js, Python, Headless Chrome, Windows OCR, Mermaid]
 status: Open source
 role: Solo developer
 featured: false
-order: 12
+order: 17
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/python-tools

@@ -7,8 +7,9 @@ categories: [Web apps]
 stack: [React, Vite, Tailwind, React Router, react-markdown, GitHub Pages]
 status: Live
 role: Solo developer
-featured: false
-order: 8
+featured: true
+order: 5
+image: /media/2am-notes.webp
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/2am-notes

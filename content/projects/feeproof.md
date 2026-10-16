@@ -7,8 +7,8 @@ categories: [SaaS, Web apps]
 stack: [React, TypeScript, Tailwind, Hono, Netlify Functions, Postgres (Neon), Drizzle ORM]
 status: In progress
 role: Solo developer
-featured: true
-order: 2
+featured: false
+order: 9
 image: /media/feeproof.webp
 page: true
 links:

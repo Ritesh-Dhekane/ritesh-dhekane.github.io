@@ -7,8 +7,8 @@ categories: [Web apps, SaaS]
 stack: [React, TypeScript, Vite, MUI, TanStack Query, Zod, Spring Boot, PostgreSQL, Flyway, pnpm workspaces]
 status: In progress
 role: Solo developer and architect
-featured: true
-order: 3
+featured: false
+order: 10
 image: /media/rdplatforms.webp
 page: true
 links:

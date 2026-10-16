@@ -8,7 +8,7 @@ stack: [Java 21, Spring Boot 3.5, Amazon Selling Partner API, OpenAPI, Maven]
 status: In progress
 role: Solo developer
 featured: false
-order: 13
+order: 12
 page: false
 links:
   code: "" # private repo

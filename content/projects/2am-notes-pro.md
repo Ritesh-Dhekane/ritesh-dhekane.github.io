@@ -7,8 +7,8 @@ categories: [Web apps]
 stack: [React, Vite, Tailwind, Google Apps Script, Google Drive, Mermaid, GitHub Actions]
 status: Live
 role: Solo developer (and content writer)
-featured: false
-order: 7
+featured: true
+order: 1
 image: /media/2am-notes-pro.webp
 page: false
 links:

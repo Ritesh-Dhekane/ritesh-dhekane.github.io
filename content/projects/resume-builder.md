@@ -7,8 +7,8 @@ categories: [Web apps, Tools]
 stack: [JavaScript, Vite, html2canvas, html2pdf.js, GitHub Actions]
 status: Live
 role: Solo developer
-featured: false
-order: 9
+featured: true
+order: 3
 image: /media/resume-builder.webp
 page: false
 links:
