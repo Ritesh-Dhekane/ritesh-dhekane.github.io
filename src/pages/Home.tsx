@@ -18,7 +18,7 @@ function SectionHead({ label, title, index }: { label: string; title: string; in
 }
 
 export default function Home() {
-  usePageMeta(null, `${profile.role} from Pune. ${profile.hero.line}`)
+  usePageMeta()
   const [intentId, setIntentId] = useState(profile.intents[0].id)
   const intent = profile.intents.find((i) => i.id === intentId) ?? profile.intents[0]
 
@@ -26,7 +26,9 @@ export default function Home() {
     <>
       <section className="hero" aria-labelledby="hero-title">
         <div>
-          <p className="label">{profile.role} · Pune</p>
+          <p className="label">
+            {profile.name} · {profile.role} · Pune
+          </p>
           <h1 id="hero-title" className="display">
             {profile.hero.title} <span className="accent">{profile.hero.accent}</span>
           </h1>

@@ -3,7 +3,7 @@ import { profile } from '../lib/content'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function Contact() {
-  usePageMeta('Contact', 'Message Ritesh on WhatsApp or email about a project, a role, or anything you saw here.')
+  usePageMeta()
   return (
     <>
       <header className="page-head">

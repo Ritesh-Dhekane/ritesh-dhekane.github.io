@@ -11,7 +11,7 @@ import NotFound from './NotFound'
 export default function ProjectPage() {
   const { slug } = useParams()
   const project = findProject(slug)
-  usePageMeta(project?.title ?? 'Not found', project?.tagline ?? 'This project does not exist.')
+  usePageMeta()
 
   if (!project) return <NotFound />
   // Card-only projects have no page; send visitors to their card on the Work page.

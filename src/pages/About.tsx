@@ -3,7 +3,7 @@ import { profile } from '../lib/content'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function About() {
-  usePageMeta('About', `${profile.role} from Pune: experience, education, toolkit and how I work.`)
+  usePageMeta()
   return (
     <>
       <header className="page-head">
