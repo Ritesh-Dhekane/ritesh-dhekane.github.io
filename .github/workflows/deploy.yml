@@ -31,17 +31,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       # Same checks as on the pull request, so a hand-started deploy can't publish a broken site.
-      - name: Checks
-        run: node scripts/check.mjs
+      - name: Content checks
+        run: npm run check
 
-      # Placeholder site for now: the static files in site/ are published as they are.
-      # When the Vite app lands this becomes `npm ci` + `npm run build` and the path ./dist.
+      - name: Tests
+        run: npm test
+
+      # Optional repo secret: without it the site builds with analytics off.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./site
+          path: ./dist
 
   deploy:
     needs: build

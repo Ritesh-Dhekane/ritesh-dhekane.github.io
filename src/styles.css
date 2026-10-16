@@ -1,0 +1,81 @@
+/* Neutral, readable base styles for the skeleton. The visual design (from Stitch) replaces this file. */
+
+:root {
+  --bg: #fbfaf7;
+  --text: #1b1b1b;
+  --muted: #5f5f5a;
+  --line: #dcd9d0;
+  --accent: #b5401f;
+  --radius: 6px;
+  --max: 1080px;
+  color-scheme: light;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+img { max-width: 100%; }
+
+.skip-link { position: absolute; left: -999px; }
+.skip-link:focus { left: 16px; top: 8px; background: var(--text); color: var(--bg); padding: 8px 12px; z-index: 10; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.site-header, main, .site-footer { width: min(var(--max), 100% - 32px); margin-inline: auto; }
+.site-header { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.site-header nav { display: flex; gap: 16px; margin-left: auto; }
+.site-header nav a { color: var(--text); text-decoration: none; }
+.site-header nav a.active { text-decoration: underline; }
+.brand { font-weight: 700; color: var(--text); text-decoration: none; }
+.status { font-size: 14px; color: var(--muted); }
+.status::before { content: '● '; color: #2f8f4e; }
+
+main { padding: 40px 0 64px; }
+main section { margin-top: 56px; }
+h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.1; margin: 0 0 16px; }
+h2 { font-size: clamp(22px, 3vw, 30px); margin: 0 0 16px; }
+.lede { font-size: 19px; max-width: 42em; }
+.muted, .note { color: var(--muted); }
+.actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+button { font: inherit; cursor: pointer; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: white; color: var(--text); }
+button[aria-checked='true'], button[aria-pressed='true'] { border-color: var(--text); background: var(--text); color: var(--bg); }
+.intents, .filters [role='group'] { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.filters { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 24px 0 8px; }
+input[type='search'] { font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); min-width: 240px; }
+
+.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.project-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: white; scroll-margin-top: 24px; }
+.project-card h3 { margin: 4px 0 8px; }
+.project-card .links { display: flex; gap: 12px; margin: 8px 0 0; }
+.badge { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.tags, .skills { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tags li, .skills li { font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+
+.capabilities, .process { padding-left: 20px; }
+.capabilities li { margin-bottom: 16px; }
+.capabilities h3 { margin: 0; font-size: 18px; }
+.capabilities p { margin: 4px 0; }
+.example { font-size: 14px; color: var(--muted); }
+
+.contact-links { display: grid; gap: 12px; max-width: 560px; }
+.contact-links a { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: white; text-decoration: none; color: var(--text); }
+.contact-links a:hover { border-color: var(--text); }
+.contact-links span { color: var(--muted); }
+
+.case-study { max-width: 760px; }
+.breadcrumb { font-size: 14px; color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 24px 0; }
+.facts dt, .skill-groups dt { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.facts dd, .skill-groups dd { margin: 0; }
+.skill-groups > div { margin-bottom: 12px; }
+.prose h2 { margin-top: 40px; }
+.prose code { background: #f0eee8; padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+.next { margin: 48px 0; font-size: 18px; }
+.experience { margin-bottom: 24px; }
+.experience h3 { margin-bottom: 0; }
+
+.site-footer { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.site-footer nav { display: flex; gap: 16px; }

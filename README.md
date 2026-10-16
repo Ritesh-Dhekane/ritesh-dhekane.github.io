@@ -52,8 +52,13 @@ I usually reply within a day.
 
 ## Working on this repo
 
-- `site/` is what gets published (a placeholder page for now); `content/` holds the profile and project
-  write-ups; `node scripts/check.mjs` checks both.
+- Vite + React + TypeScript. `content/` holds the profile (`profile.json`) and one Markdown file per
+  project; the site reads them at build time.
+- `npm run dev` · `npm test` · `npm run check` (content checks) · `npm run build` (type check, build,
+  then `404.html`, `sitemap.xml`, `robots.txt`).
+- Optional repo secret `VITE_GA_MEASUREMENT_ID` turns on privacy-safe GA4 (page views and a few
+  click events, never anything typed). Drop a `public/resume.pdf` and set `links.resume` to
+  `/resume.pdf` to show the résumé link.
 - **Branches:** push to `dev` freely. `prod` only changes through a pull request from `dev`; the
   **Checks** workflow must pass on the PR, and merging it deploys the site to GitHub Pages
   (`deploy.yml`). Pushes to `dev` never deploy.
