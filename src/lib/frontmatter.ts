@@ -29,6 +29,7 @@ export function parseProject(file: string, text: string): Project {
     featured: data.featured === true,
     order: Number(data.order),
     page: data.page === true,
+    image: str(data.image),
     links: { code: str(links.code), live: str(links.live) },
     body,
   }

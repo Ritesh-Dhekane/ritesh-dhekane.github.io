@@ -9,6 +9,7 @@ status: Live
 role: Solo developer (and content writer)
 featured: false
 order: 7
+image: /media/2am-notes-pro.webp
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/2am-notes-pro

@@ -1,16 +1,23 @@
 import { Link } from 'react-router'
 import type { Project } from '../lib/types'
 import { track } from '../lib/analytics'
+import BrowserFrame from './BrowserFrame'
 
-/** One project. Links to its case-study page when it has one; otherwise to its live site or code. */
-export default function ProjectCard({ project }: { project: Project }) {
-  const { slug, title, tagline, stack, status, page, links } = project
+/** One project in the catalogue. Links to its case study when it has one; otherwise to live site / code. */
+export default function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const { slug, title, tagline, stack, status, page, links, categories, image } = project
   return (
-    <article className="project-card" id={slug}>
-      <p className="meta">
-        <span className={`badge badge-${status.toLowerCase().replace(' ', '-')}`}>{status}</span>
-      </p>
-      <h3>
+    <article className="card reveal" id={slug}>
+      {image && <BrowserFrame src={image} alt={`${title} screenshot`} />}
+      <div className="card-top">
+        <span className="label">
+          {String(index + 1).padStart(2, '0')} · {categories[0]}
+        </span>
+        <span className="status-pill" data-status={status}>
+          {status}
+        </span>
+      </div>
+      <h3 className="h3">
         {page ? (
           <Link to={`/work/${slug}`} onClick={() => track({ name: 'project_open', params: { slug } })}>
             {title}
@@ -29,12 +36,12 @@ export default function ProjectCard({ project }: { project: Project }) {
         <p className="links">
           {links.live && (
             <a href={links.live} rel="noopener" onClick={() => track({ name: 'outbound_project_link', params: { slug, kind: 'live' } })}>
-              Live ↗
+              Live site ↗
             </a>
           )}
           {links.code && (
             <a href={links.code} rel="noopener" onClick={() => track({ name: 'outbound_project_link', params: { slug, kind: 'code' } })}>
-              Code ↗
+              Source ↗
             </a>
           )}
         </p>

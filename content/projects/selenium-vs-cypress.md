@@ -9,6 +9,7 @@ status: Live
 role: Researcher and developer
 featured: false
 order: 11
+image: /media/selenium-vs-cypress.webp
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/selenium-vs-cypress-latency

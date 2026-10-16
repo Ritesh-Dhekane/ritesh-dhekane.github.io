@@ -16,6 +16,8 @@ export interface Project {
   order: number
   /** Whether the project gets its own case-study page; otherwise it's a card only. */
   page: boolean
+  /** Optional screenshot (path under public/), shown in a browser frame. */
+  image: string
   links: { code: string; live: string }
   /** Markdown body (the write-up). */
   body: string
@@ -42,6 +44,10 @@ export interface Experience {
 export interface Profile {
   name: string
   headline: string
+  /** Hero headline in two parts; the accent part is set in copper. */
+  hero: { title: string; accent: string; line: string }
+  /** The short facts band under the hero. */
+  facts: { label: string; value: string }[]
   role: string
   intro: string
   about: string[]

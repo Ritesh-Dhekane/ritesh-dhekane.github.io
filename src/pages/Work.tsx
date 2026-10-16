@@ -27,35 +27,40 @@ export default function Work() {
 
   return (
     <>
-      <h1>Everything I've built</h1>
-      <p className="lede">Products, tools and experiments — some for real users, some because I wanted to learn how.</p>
+      <header className="page-head">
+        <p className="label">Work · {projects.length} projects</p>
+        <h1 className="h1">Everything I've built.</h1>
+        <p className="lede">Products, tools and experiments — some for real users, some because I wanted to learn how.</p>
+      </header>
 
       <div className="filters">
         <div role="group" aria-label="Filter by type">
           {['All', ...categories].map((c) => (
-            <button key={c} type="button" aria-pressed={c === category} onClick={() => setCategory(c)}>
+            <button key={c} type="button" className="chip" aria-pressed={c === category} onClick={() => setCategory(c)}>
               {c}
             </button>
           ))}
         </div>
         <label>
           <span className="visually-hidden">Search projects</span>
-          <input type="search" placeholder="Search by name or tech" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input className="search" type="search" placeholder="Search by name or technology" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
       </div>
 
       <h2 className="visually-hidden">Projects</h2>
-      <p aria-live="polite">
-        {shown.length} {shown.length === 1 ? 'project' : 'projects'}
+      <p className="count" aria-live="polite">
+        Showing {shown.length} of {projects.length}
       </p>
-      <div className="project-grid">
+      <div className="cards">
         {shown.map((p) => (
-          <ProjectCard key={p.slug} project={p} />
+          <ProjectCard key={p.slug} project={p} index={projects.indexOf(p)} />
         ))}
       </div>
 
-      <section aria-labelledby="work-cta">
-        <h2 id="work-cta">Have a problem that isn't on this list yet? That's my favourite kind.</h2>
+      <section className="closing reveal" aria-labelledby="work-cta">
+        <h2 id="work-cta" className="h2">
+          A problem that isn't on this list yet? That's my favourite kind.
+        </h2>
         <ContactLinks />
       </section>
     </>
