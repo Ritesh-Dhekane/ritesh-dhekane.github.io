@@ -9,6 +9,7 @@ status: Open source
 role: Solo developer
 featured: true
 order: 5
+image: /media/prepmate.webp
 page: true
 links:
   code: https://github.com/Ritesh-Dhekane/prepmate

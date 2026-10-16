@@ -9,6 +9,7 @@ status: In progress
 role: Solo developer
 featured: true
 order: 2
+image: /media/feeproof.webp
 page: true
 links:
   code: "" # private repo

@@ -9,6 +9,7 @@ status: In progress
 role: Solo developer and architect
 featured: true
 order: 3
+image: /media/rdplatforms.webp
 page: true
 links:
   code: "" # TODO(ritesh): rdplatforms org repos public?
