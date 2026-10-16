@@ -7,8 +7,9 @@ categories: [AI, Web apps]
 stack: [Python, Flask, JavaScript, Google Gemini, edge-tts, pytest]
 status: Open source
 role: Solo developer
-featured: true
-order: 5
+featured: false
+order: 11
+image: /media/prepmate.webp
 page: true
 links:
   code: https://github.com/Ritesh-Dhekane/prepmate

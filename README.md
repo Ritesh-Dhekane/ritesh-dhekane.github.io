@@ -3,7 +3,7 @@
 Full-stack developer from Pune. Give me a problem — a business website, a SaaS product, an AI tool or
 something nobody has built yet — and I'll figure it out and ship it.
 
-**Portfolio:** coming soon at `ritesh-dhekane.github.io` ·
+**Portfolio:** [ritesh-dhekane.github.io](https://ritesh-dhekane.github.io/) ·
 **WhatsApp:** [chat](https://wa.me/919322527567) ·
 **Email:** [ritesh.dhekane@outlook.com](mailto:ritesh.dhekane@outlook.com) ·
 **LinkedIn:** [riteshdhekane](https://www.linkedin.com/in/riteshdhekane)
@@ -14,16 +14,22 @@ something nobody has built yet — and I'll figure it out and ship it.
 
 | Project | What it does | Built with |
 |---|---|---|
-| **HRStack** | Employee management for companies: offer letter → onboarding → attendance, leave and payroll. Multi-tenant SaaS. | Java, Spring Boot, PostgreSQL, React, TypeScript, AWS S3 |
-| **FeeProof** | Collect fees by UPI or bank transfer and verify every payment in one place, without a payment gateway. | React, Hono, Postgres, Drizzle |
-| **RD Platforms** | One codebase powering many small-business websites; bookings and orders fall back to WhatsApp. | React, TypeScript, Spring Boot, PostgreSQL |
-| [**SlideCraft**](https://github.com/Ritesh-Dhekane/slidecraft) | Describe a deck in chat, get a PowerPoint where every element is still editable. [Demo](https://ritesh-dhekane.github.io/slidecraft/) | React, Node.js, pptxgenjs, Gemini |
-| [**PrepMate AI**](https://github.com/Ritesh-Dhekane/prepmate) | AI mock interviews: spoken questions, typed answers, scored feedback. | Flask, JavaScript, Gemini |
-| [**Streakline**](https://github.com/Ritesh-Dhekane/streakline) | A clean page of anyone's public GitHub activity. [Live](https://ritesh-dhekane.github.io/streakline/) | React, Cloudflare Workers |
 | [**2AM Notes Pro**](https://github.com/Ritesh-Dhekane/2am-notes-pro) | Private exam-notes portal on Google Drive with read-aloud, for my MCA class. [Live](https://ritesh-dhekane.github.io/2am-notes-pro/) | React, Apps Script |
+| [**Streakline**](https://github.com/Ritesh-Dhekane/streakline) | A clean page of anyone's public GitHub activity. [Live](https://ritesh-dhekane.github.io/streakline/) | React, Cloudflare Workers |
 | [**Resume Builder**](https://github.com/Ritesh-Dhekane/resume-builder) | Templates, live A4 preview, PDF export — all in the browser. [Live](https://ritesh-dhekane.github.io/resume-builder/) | JavaScript, Vite |
+| [**SlideCraft**](https://github.com/Ritesh-Dhekane/slidecraft) | Describe a deck in chat, get a PowerPoint where every element is still editable. [Demo](https://ritesh-dhekane.github.io/slidecraft/) | React, Node.js, pptxgenjs, Gemini |
+| [**2AM Notes**](https://github.com/Ritesh-Dhekane/2am-notes) | Public, Markdown-first exam notes with search and an audio reader. [Live](https://ritesh-dhekane.github.io/2am-notes/) | React, Vite |
+| [**Internal Playstore**](https://github.com/Ritesh-Dhekane/internal-playstore) | A private app store for a team's Android builds: versions, download or scan to install. [Demo](https://ritesh-dhekane.github.io/internal-playstore/#/demo) | React, GitHub Actions |
+| [**Shree Ganesha Demo Portal**](https://github.com/Ritesh-Dhekane/shreeganesha-demo-portal) | Client demos, design approvals and decisions for a jewellery store, in one place. [Live](https://ritesh-dhekane.github.io/shreeganesha-demo-portal/) | React, Vite |
+| **HRStack** | Employee management for companies: offer letter → onboarding → attendance, leave and payroll. | Java, Spring Boot, PostgreSQL, React |
+| **FeeProof** | Collect fees by UPI or bank transfer and verify every payment in one place, without a payment gateway. | React, Hono, Postgres |
+| **RD Platforms** | One codebase powering many small-business websites; orders fall back to WhatsApp. | React, Spring Boot, PostgreSQL |
+| [**PrepMate AI**](https://github.com/Ritesh-Dhekane/prepmate) | AI mock interviews: spoken questions, typed answers, scored feedback. | Flask, Gemini |
+| **VendorFlow** | One backend for products, stock and listings across Amazon, Flipkart and more. | Java 21, Spring Boot, Amazon SP-API |
+| **StudentFlow** | Online admissions: step-by-step applications, document upload, admin review. | Spring Boot, MySQL, React |
 | [**LiftLog**](https://github.com/Ritesh-Dhekane/liftlog-mobile) | Offline-first fitness tracker for Android and iOS. | React Native, Expo, SQLite |
 | [**Selenium vs Cypress**](https://github.com/Ritesh-Dhekane/selenium-vs-cypress-latency) | Research: how two test frameworks behave on slow networks. [Results](https://ritesh-dhekane.github.io/selenium-vs-cypress-latency/) | Selenium, Cypress |
+| **Memory Pipelines** *(in progress)* | Photos and videos from every phone, sorted into one de-duplicated library. | Python, SQLite |
 
 ## Toolkit
 

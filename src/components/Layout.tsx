@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   useReveal()
+  const { pathname } = useLocation()
   return (
     <>
       <a className="skip-link" href="#main">
@@ -26,7 +27,8 @@ export default function Layout() {
         </div>
       </header>
 
-      <main id="main" className="wrap">
+      {/* Keyed by path so each page fades in on navigation. */}
+      <main id="main" className="wrap page-enter" key={pathname}>
         <Outlet />
       </main>
 

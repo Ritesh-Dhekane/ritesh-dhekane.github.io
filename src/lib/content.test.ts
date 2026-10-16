@@ -15,9 +15,9 @@ describe('content', () => {
     expect(new Set(projects.map((p) => p.slug)).size).toBe(projects.length)
   })
 
-  it('features six projects, each with its own page', () => {
+  it('features six projects, all with a screenshot for the display case', () => {
     expect(featuredProjects).toHaveLength(6)
-    expect(featuredProjects.every((p) => p.page)).toBe(true)
+    expect(featuredProjects.every((p) => p.image)).toBe(true)
   })
 
   it('only highlights projects that exist', () => {

@@ -7,8 +7,8 @@ categories: [SaaS, Web apps]
 stack: [Java 17, Spring Boot 3, Spring Security, PostgreSQL, React, TypeScript, AWS S3, Tesseract OCR]
 status: In progress
 role: Solo developer (backend, frontend, data model)
-featured: true
-order: 1
+featured: false
+order: 8
 page: true
 links:
   code: "" # TODO(ritesh): hrstackapp repos public? add link if yes

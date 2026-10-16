@@ -1,11 +1,11 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
+import HeroMechanism from '../components/HeroMechanism'
 import Vitrine from '../components/Vitrine'
 import { featuredProjects, findProject, profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { usePageMeta } from '../lib/usePageMeta'
-import { useHeroParallax } from '../lib/useReveal'
 
 function SectionHead({ label, title, index }: { label: string; title: string; index?: string }) {
   return (
@@ -19,8 +19,6 @@ function SectionHead({ label, title, index }: { label: string; title: string; in
 
 export default function Home() {
   usePageMeta(null, `${profile.role} from Pune. ${profile.hero.line}`)
-  const caseRef = useRef<HTMLDivElement>(null)
-  useHeroParallax(caseRef)
   const [intentId, setIntentId] = useState(profile.intents[0].id)
   const intent = profile.intents.find((i) => i.id === intentId) ?? profile.intents[0]
 
@@ -42,21 +40,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="case" ref={caseRef}>
-          <img
-            src="/media/mechanism-640.webp"
-            srcSet="/media/mechanism-640.webp 640w, /media/mechanism.webp 1024w"
-            sizes="(max-width: 900px) 90vw, 46vw"
-            width="1024"
-            height="1024"
-            alt="An exploded precision mechanism: metal plates, gears and jewel bearings floating apart in layers."
-            fetchPriority="high"
-          />
-          <div className="case-caption" aria-hidden="true">
-            <span className="label">Many parts</span>
-            <span className="label">One working whole</span>
-          </div>
-        </div>
+        <HeroMechanism />
       </section>
 
       <dl className="facts reveal">

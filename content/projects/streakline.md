@@ -8,7 +8,7 @@ stack: [React, TypeScript, Vite, Tailwind, Cloudflare Workers, D1, GitHub API, V
 status: Open source
 role: Solo developer
 featured: true
-order: 6
+order: 2
 image: /media/streakline.webp
 page: true
 links:
