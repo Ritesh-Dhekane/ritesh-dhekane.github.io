@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages (prod)
+
+# Releases go through a pull request from dev to prod. prod only accepts merged pull requests (branch
+# protection), so a push to prod is a merged release and the site is published from it. The workflow
+# can also be started by hand from the Actions tab. Pushes to dev don't deploy.
+on:
+  push:
+    branches: [prod]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer release waits for the running one instead of cancelling it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout prod
+        uses: actions/checkout@v4
+        with:
+          ref: prod
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Same checks as on the pull request, so a hand-started deploy can't publish a broken site.
+      - name: Checks
+        run: node scripts/check.mjs
+
+      # Placeholder site for now: the static files in site/ are published as they are.
+      # When the Vite app lands this becomes `npm ci` + `npm run build` and the path ./dist.
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

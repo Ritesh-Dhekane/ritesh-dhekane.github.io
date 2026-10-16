@@ -50,5 +50,13 @@ I usually reply within a day.
 
 ---
 
+## Working on this repo
+
+- `site/` is what gets published (a placeholder page for now); `content/` holds the profile and project
+  write-ups; `node scripts/check.mjs` checks both.
+- **Branches:** push to `dev` freely. `prod` only changes through a pull request from `dev`; the
+  **Checks** workflow must pass on the PR, and merging it deploys the site to GitHub Pages
+  (`deploy.yml`). Pushes to `dev` never deploy.
+
 <sub>This repository is also the source of my portfolio website (`content/` holds the profile and
 project write-ups).</sub>

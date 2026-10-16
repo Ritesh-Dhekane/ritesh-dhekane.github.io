@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ritesh Dhekane — Full-stack developer</title>
+  <meta name="description" content="Full-stack developer from Pune. Give me a problem and I'll figure it out and ship it. Portfolio coming soon." />
+  <meta property="og:title" content="Ritesh Dhekane — I learn the manual mid-flight." />
+  <meta property="og:description" content="Full-stack developer from Pune. Portfolio coming soon." />
+  <meta name="theme-color" content="#F2EFE6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f2efe6;
+      --ink: #141414;
+      --ink-2: #55524a;
+      --rule: #c9c4b6;
+      --orange: #ff5a1f;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --serif: "Instrument Serif", Georgia, serif;
+      --sans: "Inter Tight", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html { background: var(--paper); color: var(--ink); }
+    body {
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      /* faint engineering grid */
+      background-image:
+        linear-gradient(to right, rgba(20, 20, 20, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(20, 20, 20, 0.035) 1px, transparent 1px);
+      background-size: 8px 8px;
+    }
+    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+    header, footer, main { width: min(1120px, 100% - 32px); margin-inline: auto; }
+    header {
+      display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 20px 0 12px; border-bottom: 1px solid var(--ink);
+    }
+    .status::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; background: var(--orange); vertical-align: 0; }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0 32px;
+      padding: clamp(48px, 10vh, 120px) 0 64px;
+    }
+    .margin { color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; padding-top: 18px; }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(56px, 10vw, 136px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+    h1 em { color: var(--orange); }
+    .lede { max-width: 34em; margin-top: 32px; font-size: clamp(17px, 2vw, 20px); }
+    .note {
+      margin-top: 48px; max-width: 560px;
+      border: 1px solid var(--ink); padding: 20px 22px;
+      position: relative; background: rgba(242, 239, 230, 0.85);
+    }
+    .note .mono:first-child { color: var(--orange); font-weight: 500; }
+    .note p { margin-top: 8px; color: var(--ink-2); }
+    .contact { margin-top: 40px; display: grid; gap: 0; max-width: 720px; }
+    .contact a {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+      padding: 18px 0; border-top: 1px solid var(--ink);
+      color: inherit; text-decoration: none;
+      font-family: var(--serif); font-size: clamp(26px, 3.4vw, 38px);
+    }
+    .contact a:last-child { border-bottom: 1px solid var(--ink); }
+    .contact a span.mono { color: var(--ink-2); }
+    .contact a:hover, .contact a:focus-visible { color: var(--orange); outline: none; }
+    .contact a:hover span.mono, .contact a:focus-visible span.mono { color: var(--orange); }
+    footer {
+      display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 14px 0 24px; border-top: 1px solid var(--rule); color: var(--ink-2);
+    }
+    footer a { color: inherit; }
+    @media (max-width: 720px) {
+      main { grid-template-columns: 1fr; }
+      .margin { flex-direction: row; flex-wrap: wrap; gap: 4px 16px; padding: 0 0 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="mono">RD-01 · Operating manual · Rev. 2026.10</span>
+    <span class="mono status">Available for new work</span>
+  </header>
+
+  <main>
+    <aside class="margin mono" aria-label="Section details">
+      <span>Section 0</span>
+      <span>Introduction</span>
+      <span>Pune, IN · UTC+5:30</span>
+    </aside>
+
+    <div>
+      <h1>I learn the manual<br /><em>mid-flight.</em></h1>
+      <p class="lede">
+        I'm Ritesh, a full-stack developer. Give me a problem — a business website, a SaaS product,
+        an AI tool, something nobody has built yet — and I'll figure it out and ship it.
+      </p>
+
+      <div class="note" role="note">
+        <p class="mono">Note</p>
+        <p>The full manual is being written. Until then, the pilot is one message away.</p>
+      </div>
+
+      <nav class="contact" aria-label="Contact">
+        <a href="https://wa.me/919322527567?text=Hi%20Ritesh%2C%20I%20saw%20your%20portfolio%20and%20wanted%20to%20talk%20about" rel="noopener">
+          WhatsApp <span class="mono">Fastest →</span>
+        </a>
+        <a href="mailto:ritesh.dhekane@outlook.com">
+          Email <span class="mono">ritesh.dhekane@outlook.com →</span>
+        </a>
+        <a href="https://github.com/Ritesh-Dhekane" rel="noopener">
+          GitHub <span class="mono">Ritesh-Dhekane →</span>
+        </a>
+      </nav>
+    </div>
+  </main>
+
+  <footer class="mono">
+    <span>— 01 —</span>
+    <span>© 2026 Ritesh Dhekane · <a href="https://www.linkedin.com/in/riteshdhekane" rel="noopener">LinkedIn</a></span>
+  </footer>
+</body>
+</html>

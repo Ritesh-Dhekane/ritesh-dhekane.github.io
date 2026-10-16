@@ -1,0 +1,31 @@
+name: Checks
+
+# Runs on pull requests (releases are PRs from dev into prod). prod's branch protection requires this
+# to pass before a PR can be merged. Plain pushes to dev run nothing; deploying is deploy.yml's job.
+on:
+  pull_request:
+    branches: [prod, dev]
+
+permissions:
+  contents: read
+
+# A newer push to the same PR cancels the run that is still checking older code.
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Content and site checks. When the Vite app lands, add `npm ci`, lint and build here.
+      - name: Checks
+        run: node scripts/check.mjs
