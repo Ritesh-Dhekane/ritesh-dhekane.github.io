@@ -2,7 +2,7 @@
 slug: dev-tools
 title: Dev tools
 tagline: Small tools I build when a task repeats — page checks, document readers, OCR, repo sync.
-problem: The same chores keep coming back: checking pages, reading big PDFs, syncing many repos.
+problem: "The same chores keep coming back: checking pages, reading big PDFs, syncing many repos."
 categories: [Tools]
 stack: [Node.js, Python, Headless Chrome, Windows OCR, Mermaid]
 status: Open source

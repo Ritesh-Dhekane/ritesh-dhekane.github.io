@@ -25,7 +25,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      # Content and site checks. When the Vite app lands, add `npm ci`, lint and build here.
-      - name: Checks
-        run: node scripts/check.mjs
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Content checks
+        run: npm run check
+
+      - name: Tests
+        run: npm test
+
+      # Type check + production build (+ 404.html, sitemap, robots.txt).
+      - name: Build
+        run: npm run build

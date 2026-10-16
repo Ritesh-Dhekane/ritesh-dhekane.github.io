@@ -9,6 +9,7 @@ status: Open source
 role: Solo developer
 featured: true
 order: 4
+image: /media/slidecraft.webp
 page: true
 links:
   code: https://github.com/Ritesh-Dhekane/slidecraft

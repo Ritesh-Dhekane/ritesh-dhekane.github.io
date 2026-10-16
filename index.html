@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ritesh Dhekane — Full-stack developer</title>
+    <meta name="description" content="Full-stack developer from Pune. Give me a problem and I'll figure it out and ship it." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ritesh Dhekane" />
+    <meta property="og:title" content="Ritesh Dhekane — Precise software, built by hand." />
+    <meta property="og:description" content="Full-stack developer from Pune. Websites, SaaS products and AI tools." />
+    <meta property="og:url" content="https://ritesh-dhekane.github.io/" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="canonical" href="https://ritesh-dhekane.github.io/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/media/mechanism-640.webp" />
+    <meta name="theme-color" content="#F5F3EF" />
+    <script>
+      // Set the theme before first paint: saved choice, else the system setting.
+      try {
+        var t = localStorage.getItem('theme')
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = t
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      Ritesh Dhekane — full-stack developer. Email ritesh.dhekane@outlook.com or WhatsApp +91 93225 27567.
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

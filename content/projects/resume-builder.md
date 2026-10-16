@@ -9,6 +9,7 @@ status: Live
 role: Solo developer
 featured: false
 order: 9
+image: /media/resume-builder.webp
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/resume-builder

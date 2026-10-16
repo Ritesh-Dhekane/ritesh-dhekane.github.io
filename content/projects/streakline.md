@@ -9,6 +9,7 @@ status: Open source
 role: Solo developer
 featured: true
 order: 6
+image: /media/streakline.webp
 page: true
 links:
   code: https://github.com/Ritesh-Dhekane/streakline

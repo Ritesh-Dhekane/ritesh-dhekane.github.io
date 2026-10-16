@@ -1,6 +1,11 @@
 {
   "name": "Ritesh Dhekane",
   "headline": "I learn the manual mid-flight.",
+  "hero": {
+    "title": "Precise software,",
+    "accent": "built by hand.",
+    "line": "Full-stack developer. Web apps, SaaS products and AI tools for people who need them to just work."
+  },
   "role": "Full-stack developer",
   "intro": "Give me a problem — a business website, a SaaS product, an AI tool or something nobody has built yet — and I'll figure it out and ship it.",
   "about": [
@@ -11,6 +16,24 @@
   "location": "Pune, Maharashtra, India",
   "timezone": "Asia/Kolkata (UTC+5:30)",
   "available": true,
+  "facts": [
+    {
+      "label": "Location",
+      "value": "Pune, India"
+    },
+    {
+      "label": "Core stack",
+      "value": "Java · React · AI"
+    },
+    {
+      "label": "Open to",
+      "value": "Freelance and full-time"
+    },
+    {
+      "label": "Response",
+      "value": "Within a day"
+    }
+  ],
   "contact": {
     "email": "ritesh.dhekane@outlook.com",
     "whatsapp": "919322527567",
@@ -19,7 +42,7 @@
   "links": {
     "github": "https://github.com/Ritesh-Dhekane",
     "linkedin": "https://www.linkedin.com/in/riteshdhekane",
-    "resume": "/resume.pdf"
+    "resume": ""
   },
   "intents": [
     {
@@ -27,28 +50,44 @@
       "label": "I have a project",
       "message": "Here's work I've done for real problems. If yours looks anything like these, let's talk.",
       "cta": "Featured work",
-      "highlight": ["feeproof", "rdplatforms", "hrstack"]
+      "highlight": [
+        "feeproof",
+        "rdplatforms",
+        "hrstack"
+      ]
     },
     {
       "id": "startup",
       "label": "I'm building a startup",
       "message": "I've taken products from idea to working app on my own: auth, multi-tenant data, payments-style flows, AI features.",
       "cta": "Products I've built",
-      "highlight": ["hrstack", "slidecraft", "prepmate"]
+      "highlight": [
+        "hrstack",
+        "slidecraft",
+        "prepmate"
+      ]
     },
     {
       "id": "hiring",
       "label": "I'm hiring",
       "message": "Software engineer on a full-stack product team since 2025. Java, Spring Boot, React, TypeScript, PostgreSQL, AWS.",
       "cta": "Experience and résumé",
-      "highlight": ["hrstack", "streakline", "slidecraft"]
+      "highlight": [
+        "hrstack",
+        "streakline",
+        "slidecraft"
+      ]
     },
     {
       "id": "exploring",
       "label": "Just exploring",
       "message": "Most of my projects are open on GitHub. Pick one and dig into the code.",
       "cta": "All projects",
-      "highlight": ["streakline", "slidecraft", "2am-notes-pro"]
+      "highlight": [
+        "streakline",
+        "slidecraft",
+        "2am-notes-pro"
+      ]
     }
   ],
   "experience": [
@@ -94,32 +133,160 @@
     }
   ],
   "skills": [
-    { "group": "Backend", "items": ["Java", "Spring Boot", "Spring Security", "REST APIs", "JPA / Hibernate", "Node.js", "Hono", "Python", "Flask"] },
-    { "group": "Frontend", "items": ["React", "TypeScript", "JavaScript", "Vite", "Tailwind CSS", "React Router", "TanStack Query", "MUI"] },
-    { "group": "Mobile", "items": ["React Native", "Expo", "SQLite", "PWA"] },
-    { "group": "Data", "items": ["PostgreSQL", "SQL", "Drizzle ORM", "Flyway", "SQLite", "Apache Spark"] },
-    { "group": "Cloud & DevOps", "items": ["AWS S3", "AWS Cognito", "Azure Data Factory", "Cloudflare Workers", "Netlify", "GitHub Actions", "GitHub Pages", "Docker"] },
-    { "group": "AI", "items": ["Google Gemini API", "Structured AI output", "AI coding agents", "Prompt design"] },
-    { "group": "Testing", "items": ["JaCoCo", "Testcontainers", "Vitest", "Playwright", "pytest", "Selenium", "Cypress"] },
-    { "group": "Ways of working", "items": ["Agile / Scrum", "Code reviews", "Design patterns", "Debugging production issues", "Data modelling", "Concurrency"] }
+    {
+      "group": "Backend",
+      "items": [
+        "Java",
+        "Spring Boot",
+        "Spring Security",
+        "REST APIs",
+        "JPA / Hibernate",
+        "Node.js",
+        "Hono",
+        "Python",
+        "Flask"
+      ]
+    },
+    {
+      "group": "Frontend",
+      "items": [
+        "React",
+        "TypeScript",
+        "JavaScript",
+        "Vite",
+        "Tailwind CSS",
+        "React Router",
+        "TanStack Query",
+        "MUI"
+      ]
+    },
+    {
+      "group": "Mobile",
+      "items": [
+        "React Native",
+        "Expo",
+        "SQLite",
+        "PWA"
+      ]
+    },
+    {
+      "group": "Data",
+      "items": [
+        "PostgreSQL",
+        "SQL",
+        "Drizzle ORM",
+        "Flyway",
+        "SQLite",
+        "Apache Spark"
+      ]
+    },
+    {
+      "group": "Cloud & DevOps",
+      "items": [
+        "AWS S3",
+        "AWS Cognito",
+        "Azure Data Factory",
+        "Cloudflare Workers",
+        "Netlify",
+        "GitHub Actions",
+        "GitHub Pages",
+        "Docker"
+      ]
+    },
+    {
+      "group": "AI",
+      "items": [
+        "Google Gemini API",
+        "Structured AI output",
+        "AI coding agents",
+        "Prompt design"
+      ]
+    },
+    {
+      "group": "Testing",
+      "items": [
+        "JaCoCo",
+        "Testcontainers",
+        "Vitest",
+        "Playwright",
+        "pytest",
+        "Selenium",
+        "Cypress"
+      ]
+    },
+    {
+      "group": "Ways of working",
+      "items": [
+        "Agile / Scrum",
+        "Code reviews",
+        "Design patterns",
+        "Debugging production issues",
+        "Data modelling",
+        "Concurrency"
+      ]
+    }
   ],
-  "spokenLanguages": ["English", "Hindi", "Marathi"],
+  "spokenLanguages": [
+    "English",
+    "Hindi",
+    "Marathi"
+  ],
   "principles": [
-    { "title": "Read the manual mid-flight", "text": "New tool, new domain, new language: I start with the problem and learn what it needs on the way." },
-    { "title": "Ship small, ship often", "text": "Working software every few days beats a perfect plan. You see progress, I get feedback early." },
-    { "title": "Leave it documented", "text": "Every project gets a README, clear decisions and a way to run it, so it isn't stuck with me." }
+    {
+      "title": "Read the manual mid-flight",
+      "text": "New tool, new domain, new language: I start with the problem and learn what it needs on the way."
+    },
+    {
+      "title": "Ship small, ship often",
+      "text": "Working software every few days beats a perfect plan. You see progress, I get feedback early."
+    },
+    {
+      "title": "Leave it documented",
+      "text": "Every project gets a README, clear decisions and a way to run it, so it isn't stuck with me."
+    }
   ],
   "process": [
-    { "step": "Call", "text": "We talk about the problem, not the tech. 20–30 minutes on WhatsApp or a call." },
-    { "step": "Plan", "text": "I write a short plan: what we build first, what comes later, and how we'll know it works." },
-    { "step": "Weekly demos", "text": "You see working software every week and can change direction early." },
-    { "step": "Launch", "text": "Deployed, tested on real devices, with the handover notes you need." },
-    { "step": "Support", "text": "Fixes and small changes after launch, so you're not left alone with it." }
+    {
+      "step": "Call",
+      "text": "We talk about the problem, not the tech. 20–30 minutes on WhatsApp or a call."
+    },
+    {
+      "step": "Plan",
+      "text": "I write a short plan: what we build first, what comes later, and how we'll know it works."
+    },
+    {
+      "step": "Weekly demos",
+      "text": "You see working software every week and can change direction early."
+    },
+    {
+      "step": "Launch",
+      "text": "Deployed, tested on real devices, with the handover notes you need."
+    },
+    {
+      "step": "Support",
+      "text": "Fixes and small changes after launch, so you're not left alone with it."
+    }
   ],
   "capabilities": [
-    { "title": "Your business needs to be online and take orders", "text": "Websites and storefronts that work on phones and send orders where you already work, like WhatsApp.", "example": "rdplatforms" },
-    { "title": "Your team is drowning in spreadsheets and manual work", "text": "Portals and dashboards that replace copy-paste and retyping with one place to check and export.", "example": "feeproof" },
-    { "title": "You have an idea and need a working product fast", "text": "Auth, roles, multi-tenant data, admin screens: the boring foundations done right so the idea can be tested.", "example": "hrstack" },
-    { "title": "You want AI to do the boring part", "text": "AI features with structured, checked output that fit into a real workflow, not just a chat box.", "example": "slidecraft" }
+    {
+      "title": "Your business needs to be online and take orders",
+      "text": "Websites and storefronts that work on phones and send orders where you already work, like WhatsApp.",
+      "example": "rdplatforms"
+    },
+    {
+      "title": "Your team is drowning in spreadsheets and manual work",
+      "text": "Portals and dashboards that replace copy-paste and retyping with one place to check and export.",
+      "example": "feeproof"
+    },
+    {
+      "title": "You have an idea and need a working product fast",
+      "text": "Auth, roles, multi-tenant data, admin screens: the boring foundations done right so the idea can be tested.",
+      "example": "hrstack"
+    },
+    {
+      "title": "You want AI to do the boring part",
+      "text": "AI features with structured, checked output that fit into a real workflow, not just a chat box.",
+      "example": "slidecraft"
+    }
   ]
 }
