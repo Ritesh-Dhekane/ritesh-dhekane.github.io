@@ -1,7 +1,7 @@
-# Ritesh Dhekane — I learn the manual mid-flight.
+# Ritesh Dhekane — Precise software, built by hand.
 
-Full-stack developer from Pune. Give me a problem — a business website, a SaaS product, an AI tool or
-something nobody has built yet — and I'll figure it out and ship it.
+Full-stack developer from Pune. Web apps, SaaS products and AI tools for people who need them to just
+work. Give me a problem — even one nobody has built yet — and I'll figure it out and ship it.
 
 **Portfolio:** [ritesh-dhekane.github.io](https://ritesh-dhekane.github.io/) ·
 **WhatsApp:** [chat](https://wa.me/919322527567) ·
@@ -30,6 +30,20 @@ something nobody has built yet — and I'll figure it out and ship it.
 | [**LiftLog**](https://github.com/Ritesh-Dhekane/liftlog-mobile) | Offline-first fitness tracker for Android and iOS. | React Native, Expo, SQLite |
 | [**Selenium vs Cypress**](https://github.com/Ritesh-Dhekane/selenium-vs-cypress-latency) | Research: how two test frameworks behave on slow networks. [Results](https://ritesh-dhekane.github.io/selenium-vs-cypress-latency/) | Selenium, Cypress |
 | **Memory Pipelines** *(in progress)* | Photos and videos from every phone, sorted into one de-duplicated library. | Python, SQLite |
+
+## What I can build for you
+
+- **Your business needs to be online and take orders** — websites and storefronts that work on phones
+  and send orders where you already work, like WhatsApp.
+- **Your team is drowning in spreadsheets and manual work** — portals and dashboards with one place to
+  check and export.
+- **You have an idea and need a working product fast** — auth, roles, multi-tenant data and admin
+  screens done right.
+- **You want AI to do the boring part** — AI features with structured, checked output that fit a real
+  workflow.
+
+Websites, CRMs, ERPs, booking systems, portals, mobile apps, AI features — if it's on your plate, I can
+build it.
 
 ## Toolkit
 
@@ -69,5 +83,5 @@ I usually reply within a day.
   **Checks** workflow must pass on the PR, and merging it deploys the site to GitHub Pages
   (`deploy.yml`). Pushes to `dev` never deploy.
 
-<sub>This repository is also the source of my portfolio website (`content/` holds the profile and
-project write-ups).</sub>
+<sub>This repository is the source of my portfolio website: `content/` holds the profile and project
+write-ups, `public/media` the screenshots, `public/og` the share images (made with `node scripts/og.mjs`).</sub>
