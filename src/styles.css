@@ -150,7 +150,13 @@ a { color: inherit; }
   position: relative; aspect-ratio: 1; border-radius: var(--r-lg); overflow: hidden;
   background: #111113; border: 1px solid var(--line); box-shadow: var(--shadow-2), var(--chamfer);
 }
-.case img { width: 100%; height: 100%; object-fit: cover; transform: translateY(var(--lift, 0px)) scale(var(--zoom, 1)); transition: transform 0.1s linear; }
+.case img { width: 100%; height: 100%; object-fit: cover; }
+/* Hero mechanism: the base image shows only when motion is reduced; otherwise the slices move. */
+.mechanism { --p: 0; }
+.mechanism img { position: absolute; inset: 0; }
+.mechanism .mechanism-slice { mix-blend-mode: lighten; transform: translateY(calc(var(--shift) * var(--p))) scale(calc(1 + var(--p) * 0.04)); will-change: transform; }
+@media (prefers-reduced-motion: no-preference) { .mechanism .mechanism-base { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .mechanism .mechanism-slice { display: none; } }
 .case::after { /* glass reflection */
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 38%);
@@ -345,6 +351,10 @@ a { color: inherit; }
 .principles h3 { margin-bottom: 10px; }
 .principles p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; }
 @media (max-width: 900px) { .principles { grid-template-columns: 1fr; } }
+
+/* ── Page transition ──────────────────────────────── */
+.page-enter { animation: page-in 0.45s var(--ease); }
+@keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
 
 /* ── Reveal on scroll (only when motion is allowed) ─ */
 @media (prefers-reduced-motion: no-preference) {
