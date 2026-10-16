@@ -249,6 +249,8 @@ a { color: inherit; }
   .grid-2x2 > :nth-child(even) { padding-left: 0; border-left: 0; }
 }
 
+.capabilities-note { margin: 32px 0 0; font-size: clamp(20px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.015em; font-weight: 500; max-width: 30em; }
+
 /* ── Spec sheet (toolkit, facts) ──────────────────── */
 .spec { margin: 0; border-top: 1px solid var(--line); }
 .spec > div { display: grid; grid-template-columns: 220px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--line); transition: border-color 0.2s; }
