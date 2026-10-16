@@ -4,7 +4,7 @@ type Theme = 'light' | 'dark'
 
 const current = (): Theme => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
 
-/** Light/dark switch. index.html sets the starting theme before paint; this keeps it in sync. */
+/** Light/dark switch. Light is the default; index.html applies a saved choice before paint. */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(current)
 
