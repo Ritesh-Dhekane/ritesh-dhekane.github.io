@@ -7,7 +7,7 @@ import BrowserFrame from './BrowserFrame'
 export default function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { slug, title, tagline, stack, status, page, links, categories, image } = project
   return (
-    <article className="card reveal" id={slug}>
+    <article className="card reveal" id={slug} style={{ viewTransitionName: `card-${slug}`, ['--i' as string]: index % 3 }}>
       {image && <BrowserFrame src={image} alt={`${title} screenshot`} />}
       <div className="card-top">
         <span className="label">

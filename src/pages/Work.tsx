@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useLocation } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import ProjectCard from '../components/ProjectCard'
@@ -15,6 +16,13 @@ export default function Work() {
   useEffect(() => {
     if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'center' })
   }, [hash])
+
+  // Filter changes animate cards into their new places where the browser supports View Transitions.
+  const pick = (c: string) => {
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => void }
+    if (doc.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) doc.startViewTransition(() => flushSync(() => setCategory(c)))
+    else setCategory(c)
+  }
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -36,7 +44,7 @@ export default function Work() {
       <div className="filters">
         <div role="group" aria-label="Filter by type">
           {['All', ...categories].map((c) => (
-            <button key={c} type="button" className="chip" aria-pressed={c === category} onClick={() => setCategory(c)}>
+            <button key={c} type="button" className="chip" aria-pressed={c === category} onClick={() => pick(c)}>
               {c}
             </button>
           ))}

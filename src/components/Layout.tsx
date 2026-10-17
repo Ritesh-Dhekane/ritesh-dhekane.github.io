@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
+import Starfield from './Starfield'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -9,6 +10,7 @@ export default function Layout() {
   const { pathname } = useLocation()
   return (
     <>
+      <Starfield />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
