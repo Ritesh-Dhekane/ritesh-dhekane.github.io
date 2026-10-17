@@ -19,9 +19,12 @@ export const OPTIONS: { dark: { id: DarkBackdrop; label: string }[]; light: { id
 }
 
 const DEFAULTS = { dark: 'stars', light: 'dust' } as const
+/** The gear menu is hidden for now (Ritesh, 2026-10-17): everyone gets the defaults, saved picks are ignored. */
+export const MENU_ENABLED = false
 const EVENT = 'backdropchange'
 
 export function getBackdrop(theme: 'light' | 'dark'): Backdrop {
+  if (!MENU_ENABLED) return DEFAULTS[theme]
   try {
     const saved = localStorage.getItem(`backdrop-${theme}`)
     if (saved && OPTIONS[theme].some((o) => o.id === saved)) return saved as Backdrop

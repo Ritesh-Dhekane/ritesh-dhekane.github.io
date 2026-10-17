@@ -3,7 +3,6 @@ import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
 import Backdrop from './Backdrop'
-import BackdropMenu from './BackdropMenu'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -27,7 +26,7 @@ export default function Layout() {
           </nav>
           {profile.available && <span className="status">Available for new projects</span>}
           <ThemeToggle />
-          <BackdropMenu />
+          {/* Background picker (gear) is hidden for now; restore with <BackdropMenu /> and MENU_ENABLED in lib/backdrop.ts. */}
         </div>
       </header>
 

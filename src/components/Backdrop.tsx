@@ -63,7 +63,7 @@ export default function Backdrop() {
             y: rand(0, h),
             z,
             r: mode === 'stars' ? 0.7 + z * 1.1 * Math.random() : 0.6 + z * 1.4 * Math.random(),
-            a: mode === 'stars' ? 0.25 + z * 0.45 * Math.random() : 0.2 + z * 0.28 * Math.random(),
+            a: mode === 'stars' ? 0.25 + z * 0.45 * Math.random() : 0.3 + z * 0.32 * Math.random(),
             tw: rand(0, Math.PI * 2),
             ts: rand(0.4, 1.6),
             vx: rand(-0.5, 0.5) * 0.05 * z,
@@ -134,7 +134,7 @@ export default function Backdrop() {
       if (dust && mouse.on) {
         // The "lamp": a soft warm glow following the cursor.
         const g = ctx.createRadialGradient(eased.x, eased.y, 0, eased.x, eased.y, 260)
-        g.addColorStop(0, 'rgba(232,170,110,0.10)')
+        g.addColorStop(0, 'rgba(226,160,100,0.13)')
         g.addColorStop(1, 'rgba(232,170,110,0)')
         ctx.fillStyle = g
         ctx.fillRect(eased.x - 260, eased.y - 260, 520, 520)
@@ -160,7 +160,7 @@ export default function Backdrop() {
         ctx.fillStyle = dust
           ? s.tint
             ? `rgba(200,105,44,${alpha})`
-            : `rgba(60,56,50,${alpha})`
+            : `rgba(42,39,35,${alpha})`
           : s.tint
             ? `rgba(210,122,62,${alpha})`
             : `rgba(237,234,228,${alpha})`
@@ -169,7 +169,7 @@ export default function Backdrop() {
         ctx.fill()
         if (mouse.on && near.length < 32 && Math.hypot(x - mouse.x, y - mouse.y) < 150) near.push({ x, y })
       }
-      if (mouse.on) links(near, 95, 150, dust ? '45,43,40' : '210,122,62', dust ? 0.22 : 0.24)
+      if (mouse.on) links(near, 95, 150, dust ? '35,33,30' : '210,122,62', dust ? 0.32 : 0.24)
     }
 
     const drawGrid = () => {
