@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import HeroMechanism from '../components/HeroMechanism'
+import ProcessSteps from '../components/ProcessSteps'
 import Vitrine from '../components/Vitrine'
 import { featuredProjects, findProject, profile } from '../lib/content'
-import { track } from '../lib/analytics'
+import { useCenterFocus } from '../lib/useCenterFocus'
 import { usePageMeta } from '../lib/usePageMeta'
 
 function SectionHead({ label, title, index }: { label: string; title: string; index?: string }) {
@@ -19,8 +20,8 @@ function SectionHead({ label, title, index }: { label: string; title: string; in
 
 export default function Home() {
   usePageMeta()
-  const [intentId, setIntentId] = useState(profile.intents[0].id)
-  const intent = profile.intents.find((i) => i.id === intentId) ?? profile.intents[0]
+  const capRef = useRef<HTMLDivElement>(null)
+  const capFocus = useCenterFocus(capRef, ':scope > article')
 
   return (
     <>
@@ -54,40 +55,7 @@ export default function Home() {
         ))}
       </dl>
 
-      <div className="intent reveal" aria-labelledby="intent-title">
-        <p id="intent-title" className="label" style={{ gridColumn: 'auto' }}>
-          What brings you here?
-        </p>
-        <div className="chips" role="radiogroup" aria-labelledby="intent-title">
-          {profile.intents.map((i) => (
-            <button
-              key={i.id}
-              type="button"
-              className="chip"
-              role="radio"
-              aria-checked={i.id === intentId}
-              onClick={() => {
-                setIntentId(i.id)
-                track({ name: 'intent_select', params: { intent: i.id } })
-              }}
-            >
-              {i.label}
-            </button>
-          ))}
-        </div>
-        <p aria-live="polite">
-          {intent.message}{' '}
-          {intent.highlight.map((slug, n) => {
-            const p = findProject(slug)
-            return p ? (
-              <span key={slug}>
-                {n > 0 && ' · '}
-                <Link to={p.page ? `/work/${slug}` : `/work#${slug}`}>{p.title}</Link>
-              </span>
-            ) : null
-          })}
-        </p>
-      </div>
+      {/* "What brings you here?" is hidden for now (Ritesh, 2026-10-17); restore with: <IntentPicker /> */}
 
       <section className="section" aria-labelledby="work-title">
         <SectionHead label="Selected work" title="Things I've built" index={`${String(featuredProjects.length).padStart(2, '0')} pieces`} />
@@ -103,11 +71,11 @@ export default function Home() {
 
       <section className="section" aria-labelledby="build-title">
         <SectionHead label="What I can build for you" title="Problems I like solving" />
-        <div className="grid-2x2">
+        <div className={`grid-2x2${capFocus >= 0 ? ' has-focus' : ''}`} ref={capRef}>
           {profile.capabilities.map((c, i) => {
             const example = findProject(c.example)
             return (
-              <article key={c.title} className="reveal">
+              <article key={c.title} className={`reveal${i === capFocus ? ' in-focus' : ''}`}>
                 <p className="label">{String(i + 1).padStart(2, '0')}</p>
                 <h3>{c.title}</h3>
                 <p>{c.text}</p>
@@ -141,15 +109,7 @@ export default function Home() {
 
       <section className="section" aria-labelledby="process-title">
         <SectionHead label="How I work" title="From first call to support" />
-        <ol className="process reveal">
-          {profile.process.map((p, i) => (
-            <li key={p.step}>
-              <span className="label">{String(i + 1).padStart(2, '0')}</span>
-              <strong>{p.step}</strong>
-              <p>{p.text}</p>
-            </li>
-          ))}
-        </ol>
+        <ProcessSteps steps={profile.process} />
       </section>
 
       <section className="section" aria-labelledby="exp-title">

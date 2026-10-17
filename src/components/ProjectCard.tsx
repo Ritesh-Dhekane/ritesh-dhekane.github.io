@@ -4,10 +4,10 @@ import { track } from '../lib/analytics'
 import BrowserFrame from './BrowserFrame'
 
 /** One project in the catalogue. Links to its case study when it has one; otherwise to live site / code. */
-export default function ProjectCard({ project, index }: { project: Project; index: number }) {
+export default function ProjectCard({ project, index, focused }: { project: Project; index: number; focused?: boolean }) {
   const { slug, title, tagline, stack, status, page, links, categories, image } = project
   return (
-    <article className="card reveal" id={slug}>
+    <article className={`card reveal${focused ? ' in-focus' : ''}`} id={slug} style={{ viewTransitionName: `card-${slug}`, ['--i' as string]: index % 3 }}>
       {image && <BrowserFrame src={image} alt={`${title} screenshot`} />}
       <div className="card-top">
         <span className="label">

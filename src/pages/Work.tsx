@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useLocation } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import ProjectCard from '../components/ProjectCard'
 import { categories, projects } from '../lib/content'
+import { useCenterFocus } from '../lib/useCenterFocus'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function Work() {
@@ -10,11 +12,20 @@ export default function Work() {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const { hash } = useLocation()
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const cardFocus = useCenterFocus(cardsRef, ':scope > .card', `${category}|${query}`)
 
   // /work#slug (from Home or a card-only project link) scrolls to that project's card.
   useEffect(() => {
     if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'center' })
   }, [hash])
+
+  // Filter changes animate cards into their new places where the browser supports View Transitions.
+  const pick = (c: string) => {
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => void }
+    if (doc.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) doc.startViewTransition(() => flushSync(() => setCategory(c)))
+    else setCategory(c)
+  }
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -36,7 +47,7 @@ export default function Work() {
       <div className="filters">
         <div role="group" aria-label="Filter by type">
           {['All', ...categories].map((c) => (
-            <button key={c} type="button" className="chip" aria-pressed={c === category} onClick={() => setCategory(c)}>
+            <button key={c} type="button" className="chip" aria-pressed={c === category} onClick={() => pick(c)}>
               {c}
             </button>
           ))}
@@ -51,9 +62,9 @@ export default function Work() {
       <p className="count" aria-live="polite">
         Showing {shown.length} of {projects.length}
       </p>
-      <div className="cards">
-        {shown.map((p) => (
-          <ProjectCard key={p.slug} project={p} index={projects.indexOf(p)} />
+      <div className="cards" ref={cardsRef}>
+        {shown.map((p, i) => (
+          <ProjectCard key={p.slug} project={p} index={projects.indexOf(p)} focused={i === cardFocus} />
         ))}
       </div>
 

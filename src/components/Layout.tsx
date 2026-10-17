@@ -2,6 +2,8 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
+import Backdrop from './Backdrop'
+import StickyContact from './StickyContact'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -9,6 +11,7 @@ export default function Layout() {
   const { pathname } = useLocation()
   return (
     <>
+      <Backdrop />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -24,6 +27,7 @@ export default function Layout() {
           </nav>
           {profile.available && <span className="status">Available for new projects</span>}
           <ThemeToggle />
+          {/* Background picker (gear) is hidden for now; restore with <BackdropMenu /> and MENU_ENABLED in lib/backdrop.ts. */}
         </div>
       </header>
 
@@ -31,6 +35,8 @@ export default function Layout() {
       <main id="main" className="wrap page-enter" key={pathname}>
         <Outlet />
       </main>
+
+      <StickyContact />
 
       <footer className="footer">
         <div className="wrap">

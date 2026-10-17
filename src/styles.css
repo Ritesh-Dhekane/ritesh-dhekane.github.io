@@ -50,10 +50,11 @@
 }
 
 * { box-sizing: border-box; }
-html { background: var(--bg); }
+html { background: var(--bg); transition: background-color 0.4s var(--ease); }
+/* body stays transparent so the starfield canvas (fixed, behind everything) can show through. */
 body {
   margin: 0;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   font-family: var(--font);
   font-size: 17px;
@@ -61,13 +62,30 @@ body {
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
+  transition: color 0.4s var(--ease);
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 ::selection { background: var(--accent); color: #fff; }
 :focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
+.backdrop { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: none; }
+.backdrop-menu { position: relative; display: none; }
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .backdrop, .backdrop-menu { display: block; }
+}
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .backdrop { display: block; }
+}
+.backdrop-panel {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 30; min-width: 230px; padding: 14px 8px 8px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-2), var(--chamfer);
+  animation: fade-up 0.25s var(--ease);
+}
+.backdrop-panel .label { padding: 0 10px 8px; }
+.backdrop-option { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm); font-size: 14px; cursor: pointer; }
+.backdrop-option:hover { background: var(--panel-2); }
+.backdrop-option input { accent-color: var(--accent); margin: 0; }
 .skip-link { position: absolute; left: -999px; }
 .skip-link:focus { left: 16px; top: 8px; background: var(--btn-bg); color: var(--btn-text); padding: 8px 12px; z-index: 50; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -121,7 +139,7 @@ a { color: inherit; }
 /* ── Header / footer ──────────────────────────────── */
 .topbar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .topbar .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
-.brand { font-weight: 600; letter-spacing: -0.02em; text-decoration: none; font-size: 16px; }
+.brand { font-weight: 700; letter-spacing: -0.03em; text-decoration: none; font-size: 19px; }
 .nav { display: flex; gap: 24px; margin-left: auto; font-size: 14px; }
 .nav a { text-decoration: none; color: var(--text-2); transition: color 0.2s; }
 .nav a:hover, .nav a.active { color: var(--text); }
@@ -152,7 +170,8 @@ a { color: inherit; }
 }
 .case img { width: 100%; height: 100%; object-fit: cover; }
 /* Hero mechanism: the base image shows only when motion is reduced; otherwise the slices move. */
-.mechanism { --p: 0; }
+.mechanism { --p: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mechanism.easing .mechanism-slice { transition: transform 0.85s cubic-bezier(0.34, 1.3, 0.64, 1); }
 .mechanism img { position: absolute; inset: 0; }
 .mechanism .mechanism-slice { mix-blend-mode: lighten; transform: translateY(calc(var(--shift) * var(--p))) scale(calc(1 + var(--p) * 0.04)); will-change: transform; }
 @media (prefers-reduced-motion: no-preference) { .mechanism .mechanism-base { visibility: hidden; } }
@@ -204,7 +223,7 @@ a { color: inherit; }
 .plate .label { display: flex; justify-content: space-between; }
 .plinth-shadow { width: 62%; margin-inline: auto; height: 14px; margin-top: 18px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, 0.18), transparent); }
 @keyframes plate-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
-.vitrine-detail { padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 18px; animation: fade-up 0.5s var(--ease); }
+.vitrine-detail { padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 18px; }
 .vitrine-detail .problem { color: var(--text-2); margin: 0; }
 .vitrine-detail .actions { display: flex; gap: 20px; flex-wrap: wrap; margin-top: auto; padding-top: 12px; }
 .vitrine-rail { display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid var(--line); }
@@ -214,7 +233,7 @@ a { color: inherit; }
 }
 .vitrine-rail button:first-child { border-left: 0; }
 .vitrine-rail button:hover { background: var(--panel-2); }
-.vitrine-rail button[aria-pressed='true'] { background: var(--bg); box-shadow: inset 0 2px 0 var(--accent); }
+.vitrine-rail button[aria-pressed='true'] { background: var(--bg); }
 .vitrine-rail .name { font-weight: 500; font-size: 15px; }
 .vitrine-rail button:focus-visible { outline: 1px solid var(--accent); outline-offset: -3px; }
 @media (max-width: 900px) {
@@ -231,22 +250,50 @@ a { color: inherit; }
 .browser-bar { display: flex; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--panel); }
 .browser-bar span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
 .browser img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-.vitrine-piece { width: 100%; max-width: 560px; display: grid; justify-items: center; animation: plate-in 0.6s var(--ease); }
+.vitrine-piece { width: 100%; max-width: 560px; display: grid; justify-items: center; }
+.vitrine-piece.from-right { animation: slide-from-right 0.7s var(--ease); }
+.vitrine-piece.from-left { animation: slide-from-left 0.7s var(--ease); }
+@keyframes slide-from-right { from { opacity: 0; transform: translateX(56px) scale(0.97); } }
+@keyframes slide-from-left { from { opacity: 0; transform: translateX(-56px) scale(0.97); } }
+.vitrine-detail > * { animation: fade-up 0.55s var(--ease) backwards; }
+.vitrine-detail > :nth-child(2) { animation-delay: 0.05s; }
+.vitrine-detail > :nth-child(3) { animation-delay: 0.1s; }
+.vitrine-detail > :nth-child(4) { animation-delay: 0.15s; }
+.vitrine-detail > :nth-child(5) { animation-delay: 0.2s; }
+.vitrine-detail > :nth-child(6) { animation-delay: 0.25s; }
+.vitrine-rail button { position: relative; overflow: hidden; }
+.rail-progress { position: absolute; left: 0; top: 0; height: 2px; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(1); }
+.rail-progress.running { animation: rail-fill 6s linear; }
+@keyframes rail-fill { from { transform: scaleX(0); } }
 .vitrine-piece .browser { width: 100%; transform: translateY(-6px) perspective(1400px) rotateX(2deg); }
 .card .browser { box-shadow: none; margin: -6px -6px 4px; }
 .case-shot { margin-top: 48px; }
 
 /* ── Capabilities 2×2 ─────────────────────────────── */
 .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
-.grid-2x2 > * { padding: 32px 32px 32px 0; border-bottom: 1px solid var(--line); }
-.grid-2x2 > :nth-child(even) { padding-left: 32px; border-left: 1px solid var(--line); }
+.grid-2x2 > * { position: relative; padding: 32px 28px; border-bottom: 1px solid var(--line);
+  transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
+.grid-2x2 > :nth-child(even) { border-left: 1px solid var(--line); }
+/* Copper edge that runs in along the top of a hovered card. */
+.grid-2x2 > *::before { content: ''; position: absolute; left: 20px; right: 20px; top: 0; height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease); }
+.grid-2x2 .example a { transition: padding-left 0.3s var(--ease); }
+@media (hover: hover) {
+  /* Hover: the card comes forward as a raised panel; the others step back. */
+  .grid-2x2 > *:hover { z-index: 1; border-radius: var(--r-lg); transform: translateY(-4px) scale(1.02); background-color: var(--panel); box-shadow: var(--shadow-2), var(--chamfer); }
+  .grid-2x2 > *:hover::before { transform: scaleX(1); }
+  .grid-2x2:hover > *:not(:hover) { opacity: 0.6; }
+  .grid-2x2 > *:hover .example a { padding-left: 4px; }
+  /* Same lift after the scroll reveal (its rules are more specific). */
+  .js .grid-2x2 > .reveal.is-in:hover { transform: translateY(-4px) scale(1.02); }
+}
 .grid-2x2 h3 { font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; margin: 10px 0 12px; }
 .grid-2x2 p { margin: 0; color: var(--text-2); }
 .grid-2x2 .example { margin-top: 16px; font-size: 13px; }
 .grid-2x2 .example a { color: var(--accent-text); text-decoration: none; }
 @media (max-width: 720px) {
   .grid-2x2 { grid-template-columns: 1fr; }
-  .grid-2x2 > :nth-child(even) { padding-left: 0; border-left: 0; }
+  .grid-2x2 > :nth-child(even) { border-left: 0; }
 }
 
 .capabilities-note { margin: 32px 0 0; font-size: clamp(20px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.015em; font-weight: 500; max-width: 30em; }
@@ -261,16 +308,31 @@ a { color: inherit; }
 
 /* ── Process line ─────────────────────────────────── */
 .process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; position: relative; }
-.process::before { content: ''; position: absolute; top: 5px; left: 0; right: 0; height: 1px; background: var(--line); }
-.process li { position: relative; padding-top: 28px; }
-.process li::before { content: ''; position: absolute; top: 0; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1px solid var(--text-2); }
-.process li:first-child::before { background: var(--accent); border-color: var(--accent); }
-.process strong { display: block; font-weight: 600; margin: 8px 0 6px; }
-.process p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; }
+.process { --star-core: var(--accent); --star-glow: rgba(200, 105, 44, 0.55); }
+:root[data-theme='dark'] .process { --star-core: #f6efe3; --star-glow: rgba(210, 122, 62, 0.8); }
+/* The line warms up from a faint hairline to copper towards the last step. */
+.process::before { content: ''; position: absolute; top: 13px; left: 0; right: 0; height: 1px; background: linear-gradient(to right, var(--line), var(--accent)); }
+.process li { position: relative; padding-top: 40px; }
+/* Each step's star grows: --lvl 1 (faint dot) … 5 (fully bright). */
+.process .star {
+  position: absolute; top: 13px; left: 6px; width: calc(4px + var(--lvl) * 2.6px); height: calc(4px + var(--lvl) * 2.6px);
+  transform: translate(-50%, -50%); fill: var(--star-core); opacity: calc(0.3 + var(--lvl) * 0.14);
+  filter: drop-shadow(0 0 calc(var(--lvl) * 2px) var(--star-glow));
+  transition: transform 0.6s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.6s var(--ease), filter 0.6s var(--ease);
+}
+.process li:last-child .star { animation: twinkle 3.2s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.88); } }
+/* The travelling highlight (every 4 s) and hover: the step's star flares and its text sharpens. */
+.process li.active .star, .process li:hover .star { opacity: 1; transform: translate(-50%, -50%) scale(1.45); filter: drop-shadow(0 0 calc(5px + var(--lvl) * 2.8px) var(--star-glow)); animation: none; }
+.process strong { display: block; font-weight: 600; margin: 8px 0 6px; transition: color 0.4s var(--ease); }
+.process p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; transition: color 0.4s var(--ease); }
+.process li.active strong { color: var(--accent-text); }
+.process li.active p { color: var(--text); }
 @media (max-width: 900px) {
   .process { grid-template-columns: 1fr; gap: 0; }
-  .process::before { top: 0; bottom: 0; left: 5px; right: auto; width: 1px; height: auto; }
-  .process li { padding: 0 0 28px 32px; }
+  .process::before { top: 0; bottom: 0; left: 6px; right: auto; width: 1px; height: auto; background: linear-gradient(to bottom, var(--line), var(--accent)); }
+  .process li { padding: 0 0 28px 36px; }
+  .process .star { top: 10px; }
 }
 
 /* ── Two-column record (experience) ───────────────── */
@@ -354,9 +416,51 @@ a { color: inherit; }
 .principles p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; }
 @media (max-width: 900px) { .principles { grid-template-columns: 1fr; } }
 
+/* ── Staggered and drawn entrances (only when JS runs and motion is allowed) ── */
+@media (prefers-reduced-motion: no-preference) {
+  .js .card.reveal { transition-delay: calc(var(--i, 0) * 90ms); }
+  /* Capability cards pop forward from depth, one after another (keyframes, so the stagger never
+     delays the hover transitions). */
+  .js .grid-2x2 > .reveal { opacity: 0; transform: none; transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
+  .js .grid-2x2 > .reveal.is-in { opacity: 1; animation: pop-forward 0.85s cubic-bezier(0.34, 1.45, 0.64, 1) backwards; }
+  .js .grid-2x2 > .reveal.is-in .label { animation: fade-up 0.5s var(--ease) backwards; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(2), .js .grid-2x2 > .reveal.is-in:nth-child(2) .label { animation-delay: 0.12s; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(3), .js .grid-2x2 > .reveal.is-in:nth-child(3) .label { animation-delay: 0.24s; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(4), .js .grid-2x2 > .reveal.is-in:nth-child(4) .label { animation-delay: 0.36s; }
+  .js .grid-2x2 > .reveal.is-in:hover { opacity: 1; }
+  .js .grid-2x2:hover > .reveal.is-in:not(:hover) { opacity: 0.6; }
+  .js .capabilities-note.reveal { transition-delay: 0.5s; }
+  @keyframes pop-forward { from { opacity: 0; transform: scale(0.92); filter: blur(6px); } 60% { filter: blur(0); } }
+  .js .process.reveal { opacity: 1; transform: none; }
+  .js .process.reveal::before { transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease); }
+  .js .process.reveal.is-in::before { transform: scaleX(1); }
+  .js .process.reveal li { opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+  .js .process.reveal.is-in li { opacity: 1; transform: none; }
+  .js .process.reveal.is-in li:nth-child(2) { transition-delay: 0.25s; }
+  .js .process.reveal.is-in li:nth-child(3) { transition-delay: 0.5s; }
+  .js .process.reveal.is-in li:nth-child(4) { transition-delay: 0.75s; }
+  .js .process.reveal.is-in li:nth-child(5) { transition-delay: 1s; }
+  /* Stars ignite one after another as the line reaches them. */
+  .js .process.reveal .star { transform: translate(-50%, -50%) scale(0); }
+  .js .process.reveal.is-in .star { animation: ignite 0.7s cubic-bezier(0.34, 1.6, 0.64, 1) backwards; transform: translate(-50%, -50%); }
+  .js .process.reveal.is-in li:nth-child(2) .star { animation-delay: 0.3s; }
+  .js .process.reveal.is-in li:nth-child(3) .star { animation-delay: 0.6s; }
+  .js .process.reveal.is-in li:nth-child(4) .star { animation-delay: 0.9s; }
+  .js .process.reveal.is-in li:nth-child(5) .star { animation: ignite 0.8s cubic-bezier(0.34, 1.6, 0.64, 1) 1.2s backwards, twinkle 3.2s ease-in-out 2.2s infinite; }
+  .js .process.reveal.is-in li.active .star, .js .process.reveal.is-in li:hover .star { animation: none; transform: translate(-50%, -50%) scale(1.45); }
+  @keyframes ignite { from { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: drop-shadow(0 0 18px var(--star-glow)); } }
+  .card .browser img { transition: transform 0.8s var(--ease); }
+  .card:hover .browser img { transform: scale(1.045); }
+  ::view-transition-group(*) { animation-duration: 0.45s; animation-timing-function: cubic-bezier(0.2, 0.7, 0.1, 1); }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .js .process.reveal::before { transform: scaleY(0); transform-origin: top; }
+  .js .process.reveal.is-in::before { transform: scaleY(1); }
+}
+
 /* ── Page transition ──────────────────────────────── */
 .page-enter { animation: page-in 0.45s var(--ease); }
-@keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); } }
 
 /* ── Reveal on scroll (only when motion is allowed) ─ */
 @media (prefers-reduced-motion: no-preference) {
@@ -365,4 +469,45 @@ a { color: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ── Phones and touch screens ─────────────────────── */
+/* Sticky WhatsApp / Email bar (phones only). */
+.sticky-contact { display: none; }
+@media (max-width: 720px) {
+  .brand { font-size: 17px; }
+  .sticky-contact {
+    position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 25;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; border-radius: 12px;
+    background: color-mix(in srgb, var(--panel) 92%, transparent); backdrop-filter: blur(14px);
+    border: 1px solid var(--line); box-shadow: var(--shadow-2);
+    transform: translateY(calc(100% + 24px)); opacity: 0; transition: transform 0.45s var(--ease), opacity 0.3s var(--ease);
+  }
+  .sticky-contact.shown { transform: none; opacity: 1; }
+  .sticky-contact .btn { justify-content: center; height: 46px; }
+  .footer .wrap { padding-bottom: 96px; }
+}
+
+/* Focus follows scrolling where there is no hover: the card in the middle of the screen comes forward. */
+@media (hover: none), (max-width: 900px) {
+  .grid-2x2 > .in-focus { z-index: 1; border-radius: var(--r-lg); transform: translateY(-4px) scale(1.02); background-color: var(--panel); box-shadow: var(--shadow-2), var(--chamfer); }
+  .js .grid-2x2 > .reveal.is-in.in-focus { transform: translateY(-4px) scale(1.02); }
+  .grid-2x2 > .in-focus::before { transform: scaleX(1); }
+  .grid-2x2.has-focus > :not(.in-focus), .js .grid-2x2.has-focus > .reveal.is-in:not(.in-focus) { opacity: 0.6; }
+  .card.in-focus { border-color: var(--accent); }
+  .js .card.reveal.is-in.in-focus { transform: translateY(-3px); }
+  /* Press feedback instead of hover. */
+  .btn:active, .card:active, .chip:active { transform: scale(0.97); }
+}
+
+/* Display case on phones: swipe between pieces; dots replace the tab row. */
+.vitrine-dots { display: none; }
+@media (max-width: 720px) {
+  .vitrine-stage { touch-action: pan-y; }
+  /* Rail stays available to screen readers, just not shown. */
+  .vitrine-rail { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .vitrine { position: relative; }
+  .vitrine-dots { display: flex; justify-content: center; gap: 8px; padding: 14px 0 16px; border-top: 1px solid var(--line); }
+  .vitrine-dots span { width: 6px; height: 6px; border-radius: 999px; background: var(--line); transition: width 0.35s var(--ease), background 0.35s var(--ease); }
+  .vitrine-dots span.on { width: 22px; background: var(--accent); }
 }
