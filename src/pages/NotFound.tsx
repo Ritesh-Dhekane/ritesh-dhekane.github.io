@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function NotFound() {
-  usePageMeta('Page not found', "This page doesn't exist.")
+  usePageMeta()
   return (
     <header className="page-head" style={{ minHeight: '50vh' }}>
       <p className="label">404</p>

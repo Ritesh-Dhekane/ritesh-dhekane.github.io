@@ -4,11 +4,18 @@ type Theme = 'light' | 'dark'
 
 const current = (): Theme => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
 
-/** Light/dark switch. Light is the default; index.html applies a saved choice before paint. */
+/**
+ * Light/dark switch. Light is the default; index.html applies a saved choice before paint. The page is
+ * pre-rendered, so the first render always assumes light (matching the server HTML) and the real theme
+ * is read after mounting.
+ */
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(current)
+  const [theme, setTheme] = useState<Theme | null>(null)
+
+  useEffect(() => setTheme(current()), [])
 
   useEffect(() => {
+    if (!theme) return
     document.documentElement.dataset.theme = theme
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#111113' : '#F5F3EF')
   }, [theme])

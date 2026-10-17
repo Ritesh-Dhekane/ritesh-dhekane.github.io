@@ -6,7 +6,7 @@ import { categories, projects } from '../lib/content'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function Work() {
-  usePageMeta('Work', 'Products, tools and experiments: SaaS apps, business websites, AI tools, mobile apps and research.')
+  usePageMeta()
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const { hash } = useLocation()
