@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import HeroMechanism from '../components/HeroMechanism'
+import ProcessSteps from '../components/ProcessSteps'
 import Vitrine from '../components/Vitrine'
 import { featuredProjects, findProject, profile } from '../lib/content'
 import { usePageMeta } from '../lib/usePageMeta'
@@ -104,15 +105,7 @@ export default function Home() {
 
       <section className="section" aria-labelledby="process-title">
         <SectionHead label="How I work" title="From first call to support" />
-        <ol className="process reveal">
-          {profile.process.map((p, i) => (
-            <li key={p.step}>
-              <span className="label">{String(i + 1).padStart(2, '0')}</span>
-              <strong>{p.step}</strong>
-              <p>{p.text}</p>
-            </li>
-          ))}
-        </ol>
+        <ProcessSteps steps={profile.process} />
       </section>
 
       <section className="section" aria-labelledby="exp-title">

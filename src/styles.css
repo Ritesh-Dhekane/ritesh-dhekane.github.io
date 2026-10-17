@@ -294,16 +294,31 @@ a { color: inherit; }
 
 /* ── Process line ─────────────────────────────────── */
 .process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; position: relative; }
-.process::before { content: ''; position: absolute; top: 5px; left: 0; right: 0; height: 1px; background: var(--line); }
-.process li { position: relative; padding-top: 28px; }
-.process li::before { content: ''; position: absolute; top: 0; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1px solid var(--text-2); }
-.process li:first-child::before { background: var(--accent); border-color: var(--accent); }
-.process strong { display: block; font-weight: 600; margin: 8px 0 6px; }
-.process p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; }
+.process { --star-core: var(--accent); --star-glow: rgba(200, 105, 44, 0.55); }
+:root[data-theme='dark'] .process { --star-core: #f6efe3; --star-glow: rgba(210, 122, 62, 0.8); }
+/* The line warms up from a faint hairline to copper towards the last step. */
+.process::before { content: ''; position: absolute; top: 13px; left: 0; right: 0; height: 1px; background: linear-gradient(to right, var(--line), var(--accent)); }
+.process li { position: relative; padding-top: 40px; }
+/* Each step's star grows: --lvl 1 (faint dot) … 5 (fully bright). */
+.process .star {
+  position: absolute; top: 13px; left: 6px; width: calc(5px + var(--lvl) * 4px); height: calc(5px + var(--lvl) * 4px);
+  transform: translate(-50%, -50%); fill: var(--star-core); opacity: calc(0.3 + var(--lvl) * 0.14);
+  filter: drop-shadow(0 0 calc(var(--lvl) * 1.6px) var(--star-glow));
+  transition: transform 0.6s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.6s var(--ease), filter 0.6s var(--ease);
+}
+.process li:last-child .star { animation: twinkle 3.2s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.88); } }
+/* The travelling highlight (every 4 s) and hover: the step's star flares and its text sharpens. */
+.process li.active .star, .process li:hover .star { opacity: 1; transform: translate(-50%, -50%) scale(1.45); filter: drop-shadow(0 0 calc(4px + var(--lvl) * 2.4px) var(--star-glow)); animation: none; }
+.process strong { display: block; font-weight: 600; margin: 8px 0 6px; transition: color 0.4s var(--ease); }
+.process p { margin: 0; color: var(--text-2); font-size: 15px; line-height: 24px; transition: color 0.4s var(--ease); }
+.process li.active strong { color: var(--accent-text); }
+.process li.active p { color: var(--text); }
 @media (max-width: 900px) {
   .process { grid-template-columns: 1fr; gap: 0; }
-  .process::before { top: 0; bottom: 0; left: 5px; right: auto; width: 1px; height: auto; }
-  .process li { padding: 0 0 28px 32px; }
+  .process::before { top: 0; bottom: 0; left: 6px; right: auto; width: 1px; height: auto; background: linear-gradient(to bottom, var(--line), var(--accent)); }
+  .process li { padding: 0 0 28px 36px; }
+  .process .star { top: 10px; }
 }
 
 /* ── Two-column record (experience) ───────────────── */
@@ -411,6 +426,15 @@ a { color: inherit; }
   .js .process.reveal.is-in li:nth-child(3) { transition-delay: 0.5s; }
   .js .process.reveal.is-in li:nth-child(4) { transition-delay: 0.75s; }
   .js .process.reveal.is-in li:nth-child(5) { transition-delay: 1s; }
+  /* Stars ignite one after another as the line reaches them. */
+  .js .process.reveal .star { transform: translate(-50%, -50%) scale(0); }
+  .js .process.reveal.is-in .star { animation: ignite 0.7s cubic-bezier(0.34, 1.6, 0.64, 1) backwards; transform: translate(-50%, -50%); }
+  .js .process.reveal.is-in li:nth-child(2) .star { animation-delay: 0.3s; }
+  .js .process.reveal.is-in li:nth-child(3) .star { animation-delay: 0.6s; }
+  .js .process.reveal.is-in li:nth-child(4) .star { animation-delay: 0.9s; }
+  .js .process.reveal.is-in li:nth-child(5) .star { animation: ignite 0.8s cubic-bezier(0.34, 1.6, 0.64, 1) 1.2s backwards, twinkle 3.2s ease-in-out 2.2s infinite; }
+  .js .process.reveal.is-in li.active .star, .js .process.reveal.is-in li:hover .star { animation: none; transform: translate(-50%, -50%) scale(1.45); }
+  @keyframes ignite { from { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: drop-shadow(0 0 18px var(--star-glow)); } }
   .card .browser img { transition: transform 0.8s var(--ease); }
   .card:hover .browser img { transform: scale(1.045); }
   ::view-transition-group(*) { animation-duration: 0.45s; animation-timing-function: cubic-bezier(0.2, 0.7, 0.1, 1); }
