@@ -2,7 +2,8 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
-import Starfield from './Starfield'
+import Backdrop from './Backdrop'
+import BackdropMenu from './BackdropMenu'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -10,7 +11,7 @@ export default function Layout() {
   const { pathname } = useLocation()
   return (
     <>
-      <Starfield />
+      <Backdrop />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -26,6 +27,7 @@ export default function Layout() {
           </nav>
           {profile.available && <span className="status">Available for new projects</span>}
           <ThemeToggle />
+          <BackdropMenu />
         </div>
       </header>
 

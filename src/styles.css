@@ -69,10 +69,20 @@ a { color: inherit; }
 ::selection { background: var(--accent); color: #fff; }
 :focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
-.starfield { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: none; }
+.backdrop { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: none; }
+.backdrop-menu { position: relative; display: none; }
 @media (hover: hover) and (pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  :root[data-theme='dark'] .starfield { display: block; }
+  .backdrop, .backdrop-menu { display: block; }
 }
+.backdrop-panel {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 30; min-width: 230px; padding: 14px 8px 8px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-2), var(--chamfer);
+  animation: fade-up 0.25s var(--ease);
+}
+.backdrop-panel .label { padding: 0 10px 8px; }
+.backdrop-option { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm); font-size: 14px; cursor: pointer; }
+.backdrop-option:hover { background: var(--panel-2); }
+.backdrop-option input { accent-color: var(--accent); margin: 0; }
 .skip-link { position: absolute; left: -999px; }
 .skip-link:focus { left: 16px; top: 8px; background: var(--btn-bg); color: var(--btn-text); padding: 8px 12px; z-index: 50; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
