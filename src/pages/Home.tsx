@@ -1,9 +1,11 @@
+import { useRef } from 'react'
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import HeroMechanism from '../components/HeroMechanism'
 import ProcessSteps from '../components/ProcessSteps'
 import Vitrine from '../components/Vitrine'
 import { featuredProjects, findProject, profile } from '../lib/content'
+import { useCenterFocus } from '../lib/useCenterFocus'
 import { usePageMeta } from '../lib/usePageMeta'
 
 function SectionHead({ label, title, index }: { label: string; title: string; index?: string }) {
@@ -18,6 +20,8 @@ function SectionHead({ label, title, index }: { label: string; title: string; in
 
 export default function Home() {
   usePageMeta()
+  const capRef = useRef<HTMLDivElement>(null)
+  const capFocus = useCenterFocus(capRef, ':scope > article')
 
   return (
     <>
@@ -67,11 +71,11 @@ export default function Home() {
 
       <section className="section" aria-labelledby="build-title">
         <SectionHead label="What I can build for you" title="Problems I like solving" />
-        <div className="grid-2x2">
+        <div className={`grid-2x2${capFocus >= 0 ? ' has-focus' : ''}`} ref={capRef}>
           {profile.capabilities.map((c, i) => {
             const example = findProject(c.example)
             return (
-              <article key={c.title} className="reveal">
+              <article key={c.title} className={`reveal${i === capFocus ? ' in-focus' : ''}`}>
                 <p className="label">{String(i + 1).padStart(2, '0')}</p>
                 <h3>{c.title}</h3>
                 <p>{c.text}</p>

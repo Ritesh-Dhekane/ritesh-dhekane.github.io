@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { DESKTOP_QUERY, getBackdrop, onBackdropChange, type Backdrop as Mode } from '../lib/backdrop'
+import { DESKTOP_QUERY, getBackdrop, onBackdropChange, TOUCH_BACKDROP_QUERY, type Backdrop as Mode } from '../lib/backdrop'
 
 // Animated background behind the page, on desktops with a mouse (see DESKTOP_QUERY). One canvas, one
 // animation loop, four looks chosen per theme with the gear menu:
@@ -10,6 +10,8 @@ import { DESKTOP_QUERY, getBackdrop, onBackdropChange, type Backdrop as Mode } f
 //          grid    — a drafting dot grid that bulges around the cursor like a lens, with pencil lines
 //                    between the nearest dots.
 //          filings — short copper flecks that turn to point at the cursor like iron filings.
+// On touch screens (TOUCH_BACKDROP_QUERY) it runs lighter: fewer particles, the finger acts as the
+// cursor, scrolling adds depth, and drawing stops ~2 s after the last scroll or touch to save battery.
 // Plain canvas, no library; it only starts in the browser (not part of the pre-rendered HTML).
 
 interface Particle {
@@ -41,6 +43,9 @@ export default function Backdrop() {
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
     const media = matchMedia(DESKTOP_QUERY)
+    const touchMedia = matchMedia(TOUCH_BACKDROP_QUERY)
+    const isTouch = () => !media.matches && touchMedia.matches
+    let lastActive = performance.now()
     const theme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
 
     let w = 0
@@ -49,13 +54,14 @@ export default function Backdrop() {
     let parts: Particle[] = []
     let frame = 0
     let running = false
+    let sized = false
     const mouse = { x: -9999, y: -9999, on: false }
     const eased = { x: 0, y: 0 }
 
     const makeParticles = () => {
       const area = w * h
       if (mode === 'stars' || mode === 'dust') {
-        const count = mode === 'stars' ? Math.max(120, Math.min(200, Math.round(area / 9000))) : Math.max(90, Math.min(150, Math.round(area / 12000)))
+        const count = isTouch() ? 45 : mode === 'stars' ? Math.max(120, Math.min(200, Math.round(area / 9000))) : Math.max(90, Math.min(150, Math.round(area / 12000)))
         parts = Array.from({ length: count }, () => {
           const z = LAYERS[Math.floor(Math.random() * LAYERS.length)]
           return {
@@ -130,7 +136,8 @@ export default function Backdrop() {
 
     const drawStarsOrDust = (t: number, dust: boolean) => {
       const px = (eased.x - w / 2) / w
-      const py = (eased.y - h / 2) / h
+      // On touch screens scrolling gives the depth: near particles move further than far ones.
+      const py = isTouch() ? (window.scrollY * 0.004) % 1 : (eased.y - h / 2) / h
       if (dust && mouse.on) {
         // The "lamp": a soft warm glow following the cursor.
         const g = ctx.createRadialGradient(eased.x, eased.y, 0, eased.x, eased.y, 260)
@@ -144,7 +151,7 @@ export default function Backdrop() {
         s.x = (s.x + s.vx + w) % w
         s.y = (s.y + s.vy + h) % h
         let x = s.x - px * 36 * s.z
-        let y = s.y - py * 24 * s.z
+        let y = isTouch() ? (((s.y - py * 60 * s.z) % h) + h) % h : s.y - py * 24 * s.z
         const [tx, ty] = push(x, y, dust ? 140 : 120, (dust ? 26 : 22) * s.z)
         s.dx += (tx - s.dx) * 0.08
         s.dy += (ty - s.dy) * 0.08
@@ -221,6 +228,11 @@ export default function Backdrop() {
     }
 
     const draw = (time: number) => {
+      // Touch screens: stop drawing shortly after the last scroll/touch (the last frame stays visible).
+      if (isTouch() && time - lastActive > 2000) {
+        running = false
+        return
+      }
       frame = requestAnimationFrame(draw)
       const target = mouse.on ? mouse : { x: w / 2, y: h / 2 }
       eased.x += (target.x - eased.x) * 0.06
@@ -234,15 +246,18 @@ export default function Backdrop() {
 
     const stop = () => {
       running = false
+      sized = false
       cancelAnimationFrame(frame)
       ctx.clearRect(0, 0, w, h)
     }
     const update = () => {
-      const next: Mode = media.matches && !document.hidden ? getBackdrop(theme()) : 'off'
+      const next: Mode = (media.matches || touchMedia.matches) && !document.hidden ? getBackdrop(theme()) : 'off'
       if (next === 'off') return stop()
-      if (next !== mode || !running) {
+      // Rebuild particles only for a new look (waking from idle keeps them where they are).
+      if (next !== mode || !sized) {
         mode = next
         size()
+        sized = true
       }
       if (!running) {
         running = true
@@ -251,21 +266,52 @@ export default function Backdrop() {
     }
 
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return
       mouse.x = e.clientX
       mouse.y = e.clientY
       mouse.on = true
     }
+    // Touch screens: the finger is the cursor; any touch or scroll wakes the animation.
+    const wake = () => {
+      lastActive = performance.now()
+      if (!running && isTouch()) update()
+    }
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0]
+      if (t) {
+        mouse.x = t.clientX
+        mouse.y = t.clientY
+        mouse.on = true
+      }
+      wake()
+    }
+    const onTouchEnd = () => {
+      window.setTimeout(() => (mouse.on = false), 600)
+      wake()
+    }
     const onLeave = () => {
       mouse.on = false
     }
-    const onResize = () => running && size()
+    // Phones resize the viewport as the address bar shows/hides while scrolling; only a width change
+    // (rotation, window resize) rebuilds the field.
+    let lastWidth = window.innerWidth
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      if (sized) size()
+    }
 
     const themeWatch = new MutationObserver(update)
     themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     const offChange = onBackdropChange(update)
     media.addEventListener('change', update)
+    touchMedia.addEventListener('change', update)
     document.addEventListener('visibilitychange', update)
     window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('touchstart', onTouch, { passive: true })
+    window.addEventListener('touchmove', onTouch, { passive: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('scroll', wake, { passive: true })
     document.documentElement.addEventListener('pointerleave', onLeave)
     window.addEventListener('resize', onResize)
     update()
@@ -275,8 +321,13 @@ export default function Backdrop() {
       themeWatch.disconnect()
       offChange()
       media.removeEventListener('change', update)
+      touchMedia.removeEventListener('change', update)
       document.removeEventListener('visibilitychange', update)
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('touchstart', onTouch)
+      window.removeEventListener('touchmove', onTouch)
+      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('scroll', wake)
       document.documentElement.removeEventListener('pointerleave', onLeave)
       window.removeEventListener('resize', onResize)
     }

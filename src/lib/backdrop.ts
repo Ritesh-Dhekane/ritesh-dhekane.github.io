@@ -48,5 +48,7 @@ export const onBackdropChange = (fn: () => void) => {
   return () => window.removeEventListener(EVENT, fn)
 }
 
-/** Effects run only on desktops with a mouse and wide screens, and never with reduced motion. */
+/** Full effects: desktops with a mouse and wide screens, never with reduced motion. */
 export const DESKTOP_QUERY = '(hover: hover) and (pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference)'
+/** Light effects on touch screens: fewer particles, driven by touch and scroll, idle when nothing moves. */
+export const TOUCH_BACKDROP_QUERY = '(pointer: coarse) and (prefers-reduced-motion: no-preference)'

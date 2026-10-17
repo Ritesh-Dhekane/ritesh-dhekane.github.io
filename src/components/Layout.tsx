@@ -3,6 +3,7 @@ import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
 import { useReveal } from '../lib/useReveal'
 import Backdrop from './Backdrop'
+import StickyContact from './StickyContact'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -34,6 +35,8 @@ export default function Layout() {
       <main id="main" className="wrap page-enter" key={pathname}>
         <Outlet />
       </main>
+
+      <StickyContact />
 
       <footer className="footer">
         <div className="wrap">

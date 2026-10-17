@@ -33,6 +33,30 @@ export default function Vitrine({ projects }: { projects: Project[] }) {
     setSelected(i)
   }
 
+  // Swipe (touch): left = next, right = previous. Auto-advance pauses while a finger is down.
+  const swipe = useRef<{ x: number; y: number } | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => {
+    swipe.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    setPaused(true)
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = swipe.current
+    swipe.current = null
+    setPaused(false)
+    if (!start) return
+    const dx = e.changedTouches[0].clientX - start.x
+    const dy = e.changedTouches[0].clientY - start.y
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    const n = projects.length
+    if (dx < 0) {
+      setDir(1)
+      setSelected((i) => (i + 1) % n)
+    } else {
+      setDir(-1)
+      setSelected((i) => (i - 1 + n) % n)
+    }
+  }
+
   // Auto-advance only while the case is visible, the tab is active and motion is allowed.
   useEffect(() => {
     const el = box.current
@@ -67,7 +91,7 @@ export default function Vitrine({ projects }: { projects: Project[] }) {
       onFocus={() => setPaused(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && setPaused(false)}
     >
-      <div className="vitrine-stage">
+      <div className="vitrine-stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div className="vitrine-object">
           <div className={`vitrine-piece from-${dir === 1 ? 'right' : 'left'}`} key={p.slug}>
             {p.image ? (
@@ -110,6 +134,11 @@ export default function Vitrine({ projects }: { projects: Project[] }) {
             )}
           </div>
         </div>
+      </div>
+      <div className="vitrine-dots" aria-hidden="true">
+        {projects.map((proj, i) => (
+          <span key={proj.slug} className={i === selected ? 'on' : undefined} />
+        ))}
       </div>
       <div className="vitrine-rail" role="group" aria-label="Choose a project">
         {projects.map((proj, i) => (

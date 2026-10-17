@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useLocation } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import ProjectCard from '../components/ProjectCard'
 import { categories, projects } from '../lib/content'
+import { useCenterFocus } from '../lib/useCenterFocus'
 import { usePageMeta } from '../lib/usePageMeta'
 
 export default function Work() {
@@ -11,6 +12,8 @@ export default function Work() {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const { hash } = useLocation()
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const cardFocus = useCenterFocus(cardsRef, ':scope > .card', `${category}|${query}`)
 
   // /work#slug (from Home or a card-only project link) scrolls to that project's card.
   useEffect(() => {
@@ -59,9 +62,9 @@ export default function Work() {
       <p className="count" aria-live="polite">
         Showing {shown.length} of {projects.length}
       </p>
-      <div className="cards">
-        {shown.map((p) => (
-          <ProjectCard key={p.slug} project={p} index={projects.indexOf(p)} />
+      <div className="cards" ref={cardsRef}>
+        {shown.map((p, i) => (
+          <ProjectCard key={p.slug} project={p} index={projects.indexOf(p)} focused={i === cardFocus} />
         ))}
       </div>
 
