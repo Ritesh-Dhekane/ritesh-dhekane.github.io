@@ -257,15 +257,29 @@ a { color: inherit; }
 
 /* ── Capabilities 2×2 ─────────────────────────────── */
 .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
-.grid-2x2 > * { padding: 32px 32px 32px 0; border-bottom: 1px solid var(--line); }
-.grid-2x2 > :nth-child(even) { padding-left: 32px; border-left: 1px solid var(--line); }
+.grid-2x2 > * { position: relative; padding: 32px 28px; border-bottom: 1px solid var(--line);
+  transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
+.grid-2x2 > :nth-child(even) { border-left: 1px solid var(--line); }
+/* Copper edge that runs in along the top of a hovered card. */
+.grid-2x2 > *::before { content: ''; position: absolute; left: 20px; right: 20px; top: 0; height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease); }
+.grid-2x2 .example a { transition: padding-left 0.3s var(--ease); }
+@media (hover: hover) {
+  /* Hover: the card comes forward as a raised panel; the others step back. */
+  .grid-2x2 > *:hover { z-index: 1; border-radius: var(--r-lg); transform: translateY(-4px) scale(1.02); background-color: var(--panel); box-shadow: var(--shadow-2), var(--chamfer); }
+  .grid-2x2 > *:hover::before { transform: scaleX(1); }
+  .grid-2x2:hover > *:not(:hover) { opacity: 0.6; }
+  .grid-2x2 > *:hover .example a { padding-left: 4px; }
+  /* Same lift after the scroll reveal (its rules are more specific). */
+  .js .grid-2x2 > .reveal.is-in:hover { transform: translateY(-4px) scale(1.02); }
+}
 .grid-2x2 h3 { font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; margin: 10px 0 12px; }
 .grid-2x2 p { margin: 0; color: var(--text-2); }
 .grid-2x2 .example { margin-top: 16px; font-size: 13px; }
 .grid-2x2 .example a { color: var(--accent-text); text-decoration: none; }
 @media (max-width: 720px) {
   .grid-2x2 { grid-template-columns: 1fr; }
-  .grid-2x2 > :nth-child(even) { padding-left: 0; border-left: 0; }
+  .grid-2x2 > :nth-child(even) { border-left: 0; }
 }
 
 .capabilities-note { margin: 32px 0 0; font-size: clamp(20px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.015em; font-weight: 500; max-width: 30em; }
@@ -376,9 +390,18 @@ a { color: inherit; }
 /* ── Staggered and drawn entrances (only when JS runs and motion is allowed) ── */
 @media (prefers-reduced-motion: no-preference) {
   .js .card.reveal { transition-delay: calc(var(--i, 0) * 90ms); }
-  .js .grid-2x2 > .reveal:nth-child(2) { transition-delay: 0.1s; }
-  .js .grid-2x2 > .reveal:nth-child(3) { transition-delay: 0.2s; }
-  .js .grid-2x2 > .reveal:nth-child(4) { transition-delay: 0.3s; }
+  /* Capability cards pop forward from depth, one after another (keyframes, so the stagger never
+     delays the hover transitions). */
+  .js .grid-2x2 > .reveal { opacity: 0; transform: none; transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
+  .js .grid-2x2 > .reveal.is-in { opacity: 1; animation: pop-forward 0.85s cubic-bezier(0.34, 1.45, 0.64, 1) backwards; }
+  .js .grid-2x2 > .reveal.is-in .label { animation: fade-up 0.5s var(--ease) backwards; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(2), .js .grid-2x2 > .reveal.is-in:nth-child(2) .label { animation-delay: 0.12s; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(3), .js .grid-2x2 > .reveal.is-in:nth-child(3) .label { animation-delay: 0.24s; }
+  .js .grid-2x2 > .reveal.is-in:nth-child(4), .js .grid-2x2 > .reveal.is-in:nth-child(4) .label { animation-delay: 0.36s; }
+  .js .grid-2x2 > .reveal.is-in:hover { opacity: 1; }
+  .js .grid-2x2:hover > .reveal.is-in:not(:hover) { opacity: 0.6; }
+  .js .capabilities-note.reveal { transition-delay: 0.5s; }
+  @keyframes pop-forward { from { opacity: 0; transform: scale(0.92); filter: blur(6px); } 60% { filter: blur(0); } }
   .js .process.reveal { opacity: 1; transform: none; }
   .js .process.reveal::before { transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease); }
   .js .process.reveal.is-in::before { transform: scaleX(1); }
