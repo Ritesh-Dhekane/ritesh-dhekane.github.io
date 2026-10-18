@@ -1,8 +1,8 @@
 import type { Profile } from './types'
 
-/** wa.me link with the profile's prefilled opening line. */
-export const whatsappUrl = (contact: Profile['contact']) =>
-  `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(contact.whatsappMessage)}`
+/** wa.me link with the profile's prefilled opening line, finished with a topic when there is one. */
+export const whatsappUrl = (contact: Profile['contact'], topic?: string) =>
+  `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(topic ? `${contact.whatsappMessage} ${topic}.` : contact.whatsappMessage)}`
 
 export const mailtoUrl = (contact: Profile['contact'], subject = 'Hello from your portfolio') =>
   `mailto:${contact.email}?subject=${encodeURIComponent(subject)}`

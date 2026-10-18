@@ -75,7 +75,7 @@ export default function Home() {
           {profile.capabilities.map((c, i) => {
             const example = findProject(c.example)
             return (
-              <article key={c.title} className={`reveal${i === capFocus ? ' in-focus' : ''}`}>
+              <article key={c.title} className={`reveal${i === capFocus ? ' in-focus' : ''}`} style={{ ['--i' as string]: i % 2 }}>
                 <p className="label">{String(i + 1).padStart(2, '0')}</p>
                 <h3>{c.title}</h3>
                 <p>{c.text}</p>
@@ -85,11 +85,19 @@ export default function Home() {
                     <Link to={example.page ? `/work/${example.slug}` : `/work#${example.slug}`}>{example.title} →</Link>
                   </p>
                 )}
+                <p className="talk">
+                  <Link to={`/contact?about=${i + 1}`}>Talk about this →</Link>
+                </p>
               </article>
             )
           })}
         </div>
-        <p className="capabilities-note reveal">{profile.capabilitiesNote}</p>
+        <p className="capabilities-note reveal">
+          {profile.capabilitiesNote}{' '}
+          <Link className="link-arrow" to="/contact">
+            Something else on your plate? Tell me about it →
+          </Link>
+        </p>
       </section>
 
       <section className="section" aria-labelledby="tool-title">

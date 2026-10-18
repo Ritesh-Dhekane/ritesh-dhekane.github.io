@@ -291,6 +291,12 @@ a { color: inherit; }
 .grid-2x2 p { margin: 0; color: var(--text-2); }
 .grid-2x2 .example { margin-top: 16px; font-size: 13px; }
 .grid-2x2 .example a { color: var(--accent-text); text-decoration: none; }
+.grid-2x2 .talk { margin-top: 10px; font-size: 13px; }
+.grid-2x2 .talk a { color: var(--text-2); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.grid-2x2 .talk a:hover { color: var(--text); text-decoration-color: currentColor; }
+.capabilities-note .link-arrow { display: inline-block; margin-top: 6px; }
+.contact-about { margin: 28px 0 0; padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--r-lg); color: var(--text); max-width: 640px; }
+.contact-about .label { margin-right: 8px; }
 @media (max-width: 720px) {
   .grid-2x2 { grid-template-columns: 1fr; }
   .grid-2x2 > :nth-child(even) { border-left: 0; }
@@ -424,9 +430,8 @@ a { color: inherit; }
   .js .grid-2x2 > .reveal { opacity: 0; transform: none; transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
   .js .grid-2x2 > .reveal[data-in] { opacity: 1; animation: pop-forward 0.85s cubic-bezier(0.34, 1.45, 0.64, 1) backwards; }
   .js .grid-2x2 > .reveal[data-in] .label { animation: fade-up 0.5s var(--ease) backwards; }
-  .js .grid-2x2 > .reveal[data-in]:nth-child(2), .js .grid-2x2 > .reveal[data-in]:nth-child(2) .label { animation-delay: 0.12s; }
-  .js .grid-2x2 > .reveal[data-in]:nth-child(3), .js .grid-2x2 > .reveal[data-in]:nth-child(3) .label { animation-delay: 0.24s; }
-  .js .grid-2x2 > .reveal[data-in]:nth-child(4), .js .grid-2x2 > .reveal[data-in]:nth-child(4) .label { animation-delay: 0.36s; }
+  /* Cards reveal row by row as you scroll; the right-hand card of a row follows its neighbour. */
+  .js .grid-2x2 > .reveal[data-in], .js .grid-2x2 > .reveal[data-in] .label { animation-delay: calc(var(--i, 0) * 0.14s); }
   .js .grid-2x2 > .reveal[data-in]:hover { opacity: 1; }
   .js .grid-2x2:hover > .reveal[data-in]:not(:hover) { opacity: 0.6; }
   .js .capabilities-note.reveal { transition-delay: 0.5s; }

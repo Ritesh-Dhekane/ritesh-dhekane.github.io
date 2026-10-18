@@ -271,22 +271,50 @@
     {
       "title": "Your business needs to be online and take orders",
       "text": "Websites and storefronts that work on phones and send orders where you already work, like WhatsApp.",
-      "example": "rdplatforms"
+      "example": "rdplatforms",
+      "topic": "getting my business online"
     },
     {
-      "title": "Your team is drowning in spreadsheets and manual work",
-      "text": "Portals and dashboards that replace copy-paste and retyping with one place to check and export.",
-      "example": "feeproof"
+      "title": "Your team is drowning in forms, spreadsheets and manual approvals",
+      "text": "Online forms with document uploads and a review screen, so every application goes from submitted to approved in one place.",
+      "example": "studentflow",
+      "topic": "forms and approvals"
+    },
+    {
+      "title": "Payments come in by UPI and bank transfer, and nobody knows who has paid",
+      "text": "One place where every payment is matched to a person and checked, without paying a gateway's cut.",
+      "example": "feeproof",
+      "topic": "tracking payments"
     },
     {
       "title": "You have an idea and need a working product fast",
       "text": "Auth, roles, multi-tenant data, admin screens: the boring foundations done right so the idea can be tested.",
-      "example": "hrstack"
+      "example": "hrstack",
+      "topic": "building a new product"
     },
     {
       "title": "You want AI to do the boring part",
       "text": "AI features with structured, checked output that fit into a real workflow, not just a chat box.",
-      "example": "slidecraft"
+      "example": "slidecraft",
+      "topic": "adding AI to our work"
+    },
+    {
+      "title": "You sell on Amazon, Flipkart and your own site, and the stock never matches",
+      "text": "One backend for products, stock and listings across every marketplace you sell on.",
+      "example": "vendorflow",
+      "topic": "stock and listings across marketplaces"
+    },
+    {
+      "title": "Your team passes app builds around on WhatsApp",
+      "text": "A private app store: every version in one place, one link to share, scan a QR code to install.",
+      "example": "internal-playstore",
+      "topic": "sharing app builds with my team"
+    },
+    {
+      "title": "Client approvals get lost in chats and calls",
+      "text": "A client portal where demos, design approvals and decisions are recorded in one place.",
+      "example": "shreeganesha-demo-portal",
+      "topic": "a client portal for approvals"
     }
   ],
   "capabilitiesNote": "Websites, CRMs, ERPs, booking systems, portals, mobile apps, AI features — if it's on your plate, I can build it."
