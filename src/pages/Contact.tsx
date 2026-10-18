@@ -1,17 +1,34 @@
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
 import { profile } from '../lib/content'
 import { usePageMeta } from '../lib/usePageMeta'
 
+type Capability = (typeof profile.capabilities)[number]
+
 export default function Contact() {
   usePageMeta()
+  // "Talk about this" on Home links here with ?about=<n>. Read after mount: the page is pre-rendered
+  // without it, and hydration must match that HTML.
+  const { search } = useLocation()
+  const [about, setAbout] = useState<Capability | null>(null)
+  useEffect(() => {
+    const n = Number(new URLSearchParams(search).get('about'))
+    setAbout(profile.capabilities[n - 1] ?? null)
+  }, [search])
   return (
     <>
       <header className="page-head">
         <p className="label">Contact</p>
         <h1 className="h1">Let's talk about what you're building.</h1>
         <p className="lede">Freelance project, a role in your startup, or a question about one of my projects — message me directly.</p>
-        <div style={{ marginTop: 36 }}>
-          <ContactLinks align="left" />
+        {about && (
+          <p className="contact-about">
+            <span className="label">About</span> {about.title}
+          </p>
+        )}
+        <div style={{ marginTop: about ? 20 : 36 }}>
+          <ContactLinks align="left" topic={about?.topic} />
         </div>
       </header>
 

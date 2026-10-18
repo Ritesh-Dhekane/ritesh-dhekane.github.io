@@ -63,7 +63,8 @@ export interface Profile {
   spokenLanguages: string[]
   principles: { title: string; text: string }[]
   process: { step: string; text: string }[]
-  capabilities: { title: string; text: string; example: string }[]
+  /** Problems Ritesh solves; `topic` finishes the contact message ("…wanted to talk about <topic>"). */
+  capabilities: { title: string; text: string; example: string; topic: string }[]
   /** One line under the capabilities: the wider range of things Ritesh builds. */
   capabilitiesNote: string
 }

@@ -33,14 +33,20 @@ work. Give me a problem — even one nobody has built yet — and I'll figure it
 
 ## What I can build for you
 
-- **Your business needs to be online and take orders** — websites and storefronts that work on phones
+- **Your business needs to be online and take orders**: websites and storefronts that work on phones
   and send orders where you already work, like WhatsApp.
-- **Your team is drowning in spreadsheets and manual work** — portals and dashboards with one place to
-  check and export.
-- **You have an idea and need a working product fast** — auth, roles, multi-tenant data and admin
+- **Your team is drowning in forms, spreadsheets and manual approvals**: online forms with uploads and
+  a review screen, so every application is handled in one place.
+- **Payments come in by UPI and bank transfer, and nobody knows who has paid**: every payment matched
+  and checked, without a gateway's cut.
+- **You have an idea and need a working product fast**: auth, roles, multi-tenant data and admin
   screens done right.
-- **You want AI to do the boring part** — AI features with structured, checked output that fit a real
+- **You want AI to do the boring part**: AI features with structured, checked output that fit a real
   workflow.
+- **You sell on several marketplaces and the stock never matches**: one backend for products, stock
+  and listings.
+- **Your team passes app builds around on WhatsApp**: a private app store with one link per version.
+- **Client approvals get lost in chats and calls**: a client portal for demos, approvals and decisions.
 
 Websites, CRMs, ERPs, booking systems, portals, mobile apps, AI features — if it's on your plate, I can
 build it.
