@@ -285,7 +285,7 @@ a { color: inherit; }
   .grid-2x2:hover > *:not(:hover) { opacity: 0.6; }
   .grid-2x2 > *:hover .example a { padding-left: 4px; }
   /* Same lift after the scroll reveal (its rules are more specific). */
-  .js .grid-2x2 > .reveal.is-in:hover { transform: translateY(-4px) scale(1.02); }
+  .js .grid-2x2 > .reveal[data-in]:hover { transform: translateY(-4px) scale(1.02); }
 }
 .grid-2x2 h3 { font-size: clamp(22px, 2.2vw, 28px); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; margin: 10px 0 12px; }
 .grid-2x2 p { margin: 0; color: var(--text-2); }
@@ -422,32 +422,32 @@ a { color: inherit; }
   /* Capability cards pop forward from depth, one after another (keyframes, so the stagger never
      delays the hover transitions). */
   .js .grid-2x2 > .reveal { opacity: 0; transform: none; transition: transform 0.45s var(--ease), background-color 0.35s var(--ease), box-shadow 0.45s var(--ease), opacity 0.35s var(--ease); }
-  .js .grid-2x2 > .reveal.is-in { opacity: 1; animation: pop-forward 0.85s cubic-bezier(0.34, 1.45, 0.64, 1) backwards; }
-  .js .grid-2x2 > .reveal.is-in .label { animation: fade-up 0.5s var(--ease) backwards; }
-  .js .grid-2x2 > .reveal.is-in:nth-child(2), .js .grid-2x2 > .reveal.is-in:nth-child(2) .label { animation-delay: 0.12s; }
-  .js .grid-2x2 > .reveal.is-in:nth-child(3), .js .grid-2x2 > .reveal.is-in:nth-child(3) .label { animation-delay: 0.24s; }
-  .js .grid-2x2 > .reveal.is-in:nth-child(4), .js .grid-2x2 > .reveal.is-in:nth-child(4) .label { animation-delay: 0.36s; }
-  .js .grid-2x2 > .reveal.is-in:hover { opacity: 1; }
-  .js .grid-2x2:hover > .reveal.is-in:not(:hover) { opacity: 0.6; }
+  .js .grid-2x2 > .reveal[data-in] { opacity: 1; animation: pop-forward 0.85s cubic-bezier(0.34, 1.45, 0.64, 1) backwards; }
+  .js .grid-2x2 > .reveal[data-in] .label { animation: fade-up 0.5s var(--ease) backwards; }
+  .js .grid-2x2 > .reveal[data-in]:nth-child(2), .js .grid-2x2 > .reveal[data-in]:nth-child(2) .label { animation-delay: 0.12s; }
+  .js .grid-2x2 > .reveal[data-in]:nth-child(3), .js .grid-2x2 > .reveal[data-in]:nth-child(3) .label { animation-delay: 0.24s; }
+  .js .grid-2x2 > .reveal[data-in]:nth-child(4), .js .grid-2x2 > .reveal[data-in]:nth-child(4) .label { animation-delay: 0.36s; }
+  .js .grid-2x2 > .reveal[data-in]:hover { opacity: 1; }
+  .js .grid-2x2:hover > .reveal[data-in]:not(:hover) { opacity: 0.6; }
   .js .capabilities-note.reveal { transition-delay: 0.5s; }
   @keyframes pop-forward { from { opacity: 0; transform: scale(0.92); filter: blur(6px); } 60% { filter: blur(0); } }
   .js .process.reveal { opacity: 1; transform: none; }
   .js .process.reveal::before { transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease); }
-  .js .process.reveal.is-in::before { transform: scaleX(1); }
+  .js .process.reveal[data-in]::before { transform: scaleX(1); }
   .js .process.reveal li { opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
-  .js .process.reveal.is-in li { opacity: 1; transform: none; }
-  .js .process.reveal.is-in li:nth-child(2) { transition-delay: 0.25s; }
-  .js .process.reveal.is-in li:nth-child(3) { transition-delay: 0.5s; }
-  .js .process.reveal.is-in li:nth-child(4) { transition-delay: 0.75s; }
-  .js .process.reveal.is-in li:nth-child(5) { transition-delay: 1s; }
+  .js .process.reveal[data-in] li { opacity: 1; transform: none; }
+  .js .process.reveal[data-in] li:nth-child(2) { transition-delay: 0.25s; }
+  .js .process.reveal[data-in] li:nth-child(3) { transition-delay: 0.5s; }
+  .js .process.reveal[data-in] li:nth-child(4) { transition-delay: 0.75s; }
+  .js .process.reveal[data-in] li:nth-child(5) { transition-delay: 1s; }
   /* Stars ignite one after another as the line reaches them. */
   .js .process.reveal .star { transform: translate(-50%, -50%) scale(0); }
-  .js .process.reveal.is-in .star { animation: ignite 0.7s cubic-bezier(0.34, 1.6, 0.64, 1) backwards; transform: translate(-50%, -50%); }
-  .js .process.reveal.is-in li:nth-child(2) .star { animation-delay: 0.3s; }
-  .js .process.reveal.is-in li:nth-child(3) .star { animation-delay: 0.6s; }
-  .js .process.reveal.is-in li:nth-child(4) .star { animation-delay: 0.9s; }
-  .js .process.reveal.is-in li:nth-child(5) .star { animation: ignite 0.8s cubic-bezier(0.34, 1.6, 0.64, 1) 1.2s backwards, twinkle 3.2s ease-in-out 2.2s infinite; }
-  .js .process.reveal.is-in li.active .star, .js .process.reveal.is-in li:hover .star { animation: none; transform: translate(-50%, -50%) scale(1.45); }
+  .js .process.reveal[data-in] .star { animation: ignite 0.7s cubic-bezier(0.34, 1.6, 0.64, 1) backwards; transform: translate(-50%, -50%); }
+  .js .process.reveal[data-in] li:nth-child(2) .star { animation-delay: 0.3s; }
+  .js .process.reveal[data-in] li:nth-child(3) .star { animation-delay: 0.6s; }
+  .js .process.reveal[data-in] li:nth-child(4) .star { animation-delay: 0.9s; }
+  .js .process.reveal[data-in] li:nth-child(5) .star { animation: ignite 0.8s cubic-bezier(0.34, 1.6, 0.64, 1) 1.2s backwards, twinkle 3.2s ease-in-out 2.2s infinite; }
+  .js .process.reveal[data-in] li.active .star, .js .process.reveal[data-in] li:hover .star { animation: none; transform: translate(-50%, -50%) scale(1.45); }
   @keyframes ignite { from { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: drop-shadow(0 0 18px var(--star-glow)); } }
   .card .browser img { transition: transform 0.8s var(--ease); }
   .card:hover .browser img { transform: scale(1.045); }
@@ -455,7 +455,7 @@ a { color: inherit; }
 }
 @media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
   .js .process.reveal::before { transform: scaleY(0); transform-origin: top; }
-  .js .process.reveal.is-in::before { transform: scaleY(1); }
+  .js .process.reveal[data-in]::before { transform: scaleY(1); }
 }
 
 /* ── Page transition ──────────────────────────────── */
@@ -465,7 +465,7 @@ a { color: inherit; }
 /* ── Reveal on scroll (only when motion is allowed) ─ */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
-  .js .reveal.is-in { opacity: 1; transform: none; }
+  .js .reveal[data-in] { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -491,11 +491,11 @@ a { color: inherit; }
 /* Focus follows scrolling where there is no hover: the card in the middle of the screen comes forward. */
 @media (hover: none), (max-width: 900px) {
   .grid-2x2 > .in-focus { z-index: 1; border-radius: var(--r-lg); transform: translateY(-4px) scale(1.02); background-color: var(--panel); box-shadow: var(--shadow-2), var(--chamfer); }
-  .js .grid-2x2 > .reveal.is-in.in-focus { transform: translateY(-4px) scale(1.02); }
+  .js .grid-2x2 > .reveal[data-in].in-focus { transform: translateY(-4px) scale(1.02); }
   .grid-2x2 > .in-focus::before { transform: scaleX(1); }
-  .grid-2x2.has-focus > :not(.in-focus), .js .grid-2x2.has-focus > .reveal.is-in:not(.in-focus) { opacity: 0.6; }
+  .grid-2x2.has-focus > :not(.in-focus), .js .grid-2x2.has-focus > .reveal[data-in]:not(.in-focus) { opacity: 0.6; }
   .card.in-focus { border-color: var(--accent); }
-  .js .card.reveal.is-in.in-focus { transform: translateY(-3px); }
+  .js .card.reveal[data-in].in-focus { transform: translateY(-3px); }
   /* Press feedback instead of hover. */
   .btn:active, .card:active, .chip:active { transform: scale(0.97); }
 }

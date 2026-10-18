@@ -4,20 +4,23 @@ import { useLocation } from 'react-router'
 /**
  * Fades `.reveal` elements in as they scroll into view. With reduced motion the CSS keeps them
  * visible, so nothing is ever hidden from those visitors.
+ * Revealed elements get a `data-in` attribute, not a class: React rewrites `className` whenever a
+ * component re-renders (e.g. the phone "in focus" highlight), which would wipe a class added here and
+ * hide the element again. React leaves attributes it doesn't render alone.
  */
 export function useReveal() {
   const { pathname } = useLocation()
   useEffect(() => {
-    const items = document.querySelectorAll<HTMLElement>('.reveal:not(.is-in)')
+    const items = document.querySelectorAll<HTMLElement>('.reveal:not([data-in])')
     if (!('IntersectionObserver' in window)) {
-      items.forEach((el) => el.classList.add('is-in'))
+      items.forEach((el) => el.setAttribute('data-in', ''))
       return
     }
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            e.target.classList.add('is-in')
+            e.target.setAttribute('data-in', '')
             io.unobserve(e.target)
           }
         }),
