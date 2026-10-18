@@ -1,5 +1,5 @@
-// Google Analytics 4, privacy-safe: loads only when VITE_GA_MEASUREMENT_ID is set and the site is not
-// on localhost; no Google Signals or ad personalisation; IP-based features off by GA4 default.
+// Google Analytics 4 (property "Portfolio", G-9KZST70QGT; VITE_GA_MEASUREMENT_ID overrides it), privacy-safe:
+// never on localhost; no Google Signals or ad personalisation; IP-based features off by GA4 default.
 // Events carry only page paths and fixed labels (channel, project slug, intent id), never anything a
 // visitor typed.
 
@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-const id = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined
+const id = (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined) || 'G-9KZST70QGT'
 const enabled = Boolean(id) && typeof window !== 'undefined' && !['localhost', '127.0.0.1'].includes(window.location.hostname)
 
 export function initAnalytics() {
