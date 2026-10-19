@@ -15,7 +15,7 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 const dist = join(root, 'dist')
 const serverDir = join(root, 'dist-server')
 const server = await import(pathToFileURL(join(serverDir, 'entry-server.js')).href)
-const { render, metaFor, jsonLdFor, pagePaths, SITE, VERIFICATION } = server
+const { render, metaFor, jsonLdFor, pagePaths, appUrls, SITE, VERIFICATION } = server
 const shell = readFileSync(join(dist, 'index.html'), 'utf8')
 
 const attr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
@@ -63,6 +63,7 @@ writeFileSync(
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     paths
       .map((p) => `  <url><loc>${SITE}${p}</loc><lastmod>${today}</lastmod><priority>${p === '/' ? '1.0' : p.startsWith('/work/') ? '0.7' : '0.8'}</priority></url>`)
+      .concat(appUrls().map((url) => `  <url><loc>${url}</loc><priority>0.6</priority></url>`)) // the live apps (same site)
       .join('\n') +
     '\n</urlset>\n',
 )

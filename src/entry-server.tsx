@@ -19,4 +19,4 @@ export async function render(url: string): Promise<string> {
   return new Response(prelude).text()
 }
 
-export { jsonLdFor, metaFor, pagePaths, SITE, VERIFICATION } from './lib/seo'
+export { appUrls, jsonLdFor, metaFor, pagePaths, SITE, VERIFICATION } from './lib/seo'
