@@ -8,7 +8,7 @@ stack: [Python, Flask, JavaScript, Google Gemini, edge-tts, pytest]
 status: Open source
 role: Solo developer
 featured: false
-order: 11
+order: 12
 image: /media/prepmate.webp
 page: true
 links:

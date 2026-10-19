@@ -8,7 +8,7 @@ stack: [Java 17, Spring Boot 3, Spring Security, JWT, MySQL, Flyway, MinIO, Reac
 status: Complete
 role: Solo developer
 featured: false
-order: 13
+order: 14
 page: false
 links:
   code: "" # private repo

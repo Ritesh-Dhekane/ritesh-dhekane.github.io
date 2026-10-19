@@ -8,7 +8,7 @@ stack: [React, Vite, JavaScript, GitHub Actions, GitHub Pages]
 status: Live
 role: Solo developer
 featured: false
-order: 7
+order: 8
 image: /media/shreeganesha-demo-portal.webp
 page: false
 links:

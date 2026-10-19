@@ -8,7 +8,7 @@ stack: [Java 17, Spring Boot 3, Spring Security, PostgreSQL, React, TypeScript, 
 status: In progress
 role: Solo developer (backend, frontend, data model)
 featured: false
-order: 8
+order: 9
 page: true
 links:
   code: "" # TODO(ritesh): hrstackapp repos public? add link if yes

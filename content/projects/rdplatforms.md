@@ -8,7 +8,7 @@ stack: [React, TypeScript, Vite, MUI, TanStack Query, Zod, Spring Boot, PostgreS
 status: In progress
 role: Solo developer and architect
 featured: false
-order: 10
+order: 11
 image: /media/rdplatforms.webp
 page: true
 links:
