@@ -477,21 +477,23 @@ a { color: inherit; }
 }
 
 /* ── Phones and touch screens ─────────────────────── */
-/* Sticky WhatsApp / Email bar (phones only). */
-.sticky-contact { display: none; }
 @media (max-width: 720px) {
   .brand { font-size: 17px; }
-  .sticky-contact {
-    position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 25;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; border-radius: 12px;
-    background: color-mix(in srgb, var(--panel) 92%, transparent); backdrop-filter: blur(14px);
-    border: 1px solid var(--line); box-shadow: var(--shadow-2);
-    transform: translateY(calc(100% + 24px)); opacity: 0; transition: transform 0.45s var(--ease), opacity 0.3s var(--ease);
-  }
-  .sticky-contact.shown { transform: none; opacity: 1; }
-  .sticky-contact .btn { justify-content: center; height: 46px; }
-  .footer .wrap { padding-bottom: 96px; }
+  .footer .wrap { padding-bottom: 96px; } /* room for the "Let's talk" button */
 }
+
+/* Relay contact form (https://github.com/Ritesh-Dhekane/relay), themed with the site's tokens. */
+relay-form, relay-button {
+  --relay-accent: var(--btn-bg); --relay-accent-ink: var(--btn-text);
+  --relay-bg: var(--bg); --relay-surface: var(--panel); --relay-text: var(--text); --relay-muted: var(--text-2);
+  --relay-line: var(--line); --relay-radius: var(--r-lg); --relay-font: var(--font);
+}
+relay-form { display: block; }
+.contact-form { max-width: 680px; }
+.contact-direct { margin: 14px 0 0; font-size: 14px; color: var(--text-2); }
+.contact-direct a { color: var(--accent-text); }
+.contact-links .contact-direct { flex-basis: 100%; text-align: center; }
+.contact-links.left .contact-direct { text-align: left; }
 
 /* Focus follows scrolling where there is no hover: the card in the middle of the screen comes forward. */
 @media (hover: none), (max-width: 900px) {

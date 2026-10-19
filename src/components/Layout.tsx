@@ -1,14 +1,31 @@
+import { useEffect } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { track } from '../lib/analytics'
+import { relayProps } from '../lib/relay'
 import { useReveal } from '../lib/useReveal'
 import Backdrop from './Backdrop'
-import StickyContact from './StickyContact'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   useReveal()
   const { pathname } = useLocation()
+
+  // Relay reports opens and sends (never what was typed).
+  useEffect(() => {
+    const onOpen = () => track({ name: 'contact_form', params: { action: 'open' } })
+    const onSend = (event: Event) => {
+      const channel = (event as CustomEvent<{ channel: 'whatsapp' | 'email' }>).detail.channel
+      track({ name: 'contact_form', params: { action: 'send', channel } })
+    }
+    window.addEventListener('relay:open', onOpen)
+    window.addEventListener('relay:send', onSend)
+    return () => {
+      window.removeEventListener('relay:open', onOpen)
+      window.removeEventListener('relay:send', onSend)
+    }
+  }, [])
+
   return (
     <>
       <Backdrop />
@@ -36,7 +53,15 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <StickyContact />
+      {/* "Let's talk" (bottom right) opens the contact form in a pop-up; /contact shows the form itself. */}
+      {pathname.replace(/\/$/, '') !== '/contact' && (
+        <relay-button
+          {...relayProps}
+          label="Let's talk"
+          heading="Let's talk"
+          intro="Tell me a little about what you need. Every field is optional."
+        />
+      )}
 
       <footer className="footer">
         <div className="wrap">

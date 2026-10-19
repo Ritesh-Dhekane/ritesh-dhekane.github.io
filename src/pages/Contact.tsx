@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
-import ContactLinks from '../components/ContactLinks'
 import { profile } from '../lib/content'
+import { mailtoUrl, whatsappUrl } from '../lib/contact'
+import { relayProps } from '../lib/relay'
 import { usePageMeta } from '../lib/usePageMeta'
 
 type Capability = (typeof profile.capabilities)[number]
@@ -27,8 +28,15 @@ export default function Contact() {
             <span className="label">About</span> {about.title}
           </p>
         )}
-        <div style={{ marginTop: about ? 20 : 36 }}>
-          <ContactLinks align="left" topic={about?.topic} />
+        <div className="contact-form" style={{ marginTop: about ? 20 : 36 }}>
+          <relay-form {...relayProps} topic={about?.topic} />
+          <p className="contact-direct">
+            or message me directly on{' '}
+            <a href={whatsappUrl(profile.contact, about?.topic)} rel="noopener">
+              WhatsApp
+            </a>{' '}
+            or by <a href={mailtoUrl(profile.contact, about ? `About ${about.topic}` : undefined)}>email</a>
+          </p>
         </div>
       </header>
 

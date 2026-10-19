@@ -1,25 +1,41 @@
 import { profile } from '../lib/content'
-import { maskedPhone, mailtoUrl, whatsappUrl } from '../lib/contact'
+import { mailtoUrl, whatsappUrl } from '../lib/contact'
 import { track } from '../lib/analytics'
+import { openRelay } from '../lib/relay'
 
-/** The two ways to reach Ritesh: WhatsApp (number masked on screen) and email. */
-/** `topic` (e.g. from a "Talk about this" link) finishes the WhatsApp message and becomes the email subject. */
-export default function ContactLinks({ subject, align, topic }: { subject?: string; align?: 'left'; topic?: string }) {
+/**
+ * "Send a message" opens the Relay contact form (with `topic` filled in). Without the Relay script it's a
+ * plain WhatsApp link. Direct WhatsApp and email links stay underneath for people who prefer them.
+ */
+export default function ContactLinks({ topic, align }: { topic?: string; align?: 'left' }) {
   const { contact } = profile
+  const whatsapp = whatsappUrl(contact, topic)
   return (
     <div className={`contact-links${align === 'left' ? ' left' : ''}`}>
       <a
         className="btn btn-primary"
-        href={whatsappUrl(contact, topic)}
+        href={whatsapp}
         rel="noopener"
-        aria-label={`WhatsApp ${maskedPhone(contact.whatsapp)}`}
-        onClick={() => track({ name: 'contact_click', params: { channel: 'whatsapp' } })}
+        onClick={(event) => {
+          if (openRelay(topic)) event.preventDefault()
+          else track({ name: 'contact_click', params: { channel: 'whatsapp' } })
+        }}
       >
-        WhatsApp <span>{maskedPhone(contact.whatsapp)}</span>
+        Send a message
       </a>
-      <a className="btn btn-secondary" href={mailtoUrl(contact, topic ? `About ${topic}` : subject)} onClick={() => track({ name: 'contact_click', params: { channel: 'email' } })}>
-        Email <span>{contact.email}</span>
-      </a>
+      <p className="contact-direct">
+        or message me directly on{' '}
+        <a href={whatsapp} rel="noopener" onClick={() => track({ name: 'contact_click', params: { channel: 'whatsapp' } })}>
+          WhatsApp
+        </a>{' '}
+        or by{' '}
+        <a
+          href={mailtoUrl(contact, topic ? `About ${topic}` : undefined)}
+          onClick={() => track({ name: 'contact_click', params: { channel: 'email' } })}
+        >
+          email
+        </a>
+      </p>
     </div>
   )
 }

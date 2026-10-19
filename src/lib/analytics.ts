@@ -38,6 +38,7 @@ export function trackPageView(path: string, title: string) {
 
 export type TrackedEvent =
   | { name: 'contact_click'; params: { channel: 'whatsapp' | 'email' | 'github' | 'linkedin' | 'resume' } }
+  | { name: 'contact_form'; params: { action: 'open' | 'send'; channel?: 'whatsapp' | 'email' } }
   | { name: 'project_open'; params: { slug: string } }
   | { name: 'intent_select'; params: { intent: string } }
   | { name: 'outbound_project_link'; params: { slug: string; kind: 'live' | 'code' } }
