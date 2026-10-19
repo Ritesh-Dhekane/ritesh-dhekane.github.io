@@ -8,7 +8,7 @@ stack: [Selenium, Cypress, Node.js, JavaScript, Google Apps Script]
 status: Live
 role: Researcher and developer
 featured: false
-order: 15
+order: 16
 image: /media/selenium-vs-cypress.webp
 page: false
 links:

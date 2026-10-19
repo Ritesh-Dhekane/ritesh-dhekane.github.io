@@ -27,6 +27,7 @@ work. Give me a problem — even one nobody has built yet — and I'll figure it
 | [**SlideCraft**](https://github.com/Ritesh-Dhekane/slidecraft) | Describe a deck in chat, get a PowerPoint where every element is still editable. [Demo](https://ritesh-dhekane.github.io/slidecraft/) | React, Node.js, pptxgenjs, Gemini |
 | [**2AM Notes**](https://github.com/Ritesh-Dhekane/2am-notes) | Public, Markdown-first exam notes with search and an audio reader. [Live](https://ritesh-dhekane.github.io/2am-notes/) | React, Vite |
 | [**Internal Playstore**](https://github.com/Ritesh-Dhekane/internal-playstore) | A private app store for a team's Android builds: versions, download or scan to install. [Demo](https://ritesh-dhekane.github.io/internal-playstore/#/demo) | React, GitHub Actions |
+| [**Relay**](https://github.com/Ritesh-Dhekane/relay) | A drop-in contact and feedback form for any site: opens WhatsApp or email with the message ready. [Demo](https://ritesh-dhekane.github.io/relay/) | TypeScript, Web Components |
 | [**Shree Ganesha Demo Portal**](https://github.com/Ritesh-Dhekane/shreeganesha-demo-portal) | Client demos, design approvals and decisions for a jewellery store, in one place. [Live](https://ritesh-dhekane.github.io/shreeganesha-demo-portal/) | React, Vite |
 | **HRStack** | Employee management for companies: offer letter → onboarding → attendance, leave and payroll. | Java, Spring Boot, PostgreSQL, React |
 | **FeeProof** | Collect fees by UPI or bank transfer and verify every payment in one place, without a payment gateway. | React, Hono, Postgres |

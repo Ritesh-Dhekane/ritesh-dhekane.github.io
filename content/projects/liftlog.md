@@ -8,7 +8,7 @@ stack: [React Native, Expo, TypeScript, SQLite, Zustand, React Native Skia, Reac
 status: In progress
 role: Solo developer
 featured: false
-order: 14
+order: 15
 page: false
 links:
   code: https://github.com/Ritesh-Dhekane/liftlog-mobile

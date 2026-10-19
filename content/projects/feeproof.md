@@ -8,7 +8,7 @@ stack: [React, TypeScript, Tailwind, Hono, Netlify Functions, Postgres (Neon), D
 status: In progress
 role: Solo developer
 featured: false
-order: 9
+order: 10
 image: /media/feeproof.webp
 page: true
 links:

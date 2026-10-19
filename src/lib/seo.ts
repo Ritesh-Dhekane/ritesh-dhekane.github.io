@@ -46,6 +46,11 @@ export function pagePaths(): string[] {
   return [...Object.keys(STATIC), ...projects.filter((p) => p.page).map((p) => `/work/${p.slug}`)]
 }
 
+/** Live project apps hosted on this same site (e.g. /streakline/), listed in the sitemap too. */
+export function appUrls(): string[] {
+  return projects.map((p) => p.links.live).filter((url): url is string => !!url && url.startsWith(`${SITE}/`))
+}
+
 export function metaFor(pathname: string): PageMeta {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
   if (STATIC[path]) return STATIC[path]
