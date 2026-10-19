@@ -1,5 +1,12 @@
 # Ritesh Dhekane — Precise software, built by hand.
 
+[![Live site](https://img.shields.io/badge/live-open%20the%20app-2ea44f?logo=googlechrome&logoColor=white)](https://ritesh-dhekane.github.io/)
+[![Deploy](https://github.com/Ritesh-Dhekane/ritesh-dhekane.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ritesh-Dhekane/ritesh-dhekane.github.io/actions/workflows/deploy.yml)
+[![Last commit](https://img.shields.io/github/last-commit/Ritesh-Dhekane/ritesh-dhekane.github.io)](https://github.com/Ritesh-Dhekane/ritesh-dhekane.github.io/commits)
+![React](https://img.shields.io/badge/React-20232a?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)
+
 Full-stack developer from Pune. Web apps, SaaS products and AI tools for people who need them to just
 work. Give me a problem — even one nobody has built yet — and I'll figure it out and ship it.
 
