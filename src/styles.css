@@ -482,13 +482,73 @@ a { color: inherit; }
   .footer .wrap { padding-bottom: 96px; } /* room for the "Let's talk" button */
 }
 
-/* Relay contact form (https://github.com/Ritesh-Dhekane/relay), themed with the site's tokens. */
+/* Relay contact form (https://github.com/Ritesh-Dhekane/relay), styled as part of the site through its
+   CSS variables and ::part() hooks. Rules are written for both elements: relay-form (on /contact) and the
+   pop-up's form inside relay-button. */
 relay-form, relay-button {
   --relay-accent: var(--btn-bg); --relay-accent-ink: var(--btn-text);
-  --relay-bg: var(--bg); --relay-surface: var(--panel); --relay-text: var(--text); --relay-muted: var(--text-2);
-  --relay-line: var(--line); --relay-radius: var(--r-lg); --relay-font: var(--font);
+  --relay-bg: var(--bg); --relay-surface: var(--bg); --relay-text: var(--text); --relay-muted: var(--text-2);
+  --relay-line: var(--line); --relay-radius: var(--r-sm); --relay-font: var(--font);
+  --relay-danger: #b3261e; --relay-backdrop: rgba(17, 17, 19, 0.38);
 }
+[data-theme='dark'] :is(relay-form, relay-button) { --relay-danger: #f2b8b5; --relay-backdrop: rgba(0, 0, 0, 0.6); }
 relay-form { display: block; }
+
+/* Pop-up: a porcelain sheet with the site's hairline, chamfer and soft shadow. */
+relay-button::part(dialog) {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-2), var(--chamfer); padding: clamp(22px, 3vw, 32px);
+}
+relay-button::part(close) { border-radius: var(--r-sm); color: var(--text-2); top: 14px; right: 14px; width: 36px; height: 36px; }
+relay-button::part(close):hover { background: var(--panel); color: var(--text); }
+
+/* Heading like a section title, intro like body copy. */
+:is(relay-form, relay-button)::part(heading) { font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+:is(relay-form, relay-button)::part(intro) { font-size: 15px; line-height: 1.5; color: var(--text-2); margin: 0 0 6px; }
+:is(relay-form, relay-button)::part(form) { gap: 18px; }
+
+/* Labels: the engraved uppercase label used across the site. */
+:is(relay-form, relay-button)::part(label) { gap: 8px; }
+:is(relay-form, relay-button)::part(label-text) {
+  font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-2);
+}
+:is(relay-form, relay-button)::part(optional) { color: var(--text-2); letter-spacing: 0.06em; text-transform: none; font-weight: 400; }
+
+/* Fields: like the Work page search box. */
+:is(relay-form, relay-button)::part(input) {
+  min-height: 44px; padding: 10px 14px; border-radius: var(--r-sm); border: 1px solid var(--line);
+  background: var(--bg); color: var(--text); font: 400 15px/1.4 var(--font); transition: border-color 0.2s, box-shadow 0.2s;
+}
+:is(relay-form, relay-button)::part(input):focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px var(--accent-wash); }
+:is(relay-form, relay-button)::part(textarea) { min-height: 128px; }
+:is(relay-form, relay-button)::part(error) { font-size: 12px; }
+
+/* Buttons: the site's primary and secondary buttons. */
+:is(relay-form, relay-button)::part(button) {
+  height: 46px; padding: 0 20px; border-radius: var(--r-sm); font: 500 15px/1 var(--font); letter-spacing: -0.005em;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
+}
+:is(relay-form, relay-button)::part(primary) { background: var(--btn-bg); color: var(--btn-text); border-color: transparent; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+:is(relay-form, relay-button)::part(primary):hover { transform: translateY(1px); box-shadow: 0 0 0 1px var(--accent); }
+:is(relay-form, relay-button)::part(secondary) { background: var(--panel); color: var(--text); border-color: var(--line); box-shadow: var(--chamfer); }
+:is(relay-form, relay-button)::part(secondary):hover { border-color: var(--text-2); }
+:is(relay-form, relay-button)::part(note) { font-size: 13px; color: var(--text-2); }
+:is(relay-form, relay-button)::part(link) { color: var(--accent-text); }
+
+/* "Let's talk": a site button with the copper dot from the section labels. */
+relay-button::part(fab) {
+  height: 48px; padding: 0 20px; gap: 10px; border-radius: var(--r-sm); background: var(--btn-bg); color: var(--btn-text);
+  font: 500 15px/1 var(--font); box-shadow: var(--shadow-2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+relay-button::part(fab):hover { transform: translateY(-1px); box-shadow: var(--shadow-2), 0 0 0 1px var(--accent); }
+relay-button::part(fab-text)::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 10px; border-radius: 50%;
+  background: var(--accent); vertical-align: middle; transform: translateY(-1px);
+}
+@media (max-width: 560px) {
+  relay-button::part(fab) { width: 52px; height: 52px; padding: 0; justify-content: center; }
+  relay-button::part(dialog) { border-radius: var(--r-lg) var(--r-lg) 0 0; border-bottom: 0; }
+}
 .contact-form { max-width: 680px; }
 .contact-direct { margin: 14px 0 0; font-size: 14px; color: var(--text-2); }
 .contact-direct a { color: var(--accent-text); }
