@@ -85,7 +85,7 @@ export default function ProjectPage() {
         <h2 id="case-cta" className="h2">
           Need something like {project.title}?
         </h2>
-        <ContactLinks subject={`About something like ${project.title}`} />
+        <ContactLinks topic={`something like ${project.title}`} />
       </section>
     </article>
   )

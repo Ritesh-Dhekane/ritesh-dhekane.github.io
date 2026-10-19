@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
+import { openRelay } from '../lib/relay'
 import HeroMechanism from '../components/HeroMechanism'
 import ProcessSteps from '../components/ProcessSteps'
 import Vitrine from '../components/Vitrine'
@@ -86,7 +87,14 @@ export default function Home() {
                   </p>
                 )}
                 <p className="talk">
-                  <Link to={`/contact?about=${i + 1}`}>Talk about this →</Link>
+                  <Link
+                    to={`/contact?about=${i + 1}`}
+                    onClick={(event) => {
+                      if (openRelay(c.topic)) event.preventDefault()
+                    }}
+                  >
+                    Talk about this →
+                  </Link>
                 </p>
               </article>
             )
