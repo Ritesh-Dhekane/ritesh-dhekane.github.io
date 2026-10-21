@@ -21,7 +21,7 @@ work. Give me a problem — even one nobody has built yet — and I'll figure it
 
 | Project | What it does | Built with |
 |---|---|---|
-| [**2AM Notes Pro**](https://github.com/Ritesh-Dhekane/2am-notes-pro) | Private exam-notes portal on Google Drive with read-aloud, for MCA and BCA students. [Live](https://ritesh-dhekane.github.io/2am-notes-pro/) | React, Apps Script |
+| [**2AM Notes Pro**](https://github.com/Ritesh-Dhekane/2am-notes-pro) | Private exam-notes portal on Google Drive with read-aloud, for MCA, BCA and MBA students. [Live](https://ritesh-dhekane.github.io/2am-notes-pro/) | React, Apps Script |
 | [**Streakline**](https://github.com/Ritesh-Dhekane/streakline) | A clean page of anyone's public GitHub activity. [Live](https://ritesh-dhekane.github.io/streakline/) | React, Cloudflare Workers |
 | [**Resume Builder**](https://github.com/Ritesh-Dhekane/resume-builder) | Templates, live A4 preview, PDF export — all in the browser. [Live](https://ritesh-dhekane.github.io/resume-builder/) | JavaScript, Vite |
 | [**SlideCraft**](https://github.com/Ritesh-Dhekane/slidecraft) | Describe a deck in chat, get a PowerPoint where every element is still editable. [Demo](https://ritesh-dhekane.github.io/slidecraft/) | React, Node.js, pptxgenjs, Gemini |
