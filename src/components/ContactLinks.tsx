@@ -2,6 +2,7 @@ import { profile } from '../lib/content'
 import { mailtoUrl, whatsappUrl } from '../lib/contact'
 import { track } from '../lib/analytics'
 import { openRelay } from '../lib/relay'
+import { SocialLink } from './SocialLinks'
 
 /**
  * "Send a message" opens the Relay contact form (with `topic` filled in). Without the Relay script it's a
@@ -23,6 +24,8 @@ export default function ContactLinks({ topic, align }: { topic?: string; align?:
       >
         Send a message
       </a>
+      <SocialLink social="github" />
+      <SocialLink social="linkedin" />
       <p className="contact-direct">
         or message me directly on{' '}
         <a href={whatsapp} rel="noopener" onClick={() => track({ name: 'contact_click', params: { channel: 'whatsapp' } })}>

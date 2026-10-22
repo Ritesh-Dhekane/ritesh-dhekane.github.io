@@ -3,9 +3,13 @@ import { useLocation } from 'react-router'
 import { profile } from '../lib/content'
 import { mailtoUrl, whatsappUrl } from '../lib/contact'
 import { relayProps } from '../lib/relay'
+import { track } from '../lib/analytics'
+import { SocialIcon, SocialLink } from '../components/SocialLinks'
 import { usePageMeta } from '../lib/usePageMeta'
 
 type Capability = (typeof profile.capabilities)[number]
+
+const cardAlt = `${profile.name}'s GitHub activity: contributions, streaks and top languages (live Streakline card)`
 
 export default function Contact() {
   usePageMeta()
@@ -39,6 +43,42 @@ export default function Contact() {
           </p>
         </div>
       </header>
+
+      <section className="section" aria-labelledby="elsewhere-title">
+        <div className="section-head">
+          <p className="label">Elsewhere</p>
+          <h2 id="elsewhere-title" className="h2">
+            Find me online
+          </h2>
+        </div>
+        <div className="social-cards">
+          <article className="social-card">
+            <h3>
+              <SocialIcon social="github" /> GitHub
+            </h3>
+            <p>My own products, experiments and open-source work, shipped in public.</p>
+            {profile.links.githubCard && (
+              <a className="social-card-media" href={profile.links.github} rel="noopener" onClick={() => track({ name: 'contact_click', params: { channel: 'github' } })}>
+                {/* The card comes in both themes; CSS shows the one matching the site. */}
+                <img className="card-dark" src={profile.links.githubCard} alt={cardAlt} loading="lazy" width="520" height="200" />
+                <img className="card-light" src={`${profile.links.githubCard}?theme=light`} alt={cardAlt} loading="lazy" width="520" height="200" />
+              </a>
+            )}
+            <SocialLink social="github" className="btn btn-primary">
+              Follow on GitHub
+            </SocialLink>
+          </article>
+          <article className="social-card">
+            <h3>
+              <SocialIcon social="linkedin" /> LinkedIn
+            </h3>
+            <p>Work history, what I'm building now and the occasional write-up. Happy to connect.</p>
+            <SocialLink social="linkedin" className="btn btn-primary">
+              Connect on LinkedIn
+            </SocialLink>
+          </article>
+        </div>
+      </section>
 
       <section className="section" aria-labelledby="include-title">
         <div className="section-head">

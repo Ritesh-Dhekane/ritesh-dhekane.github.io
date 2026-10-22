@@ -55,7 +55,7 @@ export interface Profile {
   timezone: string
   available: boolean
   contact: { email: string; whatsapp: string; whatsappMessage: string }
-  links: { github: string; linkedin: string; resume: string }
+  links: { github: string; linkedin: string; githubCard: string; resume: string }
   intents: Intent[]
   experience: Experience[]
   education: { degree: string; institution: string; years: string; note?: string }[]
