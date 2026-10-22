@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router'
 import ContactLinks from '../components/ContactLinks'
+import SocialLinks from '../components/SocialLinks'
 import { openRelay } from '../lib/relay'
 import HeroMechanism from '../components/HeroMechanism'
 import ProcessSteps from '../components/ProcessSteps'
@@ -35,6 +36,7 @@ export default function Home() {
             {profile.hero.title} <span className="accent">{profile.hero.accent}</span>
           </h1>
           <p className="lede">{profile.hero.line}</p>
+          <SocialLinks className="socials hero-socials" />
           <div className="hero-actions">
             <Link className="btn btn-primary" to="/work">
               See the work

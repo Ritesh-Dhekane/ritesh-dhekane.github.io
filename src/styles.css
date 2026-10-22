@@ -595,3 +595,36 @@ relay-button::part(fab-text)::before {
   .vitrine-dots span { width: 6px; height: 6px; border-radius: 999px; background: var(--line); transition: width 0.35s var(--ease), background 0.35s var(--ease); }
   .vitrine-dots span.on { width: 22px; background: var(--accent); }
 }
+
+/* ── Social profiles (hero row, contact cards, footer) ── */
+.social-icon { width: 18px; height: 18px; flex: none; }
+.socials { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.socials .btn { height: 42px; padding: 0 16px; font-size: 14px; }
+.btn-secondary:hover .social-icon { color: var(--accent); }
+.social-cards { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+.social-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 28px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-1), var(--chamfer);
+}
+.social-card h3 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+.social-card h3 .social-icon { width: 22px; height: 22px; }
+.social-card p { margin: 0; color: var(--text-2); }
+.social-card .btn { margin-top: auto; }
+.social-card-media { display: block; width: 100%; max-width: 520px; border-radius: 14px; overflow: hidden; }
+.social-card-media img { display: block; width: 100%; height: auto; }
+.card-dark { display: none !important; }
+:root[data-theme='dark'] .card-dark { display: block !important; }
+:root[data-theme='dark'] .card-light { display: none !important; }
+.footer .footer-social {
+  display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--panel); color: var(--text); font-weight: 500;
+}
+.footer .footer-social:hover { border-color: var(--text-2); }
+.footer .footer-social .social-icon { width: 16px; height: 16px; }
+.footer nav { align-items: center; flex-wrap: wrap; gap: 10px 12px; }
+@media (max-width: 720px) {
+  .social-cards { grid-template-columns: 1fr; }
+  .social-card { padding: 22px; }
+}
+.contact-links .btn-secondary { padding: 0 20px; }
+@media (max-width: 720px) { .contact-links .btn-secondary { height: 48px; padding: 0 16px; } }

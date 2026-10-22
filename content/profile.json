@@ -42,6 +42,7 @@
   "links": {
     "github": "https://github.com/Ritesh-Dhekane",
     "linkedin": "https://www.linkedin.com/in/riteshdhekane",
+    "githubCard": "https://streakline-api.streakline.workers.dev/card/Ritesh-Dhekane.svg",
     "resume": ""
   },
   "intents": [
