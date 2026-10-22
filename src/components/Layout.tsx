@@ -5,6 +5,7 @@ import { track } from '../lib/analytics'
 import { relayProps } from '../lib/relay'
 import { useReveal } from '../lib/useReveal'
 import Backdrop from './Backdrop'
+import { SocialLink } from './SocialLinks'
 import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
@@ -69,12 +70,8 @@ export default function Layout() {
             © {new Date().getFullYear()} {profile.name} · {profile.location}
           </span>
           <nav aria-label="Elsewhere">
-            <a href={profile.links.github} rel="noopener" onClick={() => track({ name: 'contact_click', params: { channel: 'github' } })}>
-              GitHub
-            </a>
-            <a href={profile.links.linkedin} rel="noopener" onClick={() => track({ name: 'contact_click', params: { channel: 'linkedin' } })}>
-              LinkedIn
-            </a>
+            <SocialLink social="github" className="footer-social" />
+            <SocialLink social="linkedin" className="footer-social" />
             {profile.links.resume && (
               <a href={profile.links.resume} onClick={() => track({ name: 'contact_click', params: { channel: 'resume' } })}>
                 Résumé
