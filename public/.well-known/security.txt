@@ -1,0 +1,5 @@
+# Covers the portfolio and the project sites under https://ritesh-dhekane.github.io/
+Contact: mailto:ritesh.dhekane@outlook.com
+Expires: 2027-10-23T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://ritesh-dhekane.github.io/.well-known/security.txt
