@@ -67,6 +67,8 @@ writeFileSync(
       .join('\n') +
     '\n</urlset>\n',
 )
-writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`)
+// Search engines read only this host's root robots.txt, so it also lists the project sites' own sitemaps.
+const projectSitemaps = ['2am-notes-pro', 'streakline', 'relay', 'resume-builder'].map((p) => `Sitemap: ${SITE}/${p}/sitemap.xml`)
+writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n${projectSitemaps.join('\n')}\n`)
 
 console.log(`postbuild: pre-rendered ${paths.length} pages, 404.html, sitemap.xml, robots.txt`)
