@@ -5,5 +5,12 @@
     "tags": ["vanilla-js", "offline", "localstorage"],
     "href": "/lab/macbuy/",
     "kind": "tool"
+  },
+  {
+    "title": "Mouse Tracker",
+    "description": "Draws your cursor's path live, with distance, speed and clicks. Switch to a heatmap and save it as a PNG.",
+    "tags": ["vanilla-js", "canvas", "offline"],
+    "href": "/lab/mouse-tracker/",
+    "kind": "tool"
   }
 ]
