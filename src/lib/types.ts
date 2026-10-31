@@ -23,6 +23,18 @@ export interface Project {
   body: string
 }
 
+/** One small thing on the Lab page (content/lab.json): a temp tool, an experiment or a mini project. */
+export interface LabItem {
+  title: string
+  description: string
+  tags: string[]
+  /** A path on this site (often a standalone static page under public/) or a full external URL. */
+  href: string
+  kind: 'tool' | 'experiment' | 'wip'
+  /** Optional, e.g. "2026-10". */
+  date?: string
+}
+
 export interface Intent {
   id: string
   label: string

@@ -27,6 +27,11 @@ const STATIC: Record<string, PageMeta> = {
     description: `Portfolio of ${NAME}: ${projects.length} projects — SaaS platforms, business websites, AI tools, mobile apps and developer tools, with live demos and code.`,
     image: '/og/default.png',
   },
+  '/lab': {
+    title: `Lab — Small Tools and Experiments by ${NAME}`,
+    description: `Small things by ${NAME}: quick tools, experiments and mini projects.`,
+    image: '/og/default.png',
+  },
   '/about': {
     title: `About ${NAME} — Full-stack Developer (React, Java, AI)`,
     description: `${NAME} is a software engineer from Pune building full-stack products with Java, Spring Boot, React, TypeScript, PostgreSQL, AWS and AI.`,
