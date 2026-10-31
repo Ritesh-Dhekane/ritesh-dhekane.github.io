@@ -40,6 +40,7 @@ export default function Layout() {
           </Link>
           <nav className="nav" aria-label="Main">
             <NavLink to="/work">Work</NavLink>
+            <NavLink to="/lab">Lab</NavLink>
             <NavLink to="/about">About</NavLink>
             <NavLink to="/contact">Contact</NavLink>
           </nav>

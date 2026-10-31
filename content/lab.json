@@ -1,0 +1,9 @@
+[
+  {
+    "title": "MacBuy",
+    "description": "MacBook refurbished buying companion: price reference, deal evaluator and market-day offer tracker (offline, INR).",
+    "tags": ["vanilla-js", "offline", "localstorage"],
+    "href": "/lab/macbuy/",
+    "kind": "tool"
+  }
+]

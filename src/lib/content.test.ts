@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { categories, featuredProjects, profile, projects } from './content'
+import { categories, featuredProjects, lab, profile, projects } from './content'
 import { maskedPhone, whatsappUrl } from './contact'
 import { parseProject } from './frontmatter'
 
@@ -24,6 +24,14 @@ describe('content', () => {
     const slugs = new Set(projects.map((p) => p.slug))
     for (const intent of profile.intents) for (const slug of intent.highlight) expect(slugs.has(slug)).toBe(true)
     for (const c of profile.capabilities) expect(slugs.has(c.example)).toBe(true)
+  })
+
+  it('has complete Lab items', () => {
+    for (const item of lab) {
+      expect(item.title && item.description && item.href).toBeTruthy()
+      expect(['tool', 'experiment', 'wip']).toContain(item.kind)
+      expect(item.href).toMatch(/^(\/|https?:\/\/)/)
+    }
   })
 
   it('collects categories for filters', () => {
