@@ -1,0 +1,2268 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="MacBuy: an offline price reference, deal evaluator and market-day tracker for buying used, refurbished, demo and open-box MacBooks in India.">
+<title>MacBuy · Used MacBook Deal Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a84ff'/%3E%3Cpath d='M14 40h36v4H14zM18 20h28v18H18z' fill='white'/%3E%3C/svg%3E">
+<style>
+/* ===================== Theme tokens ===================== */
+:root{--radius:16px;--radius-sm:10px;--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--nav-h:64px;--side-w:236px;--ease:cubic-bezier(.2,.8,.2,1)}
+:root,[data-theme=dark]{--bg:#0a0a0c;--surface:#151518;--surface-2:#1d1d21;--surface-3:#28282e;--border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.16);--text:#f5f5f7;--muted:#9a9aa2;--accent:#0a84ff;--accent-bg:rgba(10,132,255,.16);--green:#30d158;--green-bg:rgba(48,209,88,.15);--amber:#ffb340;--amber-bg:rgba(255,179,64,.15);--red:#ff453a;--red-bg:rgba(255,69,58,.15);--grey-bg:rgba(255,255,255,.08);--shadow:0 10px 40px rgba(0,0,0,.5);--glass:rgba(10,10,12,.78);--ink-on-green:#03210c}
+[data-theme=light]{--bg:#f5f5f7;--surface:#ffffff;--surface-2:#f2f2f5;--surface-3:#e6e6eb;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.16);--text:#1d1d1f;--muted:#6e6e73;--accent:#0071e3;--accent-bg:rgba(0,113,227,.1);--green:#1f8a3b;--green-bg:rgba(36,138,61,.12);--amber:#b25e00;--amber-bg:rgba(255,159,10,.16);--red:#d70015;--red-bg:rgba(215,0,21,.1);--grey-bg:rgba(0,0,0,.06);--shadow:0 10px 40px rgba(0,0,0,.12);--glass:rgba(245,245,247,.8);--ink-on-green:#fff}
+
+/* ===================== Base ===================== */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:15px/1.45 var(--font);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;transition:background .3s var(--ease),color .3s var(--ease)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent);text-decoration:none}
+h1,h2,h3{margin:0;letter-spacing:-.02em}
+h1{font-size:26px;font-weight:700}
+h2{font-size:19px;font-weight:650}
+h3{font-size:15px;font-weight:650}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:12px}
+.mono{font-family:var(--mono);font-size:12px}
+.num{font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===================== Layout ===================== */
+.app{min-height:100vh}
+.sidebar{display:none}
+main{padding:0 16px calc(var(--nav-h) + 92px + env(safe-area-inset-bottom));max-width:1240px;margin:0 auto;min-width:0}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;margin:0 -16px;padding:12px 16px;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border)}
+.topbar .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;letter-spacing:-.02em}
+.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#0a84ff,#5e5ce6);display:grid;place-items:center;color:#fff}
+.logo svg{width:16px;height:16px}
+.topbar .spacer{flex:1}
+.save-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:4px 10px;border-radius:999px;background:var(--grey-bg);white-space:nowrap}
+.save-status::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.save-status.flash{animation:pulse .6s var(--ease)}
+.save-status.bad{color:var(--red);background:var(--red-bg)}
+.save-status.bad::before{background:var(--red)}
+.view{display:none;padding-top:18px}
+.view.active{display:block;animation:fadeUp .3s var(--ease)}
+.view-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.view-head p{margin:4px 0 0}
+.stack>*+*{margin-top:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pulse{50%{transform:scale(1.06)}}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes toastIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+
+/* Bottom nav (mobile) */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);height:calc(var(--nav-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border)}
+.bottomnav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;position:relative}
+.bottomnav button.active{color:var(--accent)}
+.navcount{position:absolute;top:8px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--accent);color:#fff;font-size:10px;line-height:16px;text-align:center}
+.fab{position:fixed;z-index:41;right:16px;bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom));display:inline-flex;align-items:center;gap:8px;padding:14px 20px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:750;font-size:14px;letter-spacing:.02em;box-shadow:0 8px 24px rgba(10,132,255,.45);cursor:pointer;transition:transform .2s var(--ease)}
+.fab:active{transform:scale(.96)}
+
+/* Drawer */
+.drawer-bg{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer{position:fixed;left:0;right:0;bottom:0;z-index:61;background:var(--surface);border-radius:22px 22px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .3s var(--ease);box-shadow:var(--shadow)}
+.drawer:not(.open){visibility:hidden;transition:transform .3s var(--ease),visibility 0s .3s}
+.drawer.open{transform:none}
+.drawer-bg.open{opacity:1;pointer-events:auto}
+.grabber{width:40px;height:5px;border-radius:3px;background:var(--border-strong);margin:0 auto 12px}
+.drawer .navlink{width:100%}
+
+/* Sidebar (desktop) */
+.navlink{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:0;background:none;color:var(--text);font-weight:550;font-size:14px;cursor:pointer;text-align:left;transition:background .15s}
+.navlink:hover{background:var(--grey-bg)}
+.navlink.active{background:var(--accent-bg);color:var(--accent)}
+.navlink .navcount{position:static;margin-left:auto}
+
+@media (min-width:900px){
+  .app{display:grid;grid-template-columns:var(--side-w) minmax(0,1fr)}
+  .sidebar{display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;padding:18px 14px;border-right:1px solid var(--border);background:var(--surface)}
+  .sidebar .brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:19px;padding:4px 8px 16px}
+  .sidebar .add-btn{margin:0 0 14px;justify-content:center}
+  .sidebar .side-foot{margin-top:auto;padding:10px 8px;font-size:12px;color:var(--muted)}
+  .bottomnav,.fab,.topbar .brand{display:none}
+  main{padding:0 32px 48px;width:100%}
+  .topbar{margin:0 -32px;padding:14px 32px}
+  h1{font-size:30px}
+}
+
+/* ===================== Components ===================== */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card.tight{padding:12px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 15px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--text);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;transition:transform .15s var(--ease),background .15s,border-color .15s;text-decoration:none}
+.btn:hover{background:var(--surface-3)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.primary{background:var(--accent);border-color:transparent;color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.btn.danger.solid{background:var(--red);color:#fff;border-color:transparent}
+.btn.ghost{background:none;border-color:transparent}
+.btn.sm{min-height:32px;padding:4px 11px;font-size:13px}
+.btn.xs{min-height:28px;padding:2px 9px;font-size:12px}
+.btn.on{background:var(--accent-bg);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.btn svg.i{width:16px;height:16px}
+.btn-add{font-weight:750;letter-spacing:.02em}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.v-EXCELLENT{background:var(--green);color:var(--ink-on-green)}
+.v-GOOD{background:var(--green-bg);color:var(--green)}
+.v-NEGOTIATE{background:var(--amber-bg);color:var(--amber)}
+.v-OVERPRICED{background:var(--red-bg);color:var(--red)}
+.v-REJECT{background:var(--red);color:#fff}
+.v-UNKNOWN,.v-NONE{background:var(--grey-bg);color:var(--muted)}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;background:var(--grey-bg);color:var(--muted);white-space:nowrap}
+.tag.warn{background:var(--amber-bg);color:var(--amber)}
+.tag.bad{background:var(--red-bg);color:var(--red)}
+.tag.ok{background:var(--green-bg);color:var(--green)}
+.tag.info{background:var(--accent-bg);color:var(--accent)}
+.c-green{color:var(--green)}.c-amber{color:var(--amber)}.c-red{color:var(--red)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;min-width:0}
+.stat .label{font-size:12px;color:var(--muted);font-weight:600}
+.stat .value{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat .sub{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Forms */
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span,.field-label{font-size:12.5px;font-weight:600;color:var(--muted)}
+.req::after{content:" *";color:var(--red)}
+input[type=text],input[type=number],input[type=search],input[type=url],input[type=date],input[type=tel],select,textarea{width:100%;min-height:42px;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface-2);outline:none;transition:border-color .15s,box-shadow .15s;font-size:16px}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+input.invalid{border-color:var(--red)}
+.check{display:flex;align-items:flex-start;gap:9px;font-size:14px;cursor:pointer;padding:4px 0}
+.check input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--accent);flex:none}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{position:relative;cursor:pointer}
+.pill input{position:absolute;opacity:0;width:1px;height:1px}
+.pill span,.pick{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:48px;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-2);font-weight:650;font-size:14px;transition:all .15s var(--ease);cursor:pointer;color:var(--text)}
+.pill input:checked+span,.pick.sel{background:var(--accent);border-color:transparent;color:#fff}
+.pill input:focus-visible+span{box-shadow:0 0 0 3px var(--accent-bg)}
+.pill.in-db span::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+.pill input:checked+span::after{background:#fff}
+.pick:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.pick .sub{font-size:10px;font-weight:600;opacity:.8;text-decoration:none}
+details.more{border-top:1px solid var(--border);padding-top:10px}
+details.more summary{cursor:pointer;font-weight:650;font-size:14px;padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"›";display:inline-block;transition:transform .2s;font-size:18px;line-height:1}
+details.more[open] summary::before{transform:rotate(90deg)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-grid .full{grid-column:1/-1}
+@media (min-width:700px){.form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.errors{background:var(--red-bg);color:var(--red);border-radius:var(--radius-sm);padding:10px 12px;font-size:13.5px}
+.errors ul,.warnings ul{margin:4px 0 0;padding-left:18px}
+.warnings{background:var(--amber-bg);color:var(--amber);border-radius:var(--radius-sm);padding:10px 12px;font-size:13.5px}
+
+/* Tables */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:10px 12px;white-space:nowrap;border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr{transition:background .15s}
+.tbl tbody tr:hover{background:var(--grey-bg)}
+.tbl td.r,.tbl th.r{text-align:right}
+.tbl tr.over-budget td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.tbl tr.sel{background:var(--accent-bg)}
+.actions{display:flex;gap:4px;flex-wrap:wrap}
+@media (max-width:899px){
+  .tbl.resp{border-collapse:separate}
+  .tbl.resp thead{display:none}
+  .tbl.resp,.tbl.resp tbody{display:block}
+  .tbl.resp tr{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;padding:12px;border-bottom:1px solid var(--border)}
+  .tbl.resp tr.over-budget{box-shadow:inset 3px 0 0 var(--red)}
+  .tbl.resp tr.over-budget td:first-child{box-shadow:none}
+  .tbl.resp td{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:2px 8px;border:0;padding:3px 0;min-width:0;text-align:right}
+  .tbl.resp td::before{content:attr(data-label);color:var(--muted);font-size:11.5px;font-weight:600;text-align:left}
+  .tbl.resp td.wide{grid-column:1/-1}
+  .tbl.resp td.head{grid-column:1/-1;order:-2;justify-content:flex-start;text-align:left;font-weight:650;font-size:15px;padding-right:36px}
+  .tbl.resp td.head::before{display:none}
+  .tbl.resp td.sel-cell{position:absolute;top:12px;right:12px;padding:0}
+  .tbl.resp td.sel-cell::before{display:none}
+  .tbl.resp td.date-cell{grid-column:1/-1;order:-1}
+  .tbl.resp td.date-cell .tiny{display:inline;margin-left:6px}
+  .tbl.resp td.actions-cell{grid-column:1/-1;justify-content:flex-start;padding-top:8px}
+  .tbl.resp td.actions-cell::before{display:none}
+}
+
+/* Price finder */
+.step{margin-bottom:14px}
+.step-title{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--grey-bg);display:grid;place-items:center;font-size:11px;color:var(--text)}
+.step.done .step-num{background:var(--accent);color:#fff}
+.result{position:relative;overflow:hidden;border-radius:20px;padding:20px;background:linear-gradient(145deg,var(--surface-2),var(--surface));border:1px solid var(--border-strong)}
+.result .cfg{font-size:24px;font-weight:750;letter-spacing:-.03em}
+.price-pair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.price-pair .k{font-size:12px;color:var(--muted);font-weight:600}
+.price-pair .v{font-size:24px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.price-pair .v{font-size:19px}.result .cfg{font-size:21px}}
+.verdict-big{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.verdict-big .badge{font-size:15px;padding:7px 14px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:14px}
+.kv .k{color:var(--muted)}
+.kv .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.kv .sep{grid-column:1/-1;height:1px;background:var(--border);margin:4px 0}
+.breakdown{list-style:none;margin:0;padding:0;font-size:13.5px}
+.breakdown li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--border)}
+.breakdown li:last-child{border-bottom:0;font-weight:700}
+.notes-list{margin:8px 0 0;padding-left:18px;font-size:13.5px}
+
+/* Deal lists */
+.deal{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.deal:last-child{border-bottom:0}
+.deal .rank{width:26px;height:26px;border-radius:50%;background:var(--grey-bg);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.deal .rank.first{background:var(--green);color:var(--ink-on-green)}
+.deal .main{flex:1;min-width:0}
+.deal .title{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deal .meta{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deal .price{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty .big{font-size:16px;font-weight:650;color:var(--text);margin-bottom:6px}
+.notice{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--radius-sm);background:var(--amber-bg);color:var(--amber);font-size:13.5px}
+.notice.info{background:var(--accent-bg);color:var(--accent)}
+.notice.bad{background:var(--red-bg);color:var(--red)}
+.banner{margin-top:12px}
+
+/* Compare */
+.cmp th{min-width:140px}
+.cmp th:first-child,.cmp td:first-child{position:sticky;left:0;background:var(--surface-2);z-index:1;min-width:130px;font-size:12px;color:var(--muted);font-weight:650;text-transform:none;letter-spacing:0}
+.cmp td.best,.cmp th.best{background:var(--green-bg)}
+.cmp th.best{color:var(--green)}
+.picker{display:grid;gap:6px;max-height:320px;overflow:auto;padding-right:4px}
+.picker label{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--surface-2);cursor:pointer;font-size:13.5px}
+.picker input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* Shortlist */
+.sl-card{display:grid;gap:10px}
+.star{background:none;border:0;cursor:pointer;font-size:20px;line-height:1;color:var(--muted);padding:4px}
+.star.on{color:#ffcc00}
+
+/* Filters */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .search{flex:1 1 220px}
+.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media (min-width:700px){.filters{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1100px){.filters{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.bulkbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;margin-bottom:10px;border-radius:12px;background:var(--accent-bg);color:var(--accent);font-weight:600;font-size:14px}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:80;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55)}
+.modal.open{display:flex}
+#confirmModal{z-index:90}
+.sheet{width:100%;max-width:680px;max-height:94vh;display:flex;flex-direction:column;background:var(--surface);border-radius:22px 22px 0 0;box-shadow:var(--shadow);animation:sheetUp .28s var(--ease)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 10px;border-bottom:1px solid var(--border)}
+.sheet-body{padding:16px 18px;overflow:auto;flex:1}
+.sheet-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border)}
+.sheet.narrow{max-width:460px}
+.sheet.wide{max-width:980px}
+@media (min-width:700px){.modal{align-items:center;padding:24px}.sheet{border-radius:22px}}
+.preview-box{border-radius:12px;padding:12px;background:var(--surface-2);font-size:13.5px}
+
+/* Toasts */
+#toasts{position:fixed;z-index:120;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 80px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;align-items:center;width:min(92vw,440px);pointer-events:none}
+@media (min-width:900px){#toasts{bottom:24px}}
+.toast{pointer-events:auto;width:100%;padding:12px 16px;border-radius:14px;background:var(--surface-3);color:var(--text);border:1px solid var(--border-strong);box-shadow:var(--shadow);font-size:14px;font-weight:550;animation:toastIn .25s var(--ease)}
+.toast.ok{border-left:4px solid var(--green)}
+.toast.err{border-left:4px solid var(--red)}
+.toast.warn{border-left:4px solid var(--amber)}
+
+/* Settings */
+.set-section h2{margin-bottom:4px}
+.set-table{width:100%;border-collapse:collapse;font-size:14px}
+.set-table td{padding:6px 4px;border-bottom:1px solid var(--border)}
+.set-table input{min-height:36px;padding:6px 10px}
+.danger-zone{border-color:color-mix(in srgb,var(--red) 35%,transparent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Desktop sidebar -->
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M3 17h18v2H3zM6 6h12v10H6z"/></svg></span>MacBuy</div>
+    <button class="btn primary btn-add add-btn" data-action="addEntry">+ ADD MARKET ENTRY</button>
+    <nav id="sideNav"></nav>
+    <div class="side-foot"><div id="sideStorage"></div><div class="tiny" style="margin-top:6px">v<span class="app-version"></span> · Offline · No account</div></div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M3 17h18v2H3zM6 6h12v10H6z"/></svg></span>MacBuy</div>
+      <span class="spacer"></span>
+      <span class="save-status" id="saveStatus" role="status" aria-live="polite">Saved locally</span>
+      <button class="btn sm ghost" id="themeToggle" data-action="toggleTheme" aria-label="Toggle dark or light theme" title="Toggle theme"></button>
+    </header>
+    <div id="banner"></div>
+
+    <!-- Dashboard -->
+    <section class="view" id="view-dashboard" aria-labelledby="h-dash">
+      <div class="view-head">
+        <div><h1 id="h-dash">Dashboard</h1><p class="muted small">Used, refurbished, demo and open-box MacBooks · India</p></div>
+        <div class="row">
+          <label class="field" style="width:170px"><span>Budget (₹)</span><input type="number" id="dashBudget" inputmode="numeric" min="1" step="500"></label>
+          <button class="btn primary btn-add" data-action="addEntry">+ ADD MARKET ENTRY</button>
+        </div>
+      </div>
+      <div id="dash"></div>
+    </section>
+
+    <!-- Price finder + deal evaluator -->
+    <section class="view" id="view-finder" aria-labelledby="h-finder">
+      <div class="view-head"><div><h1 id="h-finder">Price Finder</h1><p class="muted small">Reference target buying prices, not live market prices.</p></div></div>
+      <div class="grid" style="grid-template-columns:minmax(0,1fr)">
+        <div class="card" id="finderSteps"></div>
+        <div id="finderResult"></div>
+        <div class="card" id="evaluator">
+          <div class="card-head"><div><h2>Deal Evaluator</h2><p class="muted small" style="margin:2px 0 0">Check a seller's offer against the selected reference.</p></div></div>
+          <form id="evalForm" class="stack" autocomplete="off" onsubmit="return false">
+            <div class="form-grid three">
+              <label class="field"><span class="req">Asking price (₹)</span><input type="number" name="price" id="ev-price" inputmode="numeric" min="0" step="500" placeholder="e.g. 65000"></label>
+              <label class="field"><span>Battery health (%)</span><input type="number" name="battery" id="ev-battery" inputmode="numeric" min="0" max="100" placeholder="e.g. 91"></label>
+              <label class="field"><span>Condition</span><select name="condition" id="ev-condition"></select></label>
+              <label class="field"><span>Warranty</span><select name="warranty" id="ev-warranty"></select></label>
+              <label class="field full"><span>Repair history (optional)</span><input type="text" name="repair" id="ev-repair" placeholder="e.g. Battery replaced at Apple, 2025"></label>
+            </div>
+            <div>
+              <div class="field-label">Serious issues (any one = REJECT)</div>
+              <div id="ev-issues"></div>
+              <label class="check"><input type="checkbox" name="verified" id="ev-verified"><span>Verified: serial checked, Activation Lock &amp; MDM off, physically inspected</span></label>
+            </div>
+          </form>
+          <div id="evalResult" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Market entries -->
+    <section class="view" id="view-entries" aria-labelledby="h-entries">
+      <div class="view-head">
+        <div><h1 id="h-entries">Market Entries</h1><p class="muted small" id="entriesCount"></p></div>
+        <div class="row">
+          <select id="exportScope" aria-label="Export scope" style="width:auto;min-height:40px"><option value="filtered">Filtered entries</option><option value="all">All entries</option></select>
+          <button class="btn" data-action="exportCsv">EXPORT MARKET ENTRIES (CSV)</button>
+          <button class="btn primary btn-add" data-action="addEntry">+ ADD MARKET ENTRY</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input type="search" class="search" id="fl-q" placeholder="Search seller, model, location, notes…" aria-label="Search entries">
+        <select id="sortSel" aria-label="Sort entries" style="width:auto"></select>
+        <button class="btn" data-action="toggleFilters" id="filterBtn">Filters</button>
+        <button class="btn ghost" data-action="clearFilters">Clear</button>
+      </div>
+      <div class="filters card tight hidden" id="filters">
+        <label class="field"><span>Chip</span><select id="fl-chip"></select></label>
+        <label class="field"><span>Air / Pro</span><select id="fl-family"></select></label>
+        <label class="field"><span>RAM</span><select id="fl-ram"></select></label>
+        <label class="field"><span>Storage</span><select id="fl-ssd"></select></label>
+        <label class="field"><span>Seller / platform</span><select id="fl-platform"></select></label>
+        <label class="field"><span>Condition</span><select id="fl-condition"></select></label>
+        <label class="field"><span>Min price (₹)</span><input type="number" id="fl-pmin" inputmode="numeric" min="0"></label>
+        <label class="field"><span>Max price (₹)</span><input type="number" id="fl-pmax" inputmode="numeric" min="0"></label>
+        <label class="field"><span>Min battery (%)</span><input type="number" id="fl-bmin" inputmode="numeric" min="0" max="100"></label>
+        <label class="field"><span>Verdict</span><select id="fl-verdict"></select></label>
+        <label class="field"><span>From date</span><input type="date" id="fl-dfrom"></label>
+        <label class="field"><span>To date</span><input type="date" id="fl-dto"></label>
+      </div>
+      <div id="bulkbar"></div>
+      <div id="entriesTable"></div>
+    </section>
+
+    <!-- Compare -->
+    <section class="view" id="view-compare" aria-labelledby="h-compare">
+      <div class="view-head"><div><h1 id="h-compare">Compare Listings</h1><p class="muted small">Ranked by value for money, not price alone.</p></div></div>
+      <div id="compareView"></div>
+    </section>
+
+    <!-- Shortlist -->
+    <section class="view" id="view-shortlist" aria-labelledby="h-shortlist">
+      <div class="view-head"><div><h1 id="h-shortlist">Shortlist</h1><p class="muted small">Your candidates, notes and favourites.</p></div></div>
+      <div id="shortlistView"></div>
+    </section>
+
+    <!-- Price DB -->
+    <section class="view" id="view-db" aria-labelledby="h-db">
+      <div class="view-head">
+        <div><h1 id="h-db">Price Database</h1><p class="muted small">Target buying prices you'd be happy to pay (ideal) and the most you'd pay (max). Not live prices. Kept separate from market entries.</p></div>
+        <button class="btn danger" data-action="resetDb">Reset to defaults</button>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-head"><h2 id="dbFormTitle">Add reference price</h2></div>
+        <form id="dbForm" class="stack" autocomplete="off" onsubmit="return false">
+          <div class="form-grid three">
+            <label class="field"><span class="req">Chip</span><select name="chip" id="db-chip"></select></label>
+            <label class="field"><span class="req">Family</span><select name="family" id="db-family"></select></label>
+            <label class="field"><span class="req">Screen</span><select name="size" id="db-size"></select></label>
+            <label class="field"><span class="req">RAM</span><select name="ram" id="db-ram"></select></label>
+            <label class="field"><span class="req">SSD</span><select name="ssd" id="db-ssd"></select></label>
+            <div></div>
+            <label class="field"><span class="req">Ideal (₹)</span><input type="number" name="ideal" id="db-ideal" inputmode="numeric" min="1" step="500"></label>
+            <label class="field"><span class="req">Max (₹)</span><input type="number" name="max" id="db-max" inputmode="numeric" min="1" step="500"></label>
+          </div>
+          <div id="dbErrors"></div>
+          <div class="row"><button class="btn primary" data-action="saveDbRow" id="dbSave">Add to database</button><button class="btn hidden" data-action="cancelDbEdit" id="dbCancel">Cancel edit</button></div>
+        </form>
+      </div>
+      <div id="dbTable"></div>
+    </section>
+
+    <!-- Backup & settings -->
+    <section class="view" id="view-settings" aria-labelledby="h-settings">
+      <div class="view-head"><div><h1 id="h-settings">Backup &amp; Settings</h1><p class="muted small">Everything stays in this browser. Nothing is uploaded.</p></div></div>
+      <div class="stack">
+        <div class="card set-section">
+          <h2>Backup &amp; restore</h2>
+          <p class="muted small">CSV is for spreadsheets (market entries only). JSON is a full backup of everything.</p>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" data-action="exportCsv">EXPORT MARKET ENTRIES (CSV)</button>
+            <button class="btn" data-action="importCsv">IMPORT CSV</button>
+            <button class="btn primary" data-action="backupJson">BACKUP ALL DATA (JSON)</button>
+            <button class="btn" data-action="restoreJson">RESTORE FROM JSON</button>
+          </div>
+          <input type="file" id="csvFile" accept=".csv,text/csv" class="hidden">
+          <input type="file" id="jsonFile" accept=".json,application/json" class="hidden">
+          <div class="notice" style="margin-top:12px" id="storageWarning2"></div>
+          <p class="tiny muted" id="storageInfo" style="margin:10px 0 0"></p>
+        </div>
+        <form id="settingsForm" class="stack" autocomplete="off" onsubmit="return false"></form>
+        <div class="card danger-zone">
+          <h2>Danger zone</h2>
+          <p class="muted small">Each action asks for confirmation first. Consider a JSON backup before you continue.</p>
+          <div class="row" style="margin-top:10px">
+            <button class="btn danger" data-action="resetSettings">Reset settings</button>
+            <button class="btn danger" data-action="resetDb">Reset price DB</button>
+            <button class="btn danger" data-action="clearEntries">Clear entries</button>
+            <button class="btn danger solid" data-action="clearAll">Clear all data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Mobile navigation -->
+<nav class="bottomnav" id="bottomNav" aria-label="Main navigation"></nav>
+<button class="fab" data-action="addEntry" aria-label="Add market entry">+ ADD MARKET ENTRY</button>
+<div class="drawer-bg" id="drawerBg" data-action="closeDrawer"></div>
+<div class="drawer" id="drawer" role="dialog" aria-label="More sections"><div class="grabber"></div><div id="drawerNav"></div></div>
+
+<!-- Add / edit market entry -->
+<div class="modal" id="entryModal" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+  <div class="sheet">
+    <div class="sheet-head"><div><h2 id="entryTitle">Add market entry</h2><div class="tiny muted" id="entryMeta"></div></div><button class="btn sm ghost" data-action="closeModal" data-modal="entryModal" aria-label="Close">✕</button></div>
+    <form class="sheet-body stack" id="entryForm" autocomplete="off" onsubmit="return false" novalidate>
+      <div><div class="field-label req">Chip</div><div class="pills" id="f-chip"></div></div>
+      <div><div class="field-label req">Family</div><div class="pills" id="f-family"></div></div>
+      <div class="form-grid">
+        <label class="field"><span class="req">Model / screen</span><select name="size" id="f-size"></select></label>
+        <label class="field"><span class="req">Asking price (₹)</span><input type="number" name="price" id="f-price" inputmode="numeric" min="0" step="500" placeholder="65000"></label>
+      </div>
+      <div><div class="field-label req">RAM (GB) <span class="tiny">· green dot = in price DB</span></div><div class="pills" id="f-ram"></div></div>
+      <div><div class="field-label req">SSD</div><div class="pills" id="f-ssd"></div></div>
+      <div class="form-grid">
+        <label class="field"><span>Platform</span><select name="platform" id="f-platform"></select></label>
+        <label class="field"><span>Seller name</span><input type="text" name="seller" id="f-seller" placeholder="Shop / person"></label>
+        <label class="field"><span>Battery health (%)</span><input type="number" name="battery" id="f-battery" inputmode="numeric" min="0" max="100"></label>
+        <label class="field"><span>Condition</span><select name="condition" id="f-condition"></select></label>
+      </div>
+      <details class="more" id="f-more">
+        <summary>More details (optional)</summary>
+        <div class="form-grid" style="margin-top:10px">
+          <label class="field"><span>Warranty</span><select name="warranty" id="f-warranty"></select></label>
+          <label class="field"><span>Cycle count</span><input type="number" name="cycles" id="f-cycles" inputmode="numeric" min="0"></label>
+          <label class="field"><span>Contact / reference</span><input type="text" name="contact" id="f-contact"></label>
+          <label class="field"><span>Colour</span><input type="text" name="color" id="f-color"></label>
+          <label class="field"><span>Location</span><input type="text" name="location" id="f-location"></label>
+          <label class="field"><span>CPU / GPU config</span><input type="text" name="cpu" id="f-cpu" placeholder="e.g. 8-core CPU, 10-core GPU"></label>
+          <label class="field full"><span>Listing URL</span><input type="url" name="url" id="f-url" placeholder="https://"></label>
+          <label class="field"><span>Serial (private, not exported to CSV)</span><input type="text" name="serial" id="f-serial"></label>
+          <label class="field"><span>Photo reference</span><input type="text" name="photoRef" id="f-photo" placeholder="e.g. IMG_2041"></label>
+          <label class="field full"><span>Repair history</span><input type="text" name="repair" id="f-repair"></label>
+          <label class="field full"><span>Notes</span><textarea name="notes" id="f-notes"></textarea></label>
+        </div>
+        <div style="margin-top:10px"><div class="field-label">Serious issues (any one = REJECT)</div><div id="f-issues"></div>
+          <label class="check"><input type="checkbox" name="verified" id="f-verified"><span>Verified: serial checked, Activation Lock &amp; MDM off, physically inspected</span></label></div>
+      </details>
+      <div id="entryErrors"></div>
+      <div class="preview-box" id="entryPreview"></div>
+    </form>
+    <div class="sheet-foot">
+      <button class="btn" data-action="closeModal" data-modal="entryModal">Cancel</button>
+      <button class="btn" data-action="saveEntry" data-another="1" id="entrySaveAnother">Save &amp; add another</button>
+      <button class="btn primary" data-action="saveEntry" id="entrySave">Save entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="modal" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="sheet narrow">
+    <div class="sheet-head"><h2 id="confirmTitle">Are you sure?</h2></div>
+    <div class="sheet-body" id="confirmBody"></div>
+    <div class="sheet-foot"><button class="btn" id="confirmCancel">Cancel</button><button class="btn danger solid" id="confirmOk">Confirm</button></div>
+  </div>
+</div>
+
+<!-- CSV import preview -->
+<div class="modal" id="importModal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+  <div class="sheet wide">
+    <div class="sheet-head"><h2 id="importTitle">Import preview</h2><button class="btn sm ghost" data-action="closeModal" data-modal="importModal" aria-label="Close">✕</button></div>
+    <div class="sheet-body stack" id="importBody"></div>
+    <div class="sheet-foot"><button class="btn" data-action="closeModal" data-modal="importModal">Cancel</button><button class="btn primary" data-action="confirmImport" id="importGo">Import</button></div>
+  </div>
+</div>
+
+<!-- JSON restore preview -->
+<div class="modal" id="restoreModal" role="dialog" aria-modal="true" aria-labelledby="restoreTitle">
+  <div class="sheet narrow">
+    <div class="sheet-head"><h2 id="restoreTitle">Restore backup</h2><button class="btn sm ghost" data-action="closeModal" data-modal="restoreModal" aria-label="Close">✕</button></div>
+    <div class="sheet-body stack" id="restoreBody"></div>
+    <div class="sheet-foot"><button class="btn" data-action="closeModal" data-modal="restoreModal">Cancel</button><button class="btn" data-action="restoreMerge" id="restoreMerge">Merge into current</button><button class="btn danger solid" data-action="restoreReplace" id="restoreReplace">Replace all data</button></div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =====================================================================
+   Constants
+   ===================================================================== */
+const APP_VERSION = '1.0.0';
+const KEYS = {
+  entries: 'macbuy_market_entries',
+  db: 'macbuy_price_database',
+  shortlist: 'macbuy_shortlist',
+  settings: 'macbuy_settings',
+  version: 'macbuy_version'
+};
+const STORAGE_WARNING = 'Your data is stored in this browser on this device. Clearing browser data may permanently delete it. Export a backup regularly.';
+const CHIPS = ['M1', 'M2', 'M3', 'M4', 'M5'];
+const FAMILIES = ['Air', 'Pro'];
+const RAMS = [8, 16, 24, 32, 36, 48, 64];
+const SSDS = [256, 512, 1024, 2048];
+const PLATFORMS = ['Cashify', 'UsedMac', 'MacStudio', 'Unicorn', 'OLX', 'Other'];
+const CONDITIONS = ['Excellent', 'Good', 'Fair', 'Poor'];
+const WARRANTIES = [
+  { v: 'none', label: 'No warranty', rank: 0 },
+  { v: '1m', label: '1 month', rank: 1 },
+  { v: '3m', label: '3 months', rank: 3 },
+  { v: '6m', label: '6 months', rank: 6 },
+  { v: '12m', label: '12 months', rank: 12 },
+  { v: 'apple', label: 'Apple warranty remaining', rank: 13 }
+];
+const ISSUE_FLAGS = [
+  ['defects', 'Major defects (display, keyboard, ports, liquid damage)'],
+  ['mdm', 'MDM / remote management lock'],
+  ['activation', 'Activation Lock / iCloud not removed'],
+  ['undisclosed', 'Undisclosed repairs or non-genuine parts'],
+  ['other', 'Other serious issue']
+];
+/* Valid chip/family combinations and their screen sizes. */
+const SIZES = {
+  Air: { M1: ['13"'], M2: ['13"', '15"'], M3: ['13"', '15"'], M4: ['13"', '15"'], M5: ['13"', '15"'] },
+  Pro: { M1: ['13"', '14"', '16"'], M2: ['13"', '14"', '16"'], M3: ['14"', '16"'], M4: ['14"', '16"'], M5: ['14"'] }
+};
+const VERDICTS = ['EXCELLENT', 'GOOD', 'NEGOTIATE', 'OVERPRICED', 'REJECT', 'UNKNOWN'];
+const VERDICT_LABEL = { EXCELLENT: 'Excellent', GOOD: 'Good', NEGOTIATE: 'Negotiate', OVERPRICED: 'Overpriced', REJECT: 'Reject', UNKNOWN: 'No reference' };
+const SORTS = [
+  ['newest', 'Newest first'],
+  ['price', 'Lowest price'],
+  ['deal', 'Best deal'],
+  ['battery', 'Best battery'],
+  ['warranty', 'Longest warranty']
+];
+/* Preloaded reference prices: chip, family, screen, RAM, SSD(GB), ideal, max. */
+const DEFAULT_DB_ROWS = [
+  ['M1', 'Air', '13"', 8, 256, 32000, 36000], ['M1', 'Air', '13"', 8, 512, 37000, 41000],
+  ['M1', 'Air', '13"', 16, 256, 38000, 43000], ['M1', 'Air', '13"', 16, 512, 43000, 49000],
+  ['M2', 'Air', '13"', 8, 256, 43000, 49000], ['M2', 'Air', '13"', 8, 512, 49000, 55000],
+  ['M2', 'Air', '13"', 16, 256, 57000, 64000], ['M2', 'Air', '13"', 16, 512, 63000, 71000],
+  ['M3', 'Air', '13"', 8, 256, 53000, 59000], ['M3', 'Air', '13"', 8, 512, 59000, 65000],
+  ['M3', 'Air', '13"', 16, 256, 66000, 74000], ['M3', 'Air', '13"', 16, 512, 72000, 81000],
+  ['M4', 'Air', '13"', 16, 256, 78000, 86000], ['M4', 'Air', '13"', 16, 512, 86000, 95000],
+  ['M1', 'Pro', '14"', 16, 512, 67000, 76000], ['M1', 'Pro', '14"', 16, 1024, 73000, 82000],
+  ['M2', 'Pro', '14"', 16, 512, 80000, 90000], ['M2', 'Pro', '14"', 16, 1024, 88000, 98000]
+];
+const DEFAULT_SETTINGS = {
+  budget: 80000,
+  currencyFormat: 'en-IN',
+  theme: 'dark',
+  defaultSort: 'newest',
+  negotiateTolerance: 5,
+  unverifiedCaution: true,
+  adjustments: {
+    // Deductions are positive ₹ amounts taken off the reference for that battery band.
+    battery: { enabled: true, bands: [{ min: 95, amount: 0 }, { min: 90, amount: 1000 }, { min: 85, amount: 3000 }, { min: 80, amount: 6000 }] },
+    // Signed ₹ amounts added to the reference (negative = worth less).
+    condition: { enabled: true, values: { Excellent: 0, Good: -1000, Fair: -3000, Poor: -6000 } },
+    // Conservative premiums for remaining coverage (positive = worth a little more).
+    warranty: { enabled: true, values: { none: 0, '1m': 500, '3m': 1000, '6m': 1500, '12m': 2500, apple: 3500 } }
+  },
+  csv: { bom: true, delimiter: ',', scope: 'filtered', extraColumns: true }
+};
+
+/* =====================================================================
+   Small helpers
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const clone = o => JSON.parse(JSON.stringify(o));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const isObj = o => o && typeof o === 'object' && !Array.isArray(o);
+const ssdLabel = gb => (gb >= 1024 ? (gb / 1024) + 'TB' : gb + 'GB');
+const ssdShort = gb => (gb >= 1024 ? (gb / 1024) + 'TB' : String(gb));
+const pad = n => String(n).padStart(2, '0');
+const localDate = ts => { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const localTime = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const warrantyInfo = v => WARRANTIES.find(w => w.v === v) || WARRANTIES[0];
+const issueLabel = k => (ISSUE_FLAGS.find(f => f[0] === k) || [k, k])[1];
+
+/** Parse a user-entered number. '' → null, junk → NaN. Accepts "₹65,000". */
+function num(v) {
+  if (v == null) return null;
+  const s = String(v).replace(/[₹,\s%]/g, '').replace(/^rs\.?/i, '');
+  if (s === '') return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN;
+}
+/** Format rupees according to the currency-display setting. */
+function money(n) {
+  if (n == null || !Number.isFinite(n)) return '—';
+  const fmt = state.settings ? state.settings.currencyFormat : 'en-IN';
+  const neg = n < 0;
+  const a = Math.abs(Math.round(n));
+  let out;
+  if (fmt === 'compact') {
+    if (a >= 100000) out = (a / 100000).toFixed(2).replace(/\.?0+$/, '') + 'L';
+    else if (a >= 1000) out = (a / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    else out = String(a);
+  } else out = a.toLocaleString(fmt === 'intl' ? 'en-US' : 'en-IN');
+  return (neg ? '−' : '') + '₹' + out;
+}
+const signed = n => (Math.round(n) === 0 ? '₹0' : (n > 0 ? '+' : '') + money(n));
+function modelName(c) {
+  const showSize = c.size && !(c.family === 'Air' && c.size === '13"');
+  return `${c.chip} ${c.family}${showSize ? ' ' + c.size : ''}`;
+}
+const configLabel = c => `${modelName(c)} ${c.ram}/${ssdShort(c.ssd)}`;
+const configKey = c => [c.chip, c.family, c.size || '', +c.ram, +c.ssd].join('|');
+
+/** Collision-free ID, e.g. E-LZ3K9A-7F2Q. */
+function uid(prefix = 'E') {
+  const taken = new Set([...state.entries.map(e => e.id), ...state.db.map(r => r.id)]);
+  let id;
+  do {
+    let rnd = '';
+    if (window.crypto && crypto.getRandomValues) rnd = Array.from(crypto.getRandomValues(new Uint8Array(3)), b => b.toString(36).padStart(2, '0')).join('').toUpperCase().slice(0, 5);
+    else rnd = Math.random().toString(36).slice(2, 7).toUpperCase();
+    id = `${prefix}-${Date.now().toString(36).toUpperCase()}-${rnd}`;
+  } while (taken.has(id));
+  return id;
+}
+
+/* =====================================================================
+   State
+   ===================================================================== */
+const state = { entries: [], db: [], shortlist: [], settings: clone(DEFAULT_SETTINGS) };
+const ui = {
+  view: 'dashboard',
+  filters: {},
+  sort: 'newest',
+  selected: new Set(),
+  compare: new Set(),
+  finder: { chip: null, family: null, ram: null, ssd: null, rowId: null },
+  editingId: null,
+  dbEditingId: null,
+  pendingImport: null,
+  pendingRestore: null
+};
+const storage = { available: false, corrupt: {}, error: null };
+
+function defaultDb() {
+  return DEFAULT_DB_ROWS.map(([chip, family, size, ram, ssd, ideal, max]) => ({
+    id: `db-${chip}-${family}-${size.replace('"', '')}-${ram}-${ssd}`.toLowerCase(), chip, family, size, ram, ssd, ideal, max, builtIn: true
+  }));
+}
+
+/* =====================================================================
+   Sanitising (used on load, import and restore)
+   ===================================================================== */
+function sanitizeDbRow(r) {
+  if (!isObj(r)) return null;
+  const row = {
+    id: String(r.id || ''), chip: String(r.chip || ''), family: String(r.family || ''), size: String(r.size || ''),
+    ram: +r.ram, ssd: +r.ssd, ideal: +r.ideal, max: +r.max, builtIn: !!r.builtIn
+  };
+  if (!CHIPS.includes(row.chip) || !FAMILIES.includes(row.family)) return null;
+  if (!RAMS.includes(row.ram) || !SSDS.includes(row.ssd)) return null;
+  if (!(row.ideal > 0) || !(row.max > 0) || row.ideal > row.max) return null;
+  if (!row.id) row.id = 'db-' + configKey(row).replace(/[|"]/g, '-').toLowerCase() + '-' + Math.random().toString(36).slice(2, 6);
+  return row;
+}
+function sanitizeEntry(e) {
+  if (!isObj(e)) return null;
+  const o = {
+    id: String(e.id || ''), chip: String(e.chip || ''), family: String(e.family || ''), size: String(e.size || ''),
+    cpu: String(e.cpu || ''), ram: +e.ram, ssd: +e.ssd, price: num(e.price),
+    seller: String(e.seller || ''), platform: PLATFORMS.includes(e.platform) ? e.platform : (e.platform ? 'Other' : ''),
+    contact: String(e.contact || ''), battery: num(e.battery), cycles: num(e.cycles),
+    condition: CONDITIONS.includes(e.condition) ? e.condition : '',
+    warranty: WARRANTIES.some(w => w.v === e.warranty) ? e.warranty : 'none',
+    color: String(e.color || ''), location: String(e.location || ''), url: String(e.url || ''),
+    serial: String(e.serial || ''), photoRef: String(e.photoRef || ''), notes: String(e.notes || ''),
+    repair: String(e.repair || ''), verified: !!e.verified,
+    issues: Array.isArray(e.issues) ? e.issues.filter(k => ISSUE_FLAGS.some(f => f[0] === k)) : [],
+    ts: Number(e.ts) || Date.parse(e.createdAt) || Date.now(),
+    updatedAt: Number(e.updatedAt) || null
+  };
+  if (Number.isNaN(o.battery)) o.battery = null;
+  if (Number.isNaN(o.cycles)) o.cycles = null;
+  if (o.price == null || Number.isNaN(o.price) || o.price < 0) return null;
+  if (!CHIPS.includes(o.chip) || !FAMILIES.includes(o.family)) return null;
+  return o;
+}
+/** Keep valid entries and make sure every ID is unique (duplicates get fresh IDs). */
+function sanitizeEntries(list) {
+  const seen = new Set(), out = [];
+  for (const raw of list) {
+    const e = sanitizeEntry(raw);
+    if (!e) continue;
+    if (!e.id || seen.has(e.id)) e.id = uidWith(seen);
+    seen.add(e.id);
+    out.push(e);
+  }
+  return out;
+}
+function uidWith(seen) { let id; do { id = 'E-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(); } while (seen.has(id)); return id; }
+function sanitizeShortlist(list, entries) {
+  const ids = new Set(entries.map(e => e.id)), seen = new Set();
+  return (Array.isArray(list) ? list : []).filter(s => isObj(s) && ids.has(s.id) && !seen.has(s.id) && seen.add(s.id))
+    .map(s => ({ id: s.id, note: String(s.note || ''), fav: !!s.fav, addedAt: Number(s.addedAt) || Date.now() }));
+}
+/** Deep-merge saved settings over defaults so new keys always exist and bad types are ignored. */
+function mergeSettings(saved) {
+  const merge = (def, val) => {
+    if (Array.isArray(def)) {
+      if (!Array.isArray(val) || val.length !== def.length) return clone(def);
+      return def.map((d, i) => merge(d, val[i]));
+    }
+    if (isObj(def)) { const o = {}; for (const k of Object.keys(def)) o[k] = merge(def[k], isObj(val) ? val[k] : undefined); return o; }
+    if (val === undefined || typeof val !== typeof def) return def;
+    if (typeof def === 'number' && !Number.isFinite(val)) return def;
+    return val;
+  };
+  const s = merge(DEFAULT_SETTINGS, saved);
+  if (!['dark', 'light'].includes(s.theme)) s.theme = 'dark';
+  if (!['en-IN', 'intl', 'compact'].includes(s.currencyFormat)) s.currencyFormat = 'en-IN';
+  if (!SORTS.some(x => x[0] === s.defaultSort)) s.defaultSort = 'newest';
+  if (![',', ';'].includes(s.csv.delimiter)) s.csv.delimiter = ',';
+  if (!(s.budget > 0)) s.budget = DEFAULT_SETTINGS.budget;
+  return s;
+}
+
+/* =====================================================================
+   Persistence (LocalStorage)
+   - Every change calls commit(), which autosaves all keys and re-renders.
+   - Corrupt JSON never crashes the app: defaults load, the raw text is kept
+     in memory and the user can download it before anything is overwritten.
+   ===================================================================== */
+function storageProbe() {
+  try { const k = '__macbuy_probe__'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; }
+  catch (e) { return false; }
+}
+function readKey(key) {
+  let raw;
+  try { raw = localStorage.getItem(key); } catch (e) { return { missing: true }; }
+  if (raw == null) return { missing: true };
+  try { return { value: JSON.parse(raw) }; } catch (e) { return { corrupt: true, raw }; }
+}
+function loadState() {
+  storage.available = storageProbe();
+  const read = name => {
+    if (!storage.available) return {};
+    const r = readKey(KEYS[name]);
+    if (r.corrupt) storage.corrupt[name] = r.raw;
+    return r;
+  };
+  const e = read('entries');
+  if (e.value !== undefined && !Array.isArray(e.value)) storage.corrupt.entries = JSON.stringify(e.value);
+  state.entries = Array.isArray(e.value) ? sanitizeEntries(e.value) : [];
+
+  const d = read('db');
+  if (d.value !== undefined && !Array.isArray(d.value)) storage.corrupt.db = JSON.stringify(d.value);
+  state.db = Array.isArray(d.value) ? d.value.map(sanitizeDbRow).filter(Boolean) : defaultDb();
+
+  const s = read('settings');
+  state.settings = mergeSettings(s.value);
+
+  const sl = read('shortlist');
+  state.shortlist = sanitizeShortlist(sl.value, state.entries);
+
+  read('version'); // reserved for future migrations between app versions
+  ui.sort = state.settings.defaultSort;
+}
+let saveTimer = null;
+function persist() {
+  if (!storage.available) { setSaveStatus(false, 'Storage unavailable'); return false; }
+  try {
+    localStorage.setItem(KEYS.entries, JSON.stringify(state.entries));
+    localStorage.setItem(KEYS.db, JSON.stringify(state.db));
+    localStorage.setItem(KEYS.shortlist, JSON.stringify(state.shortlist));
+    localStorage.setItem(KEYS.settings, JSON.stringify(state.settings));
+    localStorage.setItem(KEYS.version, JSON.stringify(APP_VERSION));
+    storage.error = null;
+    setSaveStatus(true, 'Saved locally · ' + localTime(Date.now()));
+    return true;
+  } catch (err) {
+    storage.error = err;
+    setSaveStatus(false, 'Not saved');
+    toast('Could not save to browser storage (' + (err && err.name || 'error') + '). Export a backup now.', 'err', 6000);
+    return false;
+  }
+}
+function setSaveStatus(ok, text) {
+  const el = $('#saveStatus');
+  el.textContent = text;
+  el.classList.toggle('bad', !ok);
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+}
+/** Single entry point for every data change: autosave + re-render. */
+function commit() { persist(); renderAll(); }
+
+/* =====================================================================
+   Pricing logic (pure functions)
+   ===================================================================== */
+/** Find the reference row for a configuration. Exact screen size wins. */
+function findRef(cfg, db = state.db) {
+  const m = db.filter(r => r.chip === cfg.chip && r.family === cfg.family && r.ram === +cfg.ram && r.ssd === +cfg.ssd);
+  if (!m.length) return null;
+  if (!cfg.size) return m[0];
+  return m.find(r => r.size === cfg.size) || m.find(r => !r.size) || null;
+}
+
+/**
+ * Valuation adjustments, applied once each (no double counting).
+ * Reference prices assume: Excellent condition, battery ≥ 95 %, no warranty.
+ * Each enabled factor yields one signed ₹ amount; the same total is added to
+ * BOTH the ideal and the max. These are negotiation valuations, not repair costs.
+ *   battery   → −deduction of the matching health band (below the lowest band:
+ *               flagged "avoid / manual assessment", largest deduction kept as a floor)
+ *   condition → signed value from the condition table
+ *   warranty  → +premium for remaining coverage
+ */
+function computeAdjustments(input, s = state.settings) {
+  const A = s.adjustments, items = [], flags = [];
+  // Battery
+  const b = input.battery;
+  let batteryAmount = 0;
+  if (b == null || Number.isNaN(b)) {
+    items.push({ key: 'battery', label: 'Battery health', detail: 'Not provided: verify in System Settings › Battery', amount: 0 });
+    flags.push('batteryUnknown');
+  } else {
+    const bands = [...A.battery.bands].sort((x, y) => y.min - x.min);
+    const band = bands.find(x => b >= x.min);
+    const lowest = bands[bands.length - 1];
+    let detail;
+    if (!band) flags.push('batteryLow');
+    if (!A.battery.enabled) detail = `${b}% (adjustment disabled)`;
+    else if (!band) { batteryAmount = -lowest.amount; detail = `${b}%: below ${lowest.min}%, avoid / assess manually (largest deduction kept as a floor)`; }
+    else { batteryAmount = -band.amount; detail = `${b}% (band ≥ ${band.min}%)`; }
+    items.push({ key: 'battery', label: 'Battery health', detail, amount: batteryAmount });
+  }
+  // Condition
+  if (!input.condition) {
+    items.push({ key: 'condition', label: 'Condition', detail: 'Not specified', amount: 0 });
+    flags.push('conditionUnknown');
+  } else {
+    const amt = A.condition.enabled ? (Number(A.condition.values[input.condition]) || 0) : 0;
+    items.push({ key: 'condition', label: 'Condition', detail: input.condition + (A.condition.enabled ? '' : ' (adjustment disabled)'), amount: amt });
+  }
+  // Warranty
+  const w = input.warranty || 'none';
+  const wAmt = A.warranty.enabled ? (Number(A.warranty.values[w]) || 0) : 0;
+  items.push({ key: 'warranty', label: 'Warranty', detail: warrantyInfo(w).label + (A.warranty.enabled ? '' : ' (adjustment disabled)'), amount: wAmt });
+
+  const total = items.reduce((t, i) => t + i.amount, 0);
+  return { items, total, flags, batteryAmount };
+}
+
+/** Round down to the nearest ₹500 (used for the opening offer). */
+const floor500 = n => Math.floor(n / 500) * 500;
+
+/**
+ * Evaluate an offer. Verdict rules (against ADJUSTED ideal/max):
+ *   REJECT     any serious issue ticked (MDM, Activation Lock, defects, undisclosed repairs…)
+ *   EXCELLENT  asking < adjusted ideal
+ *   GOOD       adjusted ideal ≤ asking ≤ adjusted max
+ *   NEGOTIATE  adjusted max < asking ≤ adjusted max × (1 + tolerance, default 5 %)
+ *   OVERPRICED asking > adjusted max × (1 + tolerance)
+ *   UNKNOWN    no reference price for this configuration
+ * Battery below the lowest band caps the verdict at NEGOTIATE.
+ * Value score = % below the adjusted ideal, minus risk penalties for missing or
+ * unverified information. Rejected units always rank last.
+ */
+function evaluate(e, s = state.settings, db = state.db) {
+  const ref = e.ref || findRef(e, db);
+  const adj = computeAdjustments(e, s);
+  const issues = (e.issues || []).slice();
+  const price = e.price;
+  const res = { ref, adj, issues, price, notes: [], verdict: null, score: null, penalties: [] };
+  if (!(price > 0)) return res;
+  if (issues.length) {
+    res.verdict = 'REJECT';
+    res.notes.push('Serious issue flagged: ' + issues.map(issueLabel).join('; ') + '. Do not buy regardless of price.');
+  }
+  res.unverified = !e.verified;
+  res.batteryAdjPrice = price - adj.batteryAmount;
+  res.effectivePrice = price - adj.total;
+  if (!ref) {
+    if (!res.verdict) res.verdict = 'UNKNOWN';
+    res.notes.push('This configuration is not in the price database. Add a reference price to evaluate it.');
+    res.score = res.verdict === 'REJECT' ? -1000 : null;
+    return res;
+  }
+  const tol = (Number(s.negotiateTolerance) || 0) / 100;
+  res.ideal = ref.ideal; res.max = ref.max;
+  res.adjIdeal = ref.ideal + adj.total;
+  res.adjMax = ref.max + adj.total;
+  res.negLimit = Math.round(res.adjMax * (1 + tol));
+  if (!res.verdict) {
+    if (price < res.adjIdeal) res.verdict = 'EXCELLENT';
+    else if (price <= res.adjMax) res.verdict = 'GOOD';
+    else if (price <= res.negLimit) res.verdict = 'NEGOTIATE';
+    else res.verdict = 'OVERPRICED';
+  }
+  if (adj.flags.includes('batteryLow') && (res.verdict === 'EXCELLENT' || res.verdict === 'GOOD')) {
+    res.verdict = 'NEGOTIATE';
+    res.notes.push('Battery is below the lowest band: avoid, or assess manually and budget for a battery service before treating this as a deal.');
+  }
+  if (res.unverified && s.unverifiedCaution && (res.verdict === 'EXCELLENT' || res.verdict === 'GOOD')) {
+    res.provisional = true;
+    res.notes.push('Provisional: not verified yet. Check the serial, Activation Lock, MDM and physical condition before treating a low price as a good deal.');
+  }
+  if (adj.flags.includes('batteryUnknown')) res.notes.push('Battery health unknown: ask for a screenshot of System Settings › Battery.');
+  if (e.repair && e.repair.trim()) res.notes.push('Repair history disclosed: "' + e.repair.trim() + '". Confirm genuine parts.');
+  res.diffIdeal = price - res.adjIdeal;
+  res.diffMax = price - res.adjMax;
+  res.target = price <= res.adjIdeal ? price : floor500(res.adjIdeal);
+  res.walkAway = Math.round(res.adjMax);
+  if (res.verdict === 'REJECT') { res.score = -1000; return res; }
+  // Value score: positive = cheaper than the (adjusted) ideal.
+  let score = (res.adjIdeal - price) / res.adjIdeal * 100;
+  const pen = (label, pts) => { res.penalties.push({ label, pts }); score -= pts; };
+  if (adj.flags.includes('batteryLow')) pen('Battery below lowest band', 10);
+  if (adj.flags.includes('batteryUnknown')) pen('Battery health unknown', 3);
+  if (adj.flags.includes('conditionUnknown')) pen('Condition not specified', 2);
+  if (res.unverified) pen('Not verified', 2);
+  res.score = Math.round(score * 10) / 10;
+  return res;
+}
+
+/** Budget status for a reference row. */
+function budgetStatus(ref, budget = state.settings.budget) {
+  if (ref.max <= budget) return { cls: 'ok', text: 'Within budget' };
+  if (ref.ideal <= budget) return { cls: 'warn', text: 'Ideal within budget, max above' };
+  return { cls: 'bad', text: 'Above budget' };
+}
+
+/* Memoised evaluations for one render pass. */
+let evalCache = new Map();
+function ev(e) { let r = evalCache.get(e); if (!r) { r = evaluate(e); evalCache.set(e, r); } return r; }
+
+/* =====================================================================
+   Validation
+   ===================================================================== */
+function validateEntry(e) {
+  const errors = [], warnings = [];
+  if (!CHIPS.includes(e.chip)) errors.push('Choose a chip.');
+  if (!FAMILIES.includes(e.family)) errors.push('Choose Air or Pro.');
+  const sizes = SIZES[e.family] && SIZES[e.family][e.chip];
+  if (CHIPS.includes(e.chip) && FAMILIES.includes(e.family) && !sizes) errors.push(`${e.chip} ${e.family} is not a valid chip/family combination.`);
+  if (sizes && !sizes.includes(e.size)) errors.push('Choose a valid model / screen size.');
+  if (!RAMS.includes(e.ram)) errors.push('Choose a valid RAM size.');
+  if (!SSDS.includes(e.ssd)) errors.push('Choose a valid storage size.');
+  if (e.price == null) errors.push('Asking price is required.');
+  else if (Number.isNaN(e.price)) errors.push('Asking price must be a number.');
+  else if (e.price < 0) errors.push('Asking price cannot be negative.');
+  else if (e.price === 0) errors.push('Asking price must be more than ₹0.');
+  if (e.battery != null && (Number.isNaN(e.battery) || e.battery < 0 || e.battery > 100)) errors.push('Battery health must be between 0 and 100.');
+  if (e.cycles != null && (Number.isNaN(e.cycles) || e.cycles < 0 || !Number.isInteger(e.cycles))) errors.push('Cycle count must be a whole number, 0 or more.');
+  if (!errors.length) {
+    if (!findRef(e)) warnings.push(`${configLabel(e)} is not in the price database, so no verdict can be given. You can still save it.`);
+    if (e.price > state.settings.budget) warnings.push(`Above your budget of ${money(state.settings.budget)}.`);
+  }
+  if (e.url && !/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/i.test(e.url)) warnings.push('Listing URL does not look like a web address.');
+  return { errors, warnings };
+}
+function safeUrl(u) {
+  if (!u) return null;
+  const s = u.trim();
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^[\w-]+(\.[\w-]+)+/.test(s)) return 'https://' + s;
+  return null;
+}
+
+/* =====================================================================
+   CSV (RFC 4180 writer + parser)
+   ===================================================================== */
+const CSV_COLS = ['Entry ID', 'Date', 'Time', 'Seller', 'Platform', 'Model', 'Chip', 'Family', 'RAM', 'Storage', 'Asking price', 'Battery health', 'Cycle count', 'Condition', 'Warranty', 'Location', 'Listing URL', 'Notes', 'Reference ideal', 'Max price', 'Verdict'];
+const CSV_EXTRA = ['Screen', 'CPU config', 'Contact', 'Colour', 'Photo reference', 'Repair history', 'Issues', 'Verified', 'Timestamp'];
+const TEXT_COLS = new Set(['Seller', 'Location', 'Listing URL', 'Notes', 'Contact', 'Colour', 'Photo reference', 'Repair history', 'CPU config']);
+
+/** Quote a cell when needed; neutralise spreadsheet formulas in free-text cells. */
+function csvCell(v, delim, isText) {
+  let s = v == null ? '' : String(v);
+  if (isText && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  if (s.includes('"') || s.includes(delim) || /[\r\n]/.test(s) || /^\s|\s$/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+function entriesToCsv(list, opts = state.settings.csv) {
+  const delim = opts.delimiter || ',';
+  const cols = opts.extraColumns ? CSV_COLS.concat(CSV_EXTRA) : CSV_COLS;
+  const lines = [cols.map(c => csvCell(c, delim)).join(delim)];
+  for (const e of list) {
+    const r = ev(e);
+    const val = {
+      'Entry ID': e.id, 'Date': localDate(e.ts), 'Time': localTime(e.ts), 'Seller': e.seller, 'Platform': e.platform,
+      'Model': modelName(e) + (e.family === 'Air' && e.size === '13"' ? ' 13"' : ''), 'Chip': e.chip, 'Family': e.family, 'RAM': e.ram, 'Storage': ssdLabel(e.ssd),
+      'Asking price': e.price, 'Battery health': e.battery == null ? '' : e.battery, 'Cycle count': e.cycles == null ? '' : e.cycles,
+      'Condition': e.condition, 'Warranty': warrantyInfo(e.warranty).label, 'Location': e.location, 'Listing URL': e.url, 'Notes': e.notes,
+      'Reference ideal': r.ref ? r.ref.ideal : '', 'Max price': r.ref ? r.ref.max : '', 'Verdict': r.verdict || '',
+      'Screen': e.size, 'CPU config': e.cpu, 'Contact': e.contact, 'Colour': e.color, 'Photo reference': e.photoRef,
+      'Repair history': e.repair, 'Issues': e.issues.join(';'), 'Verified': e.verified ? 'yes' : 'no', 'Timestamp': new Date(e.ts).toISOString()
+    };
+    lines.push(cols.map(c => csvCell(val[c], delim, TEXT_COLS.has(c))).join(delim));
+  }
+  return lines.join('\r\n');
+}
+/** Detect ',' or ';' from the header line (outside quotes). */
+function detectDelimiter(text) {
+  let inQ = false, commas = 0, semis = 0;
+  for (const ch of text) {
+    if (ch === '"') inQ = !inQ;
+    else if (!inQ && (ch === '\n' || ch === '\r')) break;
+    else if (!inQ && ch === ',') commas++;
+    else if (!inQ && ch === ';') semis++;
+  }
+  return semis > commas ? ';' : ',';
+}
+/** State-machine CSV parser: quoted fields, "" escapes, embedded delimiters and newlines, CRLF, BOM. */
+function parseCsv(text, delim) {
+  text = String(text).replace(/^﻿/, '');
+  delim = delim || detectDelimiter(text);
+  const rows = [];
+  let row = [], field = '', i = 0, inQ = false;
+  while (i < text.length) {
+    const ch = text[i];
+    if (inQ) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQ = false; i++; continue;
+      }
+      field += ch; i++; continue;
+    }
+    if (ch === '"' && field === '') { inQ = true; i++; continue; }
+    if (ch === delim) { row.push(field); field = ''; i++; continue; }
+    if (ch === '\r' || ch === '\n') {
+      row.push(field); field = '';
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      row = [];
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      i++; continue;
+    }
+    field += ch; i++;
+  }
+  if (field !== '' || row.length) { row.push(field); if (row.length > 1 || row[0] !== '') rows.push(row); }
+  return rows;
+}
+const normHeader = h => String(h).toLowerCase().replace(/[^a-z0-9]/g, '');
+const unformula = s => (/^'[=+\-@\t\r]/.test(s) ? s.slice(1) : s);
+function parseStorage(v) {
+  const s = String(v || '').toUpperCase().replace(/\s/g, '');
+  const m = s.match(/^(\d+(?:\.\d+)?)(TB|GB)?$/);
+  if (!m) return NaN;
+  const n = parseFloat(m[1]);
+  return m[2] === 'TB' || (!m[2] && n <= 8) ? Math.round(n * 1024) : n;
+}
+function parseWarranty(v) {
+  const s = String(v || '').trim().toLowerCase();
+  if (!s || /^(none|no|no warranty|-)$/.test(s)) return 'none';
+  const hit = WARRANTIES.find(w => w.v === s || w.label.toLowerCase() === s);
+  if (hit) return hit.v;
+  if (s.includes('apple')) return 'apple';
+  const m = s.match(/(\d+)/);
+  if (m) { const n = +m[1]; return n >= 12 ? '12m' : n >= 6 ? '6m' : n >= 3 ? '3m' : '1m'; }
+  return 'none';
+}
+/** Convert one CSV record (header → value) into an entry candidate. */
+function csvRecordToEntry(rec) {
+  const g = k => unformula(String(rec[normHeader(k)] == null ? '' : rec[normHeader(k)]).trim());
+  const model = g('Model');
+  let chip = g('Chip').toUpperCase() || ((model.match(/\bM\d\b/i) || [''])[0].toUpperCase());
+  let family = g('Family');
+  family = family ? family[0].toUpperCase() + family.slice(1).toLowerCase() : (/\bair\b/i.test(model) ? 'Air' : /\bpro\b/i.test(model) ? 'Pro' : '');
+  let size = g('Screen');
+  if (!size) { const m = model.match(/(\d{2})\s*(?:"|''|-?inch|in\b)/i); if (m) size = m[1] + '"'; }
+  if (size && !size.endsWith('"')) size = size.replace(/\D/g, '') + '"';
+  if (!size && SIZES[family] && SIZES[family][chip]) size = family === 'Pro' && SIZES.Pro[chip].includes('14"') ? '14"' : SIZES[family][chip][0];
+  const cond = g('Condition');
+  const condition = CONDITIONS.find(c => c.toLowerCase() === cond.toLowerCase()) || '';
+  const platRaw = g('Platform');
+  const platform = PLATFORMS.find(p => p.toLowerCase() === platRaw.toLowerCase()) || (platRaw ? 'Other' : '');
+  const date = g('Date'), time = g('Time'), stamp = g('Timestamp');
+  let ts = stamp ? Date.parse(stamp) : NaN;
+  if (Number.isNaN(ts) && /^\d{4}-\d{2}-\d{2}$/.test(date)) ts = new Date(`${date}T${/^\d{1,2}:\d{2}/.test(time) ? time.padStart(5, '0').slice(0, 5) : '00:00'}`).getTime();
+  const issues = g('Issues').split(/[;|]/).map(x => x.trim()).filter(Boolean)
+    .map(x => (ISSUE_FLAGS.find(f => f[0] === x || f[1].toLowerCase() === x.toLowerCase()) || [null])[0]).filter(Boolean);
+  return {
+    id: g('Entry ID'), chip, family, size, cpu: g('CPU config'),
+    ram: num(g('RAM').replace(/gb/i, '')), ssd: parseStorage(g('Storage')), price: num(g('Asking price')),
+    seller: g('Seller'), platform, contact: g('Contact'), battery: num(g('Battery health')), cycles: num(g('Cycle count')),
+    condition, warranty: parseWarranty(g('Warranty')), color: g('Colour') || g('Color'), location: g('Location'), url: g('Listing URL'),
+    serial: '', photoRef: g('Photo reference'), notes: g('Notes'), repair: g('Repair history'), issues,
+    verified: /^(yes|true|1|y)$/i.test(g('Verified')), ts: Number.isNaN(ts) ? Date.now() : ts,
+    _has: new Set(Object.keys(rec).filter(k => String(rec[k]).trim() !== ''))
+  };
+}
+
+/* =====================================================================
+   Downloads
+   ===================================================================== */
+function download(filename, content, mime) {
+  try {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    return true;
+  } catch (err) {
+    toast('Download blocked by the browser. Run MacBuy from a local server (see README).', 'err', 7000);
+    return false;
+  }
+}
+const stamp = () => { const d = new Date(); return `${localDate(d).replace(/-/g, '')}-${pad(d.getHours())}${pad(d.getMinutes())}`; };
+
+/* =====================================================================
+   UI primitives: toast, modal, confirm
+   ===================================================================== */
+function toast(msg, kind = 'ok', ms = 3200) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind; t.setAttribute('role', 'status'); t.textContent = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 320); }, ms);
+}
+function openModal(id) { const m = document.getElementById(id); m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); if (!$('.modal.open')) document.body.style.overflow = ''; }
+/** Promise-based confirmation for every destructive action. */
+function confirmDialog({ title = 'Are you sure?', message = '', ok = 'Confirm', danger = true } = {}) {
+  return new Promise(resolve => {
+    $('#confirmTitle').textContent = title;
+    $('#confirmBody').innerHTML = message;
+    const okBtn = $('#confirmOk'), cancelBtn = $('#confirmCancel');
+    okBtn.textContent = ok;
+    okBtn.className = 'btn ' + (danger ? 'danger solid' : 'primary');
+    const done = v => { okBtn.onclick = cancelBtn.onclick = null; closeModal('confirmModal'); resolve(v); };
+    okBtn.onclick = () => done(true);
+    cancelBtn.onclick = () => done(false);
+    openModal('confirmModal');
+    setTimeout(() => cancelBtn.focus(), 30);
+  });
+}
+
+/* =====================================================================
+   Icons + navigation
+   ===================================================================== */
+const ICONS = {
+  dashboard: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  finder: 'M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM20 20l-4.8-4.8',
+  entries: 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01',
+  compare: 'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4',
+  shortlist: 'M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.9l-5.25 2.7 1-5.8L3.5 9.7l5.9-.9z',
+  db: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  settings: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
+  sun: 'M12 4V2M12 22v-2M4.9 4.9 3.5 3.5M20.5 20.5l-1.4-1.4M4 12H2M22 12h-2M4.9 19.1l-1.4 1.4M20.5 3.5l-1.4 1.4M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z'
+};
+const icon = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+const NAV = [
+  ['dashboard', 'Dashboard', 'Home'], ['finder', 'Price Finder', 'Finder'], ['entries', 'Market Entries', 'Entries'],
+  ['compare', 'Compare Listings', 'Compare'], ['shortlist', 'Shortlist', 'Shortlist'], ['db', 'Price Database', 'Prices'],
+  ['settings', 'Backup & Settings', 'Settings']
+];
+function navCount(view) {
+  if (view === 'entries') return state.entries.length;
+  if (view === 'shortlist') return state.shortlist.length;
+  if (view === 'compare') return ui.compare.size;
+  return 0;
+}
+function renderNav() {
+  const link = ([v, label]) => { const c = navCount(v); return `<button class="navlink${ui.view === v ? ' active' : ''}" data-nav="${v}">${icon(v)}<span>${label}</span>${c ? `<span class="navcount">${c}</span>` : ''}</button>`; };
+  $('#sideNav').innerHTML = NAV.map(link).join('');
+  const bottom = ['dashboard', 'finder', 'entries', 'compare'];
+  const inMore = !bottom.includes(ui.view);
+  $('#bottomNav').innerHTML = NAV.filter(n => bottom.includes(n[0])).map(([v, , short]) => {
+    const c = navCount(v);
+    return `<button class="${ui.view === v ? 'active' : ''}" data-nav="${v}" aria-label="${short}">${icon(v)}<span>${short}</span>${c ? `<span class="navcount">${c}</span>` : ''}</button>`;
+  }).join('') + `<button class="${inMore ? 'active' : ''}" data-action="openDrawer" aria-label="More">${icon('more')}<span>More</span></button>`;
+  $('#drawerNav').innerHTML = NAV.filter(n => !bottom.includes(n[0])).map(link).join('') +
+    `<button class="navlink" data-action="toggleTheme">${icon(state.settings.theme === 'dark' ? 'sun' : 'moon')}<span>Switch to ${state.settings.theme === 'dark' ? 'light' : 'dark'} theme</span></button>`;
+}
+function show(view) {
+  if (!NAV.some(n => n[0] === view)) view = 'dashboard';
+  ui.view = view;
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
+  closeDrawer();
+  if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view);
+  if (view === 'settings') renderSettings();
+  renderNav();
+  window.scrollTo({ top: 0 });
+}
+function openDrawer() { $('#drawer').classList.add('open'); $('#drawerBg').classList.add('open'); }
+function closeDrawer() { $('#drawer').classList.remove('open'); $('#drawerBg').classList.remove('open'); }
+
+function applyTheme() {
+  document.documentElement.dataset.theme = state.settings.theme;
+  const dark = state.settings.theme === 'dark';
+  $('#themeToggle').innerHTML = icon(dark ? 'sun' : 'moon') + `<span class="sr">${dark ? 'Light' : 'Dark'} theme</span>`;
+}
+
+/* =====================================================================
+   Render: everything
+   ===================================================================== */
+function renderAll() {
+  evalCache = new Map();
+  for (const id of [...ui.selected]) if (!state.entries.some(e => e.id === id)) ui.selected.delete(id);
+  for (const id of [...ui.compare]) if (!state.entries.some(e => e.id === id)) ui.compare.delete(id);
+  applyTheme();
+  renderNav();
+  renderBanner();
+  renderDashboard();
+  renderFinder();
+  renderEntries();
+  renderCompare();
+  renderShortlist();
+  renderDb();
+  renderStorageInfo();
+}
+function renderBanner() {
+  const out = [];
+  if (!storage.available) out.push(`<div class="notice bad banner"><b>Browser storage is unavailable.</b>&nbsp;Nothing will be saved after you close this page. If you opened the file directly, run a local server (see README), or export a JSON backup before leaving.</div>`);
+  const bad = Object.keys(storage.corrupt);
+  if (bad.length) out.push(`<div class="notice bad banner"><div><b>Some saved data could not be read</b> (${bad.map(k => esc(KEYS[k])).join(', ')}). Defaults were loaded instead. Download the unreadable data before making changes, because the next save will replace it.<div class="row" style="margin-top:8px"><button class="btn sm" data-action="downloadCorrupt">Download unreadable data</button><button class="btn sm ghost" data-action="dismissCorrupt">Dismiss</button></div></div></div>`);
+  $('#banner').innerHTML = out.join('');
+}
+function renderStorageInfo() {
+  $('#storageWarning2').textContent = STORAGE_WARNING;
+  let bytes = 0;
+  try { for (const k of Object.values(KEYS)) bytes += (localStorage.getItem(k) || '').length * 2; } catch (e) { /* storage unavailable */ }
+  const txt = storage.available ? `Stored locally: ${(bytes / 1024).toFixed(1)} KB across ${Object.values(KEYS).join(', ')}. App version ${APP_VERSION}. No cloud sync.` : 'Storage unavailable in this browser context.';
+  $('#storageInfo').textContent = txt;
+  $('#sideStorage').innerHTML = storage.available ? `${state.entries.length} entries · ${(bytes / 1024).toFixed(1)} KB local` : '<span class="c-red">Storage unavailable</span>';
+  $$('.app-version').forEach(el => (el.textContent = APP_VERSION));
+}
+
+function verdictBadge(r) {
+  if (!r || !r.verdict) return '<span class="badge v-NONE">—</span>';
+  return `<span class="badge v-${r.verdict}">${VERDICT_LABEL[r.verdict]}</span>${r.provisional ? ' <span class="tag warn" title="Not verified yet">Unverified</span>' : ''}`;
+}
+
+/* ----- Dashboard ----- */
+function rankedDeals(list) {
+  return list.map(e => ({ e, r: ev(e) })).filter(x => x.r.score != null && x.r.verdict !== 'REJECT')
+    .sort((a, b) => b.r.score - a.r.score || a.e.price - b.e.price);
+}
+function dealRow({ e, r }, i) {
+  return `<div class="deal"><span class="rank${i === 0 ? ' first' : ''}">${i + 1}</span>
+    <div class="main"><div class="title">${esc(configLabel(e))}</div><div class="meta">${esc(e.seller || e.platform || 'Unknown seller')}${e.platform && e.seller ? ' · ' + esc(e.platform) : ''} · ${e.battery != null ? e.battery + '% battery' : 'battery ?'} · ${esc(warrantyInfo(e.warranty).label)}</div></div>
+    <div><div class="price">${money(e.price)}</div><div style="text-align:right">${verdictBadge(r)}</div></div></div>`;
+}
+function renderDashboard() {
+  if (document.activeElement !== $('#dashBudget')) $('#dashBudget').value = state.settings.budget;
+  const E = state.entries, budget = state.settings.budget;
+  const prices = E.map(e => e.price);
+  const lowest = E.length ? E.reduce((a, b) => (b.price < a.price ? b : a)) : null;
+  const deals = rankedDeals(E);
+  const best = deals[0];
+  const avg = prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : null;
+  const models = new Set(E.map(configLabel));
+  const over = E.filter(e => e.price > budget).length;
+  const stat = (label, value, sub, id) => `<div class="stat" id="${id}"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub || '&nbsp;'}</div></div>`;
+  const stats = [
+    stat('Total entries', E.length, E.length ? `${new Set(E.map(e => localDate(e.ts))).size} market day(s)` : 'Add your first offer', 'st-total'),
+    stat('Shortlisted', state.shortlist.length, state.shortlist.filter(s => s.fav).length + ' favourite(s)', 'st-short'),
+    stat('Lowest price', lowest ? money(lowest.price) : '—', lowest ? esc(configLabel(lowest)) : '', 'st-low'),
+    stat('Best deal', best ? money(best.e.price) : '—', best ? esc(configLabel(best.e)) + ' · ' + VERDICT_LABEL[best.r.verdict] : 'Needs entries with a reference', 'st-best'),
+    stat('Average price', avg != null ? money(avg) : '—', E.length ? 'across all entries' : '', 'st-avg'),
+    stat('Models tracked', models.size, 'distinct configurations', 'st-models'),
+    stat('Above budget', `<span class="${over ? 'c-red' : ''}">${over}</span>`, 'budget ' + money(budget), 'st-over'),
+    stat('Reference prices', state.db.length, 'in price database', 'st-db')
+  ].join('');
+  const recent = [...E].sort((a, b) => b.ts - a.ts).slice(0, 5);
+  $('#dash').innerHTML = `
+    <div class="stats">${stats}</div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));margin-top:14px">
+      <div class="card"><div class="card-head"><h2>Best Deals Found</h2><button class="btn sm" data-nav="compare">Compare</button></div>
+        <div id="bestDeals">${deals.length ? deals.slice(0, 5).map(dealRow).join('') : `<div class="empty"><div class="big">No ranked deals yet</div>Add market entries for configurations in the price database to see them ranked here.</div>`}</div></div>
+      <div class="card"><div class="card-head"><h2>Recent entries</h2><button class="btn sm" data-nav="entries">View all</button></div>
+        ${recent.length ? recent.map(e => `<div class="deal"><div class="main"><div class="title">${esc(configLabel(e))}${e.price > budget ? ' <span class="tag bad">Over budget</span>' : ''}</div><div class="meta">${localDate(e.ts)} ${localTime(e.ts)} · ${esc(e.seller || e.platform || 'Unknown seller')}</div></div><div><div class="price">${money(e.price)}</div><div style="text-align:right">${verdictBadge(ev(e))}</div></div></div>`).join('') : `<div class="empty"><div class="big">Nothing recorded yet</div>On market day, tap <b>+ ADD MARKET ENTRY</b> for each offer you see.</div>`}
+      </div>
+    </div>
+    <div class="notice" style="margin-top:14px" id="storageWarning">${esc(STORAGE_WARNING)}</div>`;
+}
+
+/* ----- Price finder ----- */
+function finderOptions() {
+  const f = ui.finder, db = state.db;
+  const chips = [...new Set(CHIPS.concat(db.map(r => r.chip)))];
+  const has = pred => db.some(pred);
+  return {
+    chips: chips.map(c => ({ v: c, ok: has(r => r.chip === c) })),
+    families: FAMILIES.map(fm => ({ v: fm, ok: !!f.chip && has(r => r.chip === f.chip && r.family === fm) })),
+    rams: RAMS.map(m => ({ v: m, ok: !!f.family && has(r => r.chip === f.chip && r.family === f.family && r.ram === m) })),
+    ssds: SSDS.map(s => ({ v: s, ok: !!f.ram && has(r => r.chip === f.chip && r.family === f.family && r.ram === f.ram && r.ssd === s) }))
+  };
+}
+/** Clear later steps that are no longer valid, and auto-pick a step with a single option. */
+function normalizeFinder() {
+  const f = ui.finder;
+  for (let pass = 0; pass < 4; pass++) {
+    const o = finderOptions();
+    if (f.chip && !o.chips.find(x => x.v === f.chip && x.ok)) f.chip = null;
+    if (!f.chip) f.family = null; else if (f.family && !o.families.find(x => x.v === f.family && x.ok)) f.family = null;
+    if (!f.family) f.ram = null; else if (f.ram && !o.rams.find(x => x.v === f.ram && x.ok)) f.ram = null;
+    if (!f.ram) f.ssd = null; else if (f.ssd && !o.ssds.find(x => x.v === f.ssd && x.ok)) f.ssd = null;
+    const o2 = finderOptions();
+    const only = arr => { const ok = arr.filter(x => x.ok); return ok.length === 1 ? ok[0].v : null; };
+    if (f.chip && !f.family && only(o2.families)) f.family = only(o2.families);
+    else if (f.family && !f.ram && only(o2.rams)) f.ram = only(o2.rams);
+    else if (f.ram && !f.ssd && only(o2.ssds)) f.ssd = only(o2.ssds);
+    else break;
+  }
+}
+function finderMatches() {
+  const f = ui.finder;
+  if (!f.ssd) return [];
+  return state.db.filter(r => r.chip === f.chip && r.family === f.family && r.ram === f.ram && r.ssd === f.ssd);
+}
+function finderRef() {
+  const m = finderMatches();
+  return m.find(r => r.id === ui.finder.rowId) || m[0] || null;
+}
+function renderFinder() {
+  normalizeFinder();
+  const f = ui.finder, o = finderOptions();
+  const step = (n, title, key, opts, fmt, done) => `<div class="step${done ? ' done' : ''}"><div class="step-title"><span class="step-num">${n}</span>${title}</div><div class="pills">${opts.map(x =>
+    `<button type="button" class="pick${f[key] === x.v ? ' sel' : ''}" data-action="pick" data-step="${key}" data-v="${x.v}" ${x.ok ? '' : 'disabled'} title="${x.ok ? '' : 'No reference price yet'}">${fmt(x.v)}${!x.ok && key === 'chip' ? ' <span class="sub">unavailable</span>' : ''}</button>`).join('')}</div></div>`;
+  $('#finderSteps').innerHTML =
+    step(1, 'Chip', 'chip', o.chips, v => v, !!f.chip) +
+    (f.chip ? step(2, 'Family', 'family', o.families, v => 'MacBook ' + v, !!f.family) : '') +
+    (f.family ? step(3, 'RAM', 'ram', o.rams, v => v + 'GB', !!f.ram) : '') +
+    (f.ram ? step(4, 'SSD', 'ssd', o.ssds, ssdLabel, !!f.ssd) : '') +
+    `<div class="row"><button class="btn sm ghost" data-action="finderReset" ${f.chip ? '' : 'disabled'}>Start over</button>${o.chips.some(c => !c.ok) ? `<span class="tiny muted">Crossed-out chips have no reference price yet. Add one in Price Database.</span>` : ''}</div>`;
+
+  const matches = finderMatches();
+  if (!matches.length) {
+    $('#finderResult').innerHTML = `<div class="card empty"><div class="big">Pick a configuration</div>Each step only shows what exists in your price database.</div>`;
+  } else {
+    if (!matches.some(r => r.id === f.rowId)) f.rowId = matches[0].id;
+    $('#finderResult').innerHTML = matches.map(ref => {
+      const b = budgetStatus(ref);
+      const ents = state.entries.filter(e => findRef(e) === ref);
+      const low = ents.length ? Math.min(...ents.map(e => e.price)) : null;
+      return `<div class="result" data-ref="${esc(ref.id)}" style="margin-bottom:12px">
+        <div class="row" style="justify-content:space-between"><div class="cfg" id="finderCfg">${esc(configLabel(ref))}</div><span class="tag ${b.cls}" id="finderBudget">${b.text}</span></div>
+        <div class="muted small">${esc(ref.size)} · ${ref.ram}GB unified memory · ${ssdLabel(ref.ssd)} SSD</div>
+        <div class="price-pair">
+          <div><div class="k">Ideal price</div><div class="v c-green" id="finderIdeal">${money(ref.ideal)}</div></div>
+          <div><div class="k">Max price</div><div class="v c-amber" id="finderMax">${money(ref.max)}</div></div>
+          <div><div class="k">Ideal–max gap</div><div class="v">${money(ref.max - ref.ideal)}</div></div>
+        </div>
+        <div class="row small"><span class="tag ok">In price database</span><span class="muted">${ents.length ? `${ents.length} market entr${ents.length === 1 ? 'y' : 'ies'} · lowest ${money(low)}` : 'No market entries for this config yet'}</span></div>
+        <div class="row" style="margin-top:12px">${matches.length > 1 ? `<button class="btn sm ${f.rowId === ref.id ? 'on' : ''}" data-action="finderUseRow" data-id="${esc(ref.id)}">${f.rowId === ref.id ? 'Evaluating this' : 'Evaluate this'}</button>` : ''}
+          <button class="btn sm" data-action="addFromFinder" data-id="${esc(ref.id)}">+ Add market entry for this</button>
+          <button class="btn sm" data-action="filterFromFinder" data-id="${esc(ref.id)}">See entries</button></div>
+      </div>`;
+    }).join('');
+  }
+  renderEvalResult();
+}
+function readEvalForm() {
+  const F = $('#evalForm');
+  return {
+    price: num(F.price.value), battery: num(F.battery.value), condition: F.condition.value, warranty: F.warranty.value,
+    repair: F.repair.value, verified: F.verified.checked, issues: $$('input[name=issue]:checked', F).map(i => i.value)
+  };
+}
+function renderEvalResult() {
+  const box = $('#evalResult');
+  const ref = finderRef();
+  if (!ref) { box.innerHTML = `<div class="muted small">Select a configuration above first.</div>`; return; }
+  const input = readEvalForm();
+  const errs = [];
+  if (input.price != null && (Number.isNaN(input.price) || input.price <= 0)) errs.push('Asking price must be a positive number.');
+  if (input.battery != null && (Number.isNaN(input.battery) || input.battery < 0 || input.battery > 100)) errs.push('Battery health must be between 0 and 100.');
+  if (errs.length) { box.innerHTML = `<div class="errors">${errs.map(esc).join('<br>')}</div>`; return; }
+  if (input.price == null) { box.innerHTML = `<div class="muted small">Enter the asking price for <b>${esc(configLabel(ref))}</b> to get a verdict.</div>`; return; }
+  const r = evaluate({ ...input, ...ref, size: ref.size, ref });
+  box.innerHTML = evaluationHtml(r, ref) + `<div class="row" style="margin-top:12px"><button class="btn primary sm" data-action="saveEvalAsEntry">Save as market entry</button></div>`;
+}
+/** The full, transparent breakdown shared by the evaluator and the entry preview. */
+function evaluationHtml(r, ref) {
+  if (!r.verdict) return '';
+  const rows = [];
+  const kv = (k, v, cls = '') => rows.push(`<div class="k">${k}</div><div class="v ${cls}">${v}</div>`);
+  if (r.ref) {
+    kv('Ideal (reference)', money(r.ideal));
+    kv('Adjusted ideal', money(r.adjIdeal), 'c-green');
+    kv('Max (reference)', money(r.max));
+    kv('Adjusted max', money(r.adjMax), 'c-amber');
+    kv(`Negotiate up to (+${state.settings.negotiateTolerance}%)`, money(r.negLimit));
+    rows.push('<div class="sep"></div>');
+    kv('Asking price', money(r.price));
+    kv('Difference vs adjusted ideal', signed(r.diffIdeal), r.diffIdeal > 0 ? 'c-red' : 'c-green');
+    kv('Difference vs adjusted max', signed(r.diffMax), r.diffMax > 0 ? 'c-red' : 'c-green');
+    rows.push('<div class="sep"></div>');
+    if (r.verdict !== 'REJECT') {
+      kv('Negotiation target (open at)', money(r.target), 'c-green');
+      kv('Walk away above', money(r.walkAway));
+    }
+  } else kv('Asking price', money(r.price));
+  const bd = r.adj.items.map(i => `<li><span>${esc(i.label)} <span class="muted">· ${esc(i.detail)}</span></span><span class="num">${signed(i.amount)}</span></li>`).join('') +
+    `<li><span>Total adjustment (applied once to ideal and max)</span><span class="num">${signed(r.adj.total)}</span></li>`;
+  return `<div class="verdict-big"><span class="badge v-${r.verdict}" id="verdictBadge">${VERDICT_LABEL[r.verdict]}</span>${r.provisional ? '<span class="tag warn">Unverified: provisional</span>' : ''}${r.ref ? `<span class="muted small">${esc(configLabel(r.ref))}</span>` : ''}</div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))">
+      <div class="kv">${rows.join('')}</div>
+      <div><div class="field-label" style="margin-bottom:4px">Adjustment breakdown</div><ul class="breakdown">${bd}</ul>
+      <div class="tiny muted" style="margin-top:6px">Valuation adjustments for negotiating, not repair quotes. Reference assumes Excellent condition, battery ≥ 95%, no warranty.</div></div>
+    </div>
+    ${r.notes.length ? `<ul class="notes-list">${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}`;
+}
+
+/* ----- Market entries ----- */
+function readFilters() {
+  const v = id => $('#' + id).value;
+  ui.filters = {
+    q: v('fl-q').trim().toLowerCase(), chip: v('fl-chip'), family: v('fl-family'), ram: v('fl-ram'), ssd: v('fl-ssd'),
+    platform: v('fl-platform'), condition: v('fl-condition'), verdict: v('fl-verdict'),
+    pmin: num(v('fl-pmin')), pmax: num(v('fl-pmax')), bmin: num(v('fl-bmin')), dfrom: v('fl-dfrom'), dto: v('fl-dto')
+  };
+}
+function filterEntries(list, f = ui.filters) {
+  return list.filter(e => {
+    if (f.chip && e.chip !== f.chip) return false;
+    if (f.family && e.family !== f.family) return false;
+    if (f.ram && e.ram !== +f.ram) return false;
+    if (f.ssd && e.ssd !== +f.ssd) return false;
+    if (f.platform && e.platform !== f.platform) return false;
+    if (f.condition && e.condition !== f.condition) return false;
+    if (f.pmin != null && !Number.isNaN(f.pmin) && e.price < f.pmin) return false;
+    if (f.pmax != null && !Number.isNaN(f.pmax) && e.price > f.pmax) return false;
+    if (f.bmin != null && !Number.isNaN(f.bmin) && (e.battery == null || e.battery < f.bmin)) return false;
+    const d = localDate(e.ts);
+    if (f.dfrom && d < f.dfrom) return false;
+    if (f.dto && d > f.dto) return false;
+    if (f.verdict && (ev(e).verdict || '') !== f.verdict) return false;
+    if (f.q) {
+      const hay = [configLabel(e), e.seller, e.platform, e.location, e.notes, e.contact, e.color, e.cpu, e.id].join(' ').toLowerCase();
+      if (!hay.includes(f.q)) return false;
+    }
+    return true;
+  });
+}
+function sortEntries(list, key = ui.sort) {
+  const a = [...list];
+  const nullLast = (x, y) => (x == null) - (y == null);
+  switch (key) {
+    case 'price': return a.sort((x, y) => x.price - y.price || y.ts - x.ts);
+    case 'deal': return a.sort((x, y) => { const sx = ev(x).score, sy = ev(y).score; return nullLast(sx, sy) || (sy - sx) || x.price - y.price; });
+    case 'battery': return a.sort((x, y) => nullLast(x.battery, y.battery) || (y.battery - x.battery) || x.price - y.price);
+    case 'warranty': return a.sort((x, y) => warrantyInfo(y.warranty).rank - warrantyInfo(x.warranty).rank || x.price - y.price);
+    default: return a.sort((x, y) => y.ts - x.ts);
+  }
+}
+const visibleEntries = () => sortEntries(filterEntries(state.entries));
+function activeFilterCount() { return Object.entries(ui.filters).filter(([k, v]) => k !== 'q' && v != null && v !== '' && !Number.isNaN(v)).length; }
+function renderEntries() {
+  const list = visibleEntries();
+  const total = state.entries.length;
+  $('#entriesCount').textContent = total ? `${list.length} of ${total} entries shown` : 'No entries yet';
+  const fc = activeFilterCount();
+  $('#filterBtn').textContent = fc ? `Filters (${fc})` : 'Filters';
+  const sel = ui.selected;
+  $('#bulkbar').innerHTML = sel.size ? `<div class="bulkbar"><span>${sel.size} selected</span><span class="spacer" style="flex:1"></span>
+    <button class="btn sm" data-action="bulkShortlist">Shortlist</button><button class="btn sm" data-action="bulkCompare">Compare</button>
+    <button class="btn sm danger" data-action="bulkDelete">Delete</button><button class="btn sm ghost" data-action="clearSelection">Clear</button></div>` : '';
+  if (!total) {
+    $('#entriesTable').innerHTML = `<div class="card empty"><div class="big">No market entries yet</div>Record every offer you see: same config from different sellers is fine.<div style="margin-top:12px"><button class="btn primary btn-add" data-action="addEntry">+ ADD MARKET ENTRY</button></div></div>`;
+    return;
+  }
+  if (!list.length) { $('#entriesTable').innerHTML = `<div class="card empty"><div class="big">No entries match these filters</div><button class="btn sm" data-action="clearFilters">Clear filters</button></div>`; return; }
+  const budget = state.settings.budget;
+  const shortIds = new Set(state.shortlist.map(s => s.id));
+  const allSel = list.every(e => sel.has(e.id));
+  const rows = list.map(e => {
+    const r = ev(e), url = safeUrl(e.url);
+    return `<tr class="${e.price > budget ? 'over-budget' : ''}${sel.has(e.id) ? ' sel' : ''}" data-id="${esc(e.id)}">
+      <td data-label="Select" class="sel-cell"><input type="checkbox" class="rowsel" data-id="${esc(e.id)}" ${sel.has(e.id) ? 'checked' : ''} aria-label="Select entry" style="width:18px;height:18px;accent-color:var(--accent)"></td>
+      <td data-label="Date / time" class="num date-cell">${localDate(e.ts)}<div class="tiny muted">${localTime(e.ts)}</div></td>
+      <td data-label="Seller">${esc(e.seller || '—')}<div class="tiny muted">${esc(e.platform || '')}${e.location ? ' · ' + esc(e.location) : ''}</div></td>
+      <td data-label="Model" class="head"><b>${esc(modelName(e))}</b>${shortIds.has(e.id) ? ' <span title="Shortlisted" style="color:#ffcc00">★</span>' : ''}</td>
+      <td data-label="RAM" class="num">${e.ram}GB</td>
+      <td data-label="Storage" class="num">${ssdLabel(e.ssd)}</td>
+      <td data-label="Price" class="r num"><b>${money(e.price)}</b>${e.price > budget ? '<div><span class="tag bad">Over budget</span></div>' : ''}</td>
+      <td data-label="Battery" class="r num">${e.battery != null ? e.battery + '%' : '—'}${e.cycles != null ? `<div class="tiny muted">${e.cycles} cycles</div>` : ''}</td>
+      <td data-label="Warranty">${esc(warrantyInfo(e.warranty).label)}</td>
+      <td data-label="Verdict">${verdictBadge(r)}</td>
+      <td data-label="Actions" class="actions-cell"><div class="actions">
+        <button class="btn xs" data-action="editEntry" data-id="${esc(e.id)}">Edit</button>
+        <button class="btn xs" data-action="dupEntry" data-id="${esc(e.id)}">Duplicate</button>
+        <button class="btn xs ${shortIds.has(e.id) ? 'on' : ''}" data-action="toggleShortlist" data-id="${esc(e.id)}">${shortIds.has(e.id) ? '★ Listed' : '☆ Shortlist'}</button>
+        <button class="btn xs ${ui.compare.has(e.id) ? 'on' : ''}" data-action="toggleCompare" data-id="${esc(e.id)}">${ui.compare.has(e.id) ? '✓ Compare' : 'Compare'}</button>
+        ${url ? `<a class="btn xs" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open URL ↗</a>` : ''}
+        <button class="btn xs danger" data-action="deleteEntry" data-id="${esc(e.id)}">Delete</button>
+      </div></td></tr>`;
+  }).join('');
+  $('#entriesTable').innerHTML = `<div class="table-wrap"><table class="tbl resp" id="entriesTbl"><thead><tr>
+    <th><input type="checkbox" id="selAll" ${allSel ? 'checked' : ''} aria-label="Select all shown" style="width:18px;height:18px;accent-color:var(--accent)"></th>
+    <th>Date / time</th><th>Seller</th><th>Model</th><th>RAM</th><th>Storage</th><th class="r">Price</th><th class="r">Battery</th><th>Warranty</th><th>Verdict</th><th>Actions</th>
+    </tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="row" style="margin-top:8px"><label class="check small"><input type="checkbox" id="selAllMobile" ${allSel ? 'checked' : ''}><span>Select all ${list.length} shown</span></label></div>`;
+}
+
+/* ----- Compare ----- */
+function renderCompare() {
+  const box = $('#compareView');
+  const E = state.entries;
+  if (E.length < 2) { box.innerHTML = `<div class="card empty"><div class="big">Add at least two market entries to compare</div><button class="btn primary btn-add" data-action="addEntry">+ ADD MARKET ENTRY</button></div>`; return; }
+  const chosen = E.filter(e => ui.compare.has(e.id));
+  const picker = `<details class="card" ${chosen.length < 2 ? 'open' : ''} id="cmpPicker"><summary style="cursor:pointer;font-weight:650">Choose entries to compare (${chosen.length} selected)</summary>
+    <div class="picker" style="margin-top:10px">${sortEntries(E, 'newest').map(e => `<label><input type="checkbox" class="cmp-pick" data-id="${esc(e.id)}" ${ui.compare.has(e.id) ? 'checked' : ''}><span style="flex:1">${esc(configLabel(e))} · ${esc(e.seller || e.platform || '—')}</span><b class="num">${money(e.price)}</b></label>`).join('')}</div>
+    <div class="row" style="margin-top:10px"><button class="btn sm" data-action="compareShortlist" ${state.shortlist.length >= 2 ? '' : 'disabled'}>Use shortlist</button><button class="btn sm ghost" data-action="clearCompare" ${chosen.length ? '' : 'disabled'}>Clear selection</button></div></details>`;
+  if (chosen.length < 2) { box.innerHTML = picker + `<div class="card empty" style="margin-top:12px"><div class="big">Pick 2 or more entries</div>Tick them above, or use <b>Compare</b> on the Market Entries table.</div>`; return; }
+
+  // Rank by value score; entries without a reference come after, rejected ones last.
+  const items = chosen.map(e => ({ e, r: ev(e) }));
+  const order = [...items].sort((a, b) => {
+    const ka = a.r.verdict === 'REJECT' ? 2 : a.r.score == null ? 1 : 0, kb = b.r.verdict === 'REJECT' ? 2 : b.r.score == null ? 1 : 0;
+    return ka - kb || (b.r.score || 0) - (a.r.score || 0) || a.e.price - b.e.price;
+  });
+  order.forEach((x, i) => (x.rank = i + 1));
+  const best = order[0].r.score != null && order[0].r.verdict !== 'REJECT' ? order[0] : null;
+  const minPrice = Math.min(...items.map(x => x.e.price));
+  const cheapest = items.find(x => x.e.price === minPrice);
+  const cols = order;
+  const cell = (x, html) => `<td class="${best && x === best ? 'best' : ''}">${html}</td>`;
+  const row = (label, fn) => `<tr><td>${label}</td>${cols.map(x => cell(x, fn(x))).join('')}</tr>`;
+  const rows = [
+    row('Value rank', x => `<b>#${x.rank}</b>${best && x === best ? ' <span class="tag ok">Best offer</span>' : ''}`),
+    row('Verdict', x => verdictBadge(x.r)),
+    row('Value score', x => x.r.score == null ? '—' : x.r.verdict === 'REJECT' ? 'Rejected' : `<span class="num">${x.r.score > 0 ? '+' : ''}${x.r.score}</span>${x.r.penalties.length ? `<div class="tiny muted">${x.r.penalties.map(p => esc(p.label) + ' −' + p.pts).join(', ')}</div>` : ''}`),
+    row('Model', x => esc(modelName(x.e))),
+    row('Chip', x => esc(x.e.chip)),
+    row('CPU config', x => esc(x.e.cpu || 'Unknown')),
+    row('RAM', x => x.e.ram + 'GB'),
+    row('SSD', x => ssdLabel(x.e.ssd)),
+    row('Asking price', x => `<b class="num">${money(x.e.price)}</b>`),
+    row('Price difference', x => x.e.price === minPrice ? '<span class="tag ok">Cheapest</span>' : `<span class="num c-red">+${money(x.e.price - minPrice)}</span>`),
+    row('Ideal', x => money(x.r.ideal)),
+    row('Max', x => money(x.r.max)),
+    row('Adjusted ideal', x => money(x.r.adjIdeal)),
+    row('Difference from ideal', x => x.r.ref ? `<span class="${x.e.price - x.r.ideal > 0 ? 'c-red' : 'c-green'}">${signed(x.e.price - x.r.ideal)}</span>` : '—'),
+    row('Vs adjusted ideal', x => x.r.ref ? `<span class="${x.r.diffIdeal > 0 ? 'c-red' : 'c-green'}">${signed(x.r.diffIdeal)}</span>` : '—'),
+    row('Battery-adjusted price', x => `${money(x.r.batteryAdjPrice)}<div class="tiny muted">price + battery deduction</div>`),
+    row('Effective price', x => `${money(x.r.effectivePrice)}<div class="tiny muted">after all adjustments</div>`),
+    row('Battery', x => x.e.battery != null ? x.e.battery + '%' : 'Unknown'),
+    row('Cycles', x => x.e.cycles != null ? x.e.cycles : '—'),
+    row('Condition', x => esc(x.e.condition || 'Not specified')),
+    row('Warranty', x => esc(warrantyInfo(x.e.warranty).label)),
+    row('Verified', x => x.e.verified ? '<span class="tag ok">Yes</span>' : '<span class="tag warn">No</span>'),
+    row('Issues', x => x.e.issues.length ? `<span class="c-red">${x.e.issues.map(k => esc(issueLabel(k))).join('<br>')}</span>` : 'None flagged'),
+    row('Seller', x => esc([x.e.seller, x.e.platform].filter(Boolean).join(' · ') || '—')),
+    row('Location', x => esc(x.e.location || '—')),
+    row('Notes', x => `<div class="small" style="max-width:220px;white-space:pre-wrap">${esc(x.e.notes || '—')}</div>`),
+    row('', x => `<div class="actions"><button class="btn xs" data-action="toggleCompare" data-id="${esc(x.e.id)}">Remove</button><button class="btn xs" data-action="toggleShortlist" data-id="${esc(x.e.id)}">${state.shortlist.some(s => s.id === x.e.id) ? '★ Listed' : '☆ Shortlist'}</button></div>`)
+  ].join('');
+  let explain = '';
+  if (best && cheapest && cheapest !== best) {
+    const why = [];
+    if (cheapest.r.verdict === 'REJECT') why.push('it has a serious issue flagged');
+    if (cheapest.r.adj.total < best.r.adj.total) why.push(`its battery/condition/warranty adjustments total ${signed(cheapest.r.adj.total)} vs ${signed(best.r.adj.total)}`);
+    if (cheapest.r.penalties.length) why.push('risk: ' + cheapest.r.penalties.map(p => p.label.toLowerCase()).join(', '));
+    if (!cheapest.r.ref) why.push('it has no reference price');
+    explain = `<div class="notice info" style="margin-top:12px">The cheapest offer (${esc(configLabel(cheapest.e))} at ${money(cheapest.e.price)}) ranks #${cheapest.rank}${why.length ? ' because ' + why.join('; ') : ' because the best offer is further below its own reference'}.</div>`;
+  }
+  box.innerHTML = picker + `<div class="card" style="margin-top:12px" id="cmpSummary">${best ? `<div class="row"><span class="tag ok">Best offer</span><b>${esc(configLabel(best.e))}</b><span class="muted">${esc(best.e.seller || best.e.platform || '')}</span><b class="num">${money(best.e.price)}</b>${verdictBadge(best.r)}</div>` : '<div class="muted">No offer can be ranked: add reference prices or clear flagged issues.</div>'}${explain}</div>
+    <div class="table-wrap" style="margin-top:12px"><table class="tbl cmp" id="cmpTable"><thead><tr><th>Compare</th>${cols.map(x => `<th class="${best && x === best ? 'best' : ''}">${esc(configLabel(x.e))}<div class="tiny" style="text-transform:none;letter-spacing:0">${esc(x.e.seller || x.e.platform || '—')}</div></th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="tiny muted">Ranking uses each offer's distance below its own adjusted ideal (battery, condition and warranty applied once), minus risk penalties for unverified or missing details. Rejected units always rank last.</p>`;
+}
+
+/* ----- Shortlist ----- */
+function renderShortlist() {
+  const box = $('#shortlistView');
+  const items = state.shortlist.map(s => ({ s, e: state.entries.find(e => e.id === s.id) })).filter(x => x.e);
+  if (!items.length) { box.innerHTML = `<div class="card empty"><div class="big">Your shortlist is empty</div>Tap <b>☆ Shortlist</b> on any market entry to save it here.<div style="margin-top:12px"><button class="btn sm" data-nav="entries">Go to Market Entries</button></div></div>`; return; }
+  const ranked = rankedDeals(items.map(x => x.e));
+  const bestE = ranked[0];
+  const sorted = [...items].sort((a, b) => (b.s.fav - a.s.fav) || ((ev(b.e).score ?? -999) - (ev(a.e).score ?? -999)));
+  box.innerHTML = `
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">
+      <div class="card" id="bestCandidate"><div class="card-head"><h2>Best current candidate</h2></div>
+        ${bestE ? `<div class="cfg" style="font-size:20px;font-weight:750">${esc(configLabel(bestE.e))}</div><div class="muted small">${esc(bestE.e.seller || bestE.e.platform || '—')} · ${bestE.e.battery != null ? bestE.e.battery + '% battery' : 'battery ?'} · ${esc(warrantyInfo(bestE.e.warranty).label)}</div>
+          <div class="row" style="margin-top:10px"><b style="font-size:22px" class="num">${money(bestE.e.price)}</b>${verdictBadge(bestE.r)}<span class="muted small">target ${money(bestE.r.target)}</span></div>` : '<div class="muted">No shortlisted entry has a reference price or all are rejected.</div>'}
+      </div>
+      <div class="card"><div class="card-head"><h2>Leaderboard</h2><button class="btn sm" data-action="compareShortlist" ${items.length >= 2 ? '' : 'disabled'}>Compare shortlisted</button></div>
+        ${ranked.length ? ranked.slice(0, 5).map(dealRow).join('') : '<div class="muted small">Nothing rankable yet.</div>'}</div>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));margin-top:14px">
+      ${sorted.map(({ s, e }) => { const r = ev(e); return `<div class="card sl-card" data-id="${esc(e.id)}">
+        <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div style="min-width:0"><b>${esc(configLabel(e))}</b><div class="tiny muted">${esc([e.seller, e.platform, e.location].filter(Boolean).join(' · ') || '—')} · added ${localDate(s.addedAt)}</div></div>
+          <button class="star ${s.fav ? 'on' : ''}" data-action="toggleFav" data-id="${esc(e.id)}" aria-label="${s.fav ? 'Unmark' : 'Mark'} favourite" title="Favourite">${s.fav ? '★' : '☆'}</button></div>
+        <div class="row"><b class="num" style="font-size:18px">${money(e.price)}</b>${verdictBadge(r)}<span class="tiny muted">${e.battery != null ? e.battery + '%' : 'battery ?'} · ${esc(warrantyInfo(e.warranty).label)}</span></div>
+        <label class="field"><span>Personal notes</span><textarea class="sl-note" data-id="${esc(e.id)}" placeholder="What did you think?">${esc(s.note)}</textarea></label>
+        <div class="actions"><button class="btn xs ${ui.compare.has(e.id) ? 'on' : ''}" data-action="toggleCompare" data-id="${esc(e.id)}">${ui.compare.has(e.id) ? '✓ Compare' : 'Compare'}</button><button class="btn xs" data-action="editEntry" data-id="${esc(e.id)}">Edit entry</button><button class="btn xs danger" data-action="toggleShortlist" data-id="${esc(e.id)}">Remove</button></div>
+      </div>`; }).join('')}
+    </div>`;
+}
+
+/* ----- Price database ----- */
+function renderDb() {
+  const rows = [...state.db].sort((a, b) => a.family.localeCompare(b.family) || a.chip.localeCompare(b.chip) || a.ram - b.ram || a.ssd - b.ssd);
+  if (!rows.length) { $('#dbTable').innerHTML = `<div class="card empty"><div class="big">The price database is empty</div>Add a reference price above or reset to defaults.</div>`; return; }
+  const budget = state.settings.budget;
+  $('#dbTable').innerHTML = `<div class="table-wrap"><table class="tbl resp" id="dbTbl"><thead><tr><th>Model</th><th>RAM</th><th>SSD</th><th class="r">Ideal</th><th class="r">Max</th><th class="r">Gap</th><th>Budget</th><th class="r">Entries</th><th>Actions</th></tr></thead><tbody>
+    ${rows.map(r => { const b = budgetStatus(r, budget); const n = state.entries.filter(e => findRef(e) === r).length; return `<tr data-id="${esc(r.id)}">
+      <td data-label="Model" class="head"><b>${esc(modelName(r))}</b> <span class="tiny muted">${esc(r.size)}</span></td>
+      <td data-label="RAM" class="num">${r.ram}GB</td><td data-label="SSD" class="num">${ssdLabel(r.ssd)}</td>
+      <td data-label="Ideal" class="r num c-green">${money(r.ideal)}</td><td data-label="Max" class="r num c-amber">${money(r.max)}</td>
+      <td data-label="Gap" class="r num">${money(r.max - r.ideal)}</td><td data-label="Budget"><span class="tag ${b.cls}">${b.text}</span></td>
+      <td data-label="Entries" class="r num">${n}</td>
+      <td data-label="Actions" class="actions-cell"><div class="actions"><button class="btn xs" data-action="editDbRow" data-id="${esc(r.id)}">Edit</button><button class="btn xs danger" data-action="deleteDbRow" data-id="${esc(r.id)}">Delete</button></div></td></tr>`; }).join('')}
+    </tbody></table></div><p class="tiny muted">${rows.length} reference prices. M4 Air starts at 16GB, and only configurations you add here are evaluated.</p>`;
+}
+function fillDbSizes() {
+  const chip = $('#db-chip').value, fam = $('#db-family').value, cur = $('#db-size').value;
+  const sizes = (SIZES[fam] && SIZES[fam][chip]) || [];
+  $('#db-size').innerHTML = sizes.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('') || '<option value="">Not available</option>';
+  if (sizes.includes(cur)) $('#db-size').value = cur;
+  else if (fam === 'Pro' && sizes.includes('14"')) $('#db-size').value = '14"';
+}
+function resetDbForm() {
+  ui.dbEditingId = null;
+  $('#dbForm').reset(); fillDbSizes();
+  $('#dbFormTitle').textContent = 'Add reference price';
+  $('#dbSave').textContent = 'Add to database';
+  $('#dbCancel').classList.add('hidden');
+  $('#dbErrors').innerHTML = '';
+}
+
+/* ----- Settings ----- */
+function renderSettings() {
+  const s = state.settings, A = s.adjustments;
+  const n = (path, val, attrs = '') => `<input type="number" data-setting="${path}" value="${esc(val)}" inputmode="numeric" ${attrs}>`;
+  const sel = (path, val, opts) => `<select data-setting="${path}">${opts.map(([v, l]) => `<option value="${esc(v)}" ${String(v) === String(val) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  const chk = (path, val, label) => `<label class="check"><input type="checkbox" data-setting="${path}" ${val ? 'checked' : ''}><span>${label}</span></label>`;
+  $('#settingsForm').innerHTML = `
+    <div class="card set-section"><h2>General</h2>
+      <div class="form-grid three" style="margin-top:12px">
+        <label class="field"><span>Budget (₹)</span>${n('budget', s.budget, 'min="1" step="500" id="set-budget"')}</label>
+        <label class="field"><span>Currency display</span>${sel('currencyFormat', s.currencyFormat, [['en-IN', 'Indian grouping (₹1,23,456)'], ['intl', 'International (₹123,456)'], ['compact', 'Compact (₹65k / ₹1.2L)']])}</label>
+        <label class="field"><span>Theme</span>${sel('theme', s.theme, [['dark', 'Dark'], ['light', 'Light']])}</label>
+        <label class="field"><span>Default sort for entries</span>${sel('defaultSort', s.defaultSort, SORTS)}</label>
+        <label class="field"><span>Negotiation tolerance above max (%)</span>${n('negotiateTolerance', s.negotiateTolerance, 'min="0" max="50" step="1"')}</label>
+      </div>
+      ${chk('unverifiedCaution', s.unverifiedCaution, 'Mark Excellent/Good verdicts on unverified units as provisional')}
+    </div>
+    <div class="card set-section"><h2>Adjustments</h2>
+      <p class="muted small">Applied once each to both ideal and max. Reference prices assume Excellent condition, battery ≥ 95% and no warranty. These are valuations, not repair costs.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin-top:10px">
+        <div>${chk('adjustments.battery.enabled', A.battery.enabled, '<b>Battery health</b>')}
+          <table class="set-table"><tr><td class="tiny muted">Health ≥ %</td><td class="tiny muted">Deduct ₹</td></tr>
+          ${A.battery.bands.map((b, i) => `<tr><td>${n(`adjustments.battery.bands.${i}.min`, b.min, 'min="0" max="100"')}</td><td>${n(`adjustments.battery.bands.${i}.amount`, b.amount, 'min="0" step="500"')}</td></tr>`).join('')}
+          <tr><td colspan="2" class="tiny muted">Below the lowest band: avoid / manual assessment.</td></tr></table></div>
+        <div>${chk('adjustments.condition.enabled', A.condition.enabled, '<b>Condition</b>')}
+          <table class="set-table">${CONDITIONS.map(c => `<tr><td>${c}</td><td>${n(`adjustments.condition.values.${c}`, A.condition.values[c], 'step="500"')}</td></tr>`).join('')}</table>
+          <div class="tiny muted">Use negative values for deductions.</div></div>
+        <div>${chk('adjustments.warranty.enabled', A.warranty.enabled, '<b>Warranty premium</b>')}
+          <table class="set-table">${WARRANTIES.map(w => `<tr><td>${esc(w.label)}</td><td>${n(`adjustments.warranty.values.${w.v}`, A.warranty.values[w.v], 'min="0" step="500"')}</td></tr>`).join('')}</table></div>
+      </div>
+    </div>
+    <div class="card set-section"><h2>CSV preferences</h2>
+      <div class="form-grid three" style="margin-top:12px">
+        <label class="field"><span>Delimiter</span>${sel('csv.delimiter', s.csv.delimiter, [[',', 'Comma (,)'], [';', 'Semicolon (;)']])}</label>
+        <label class="field"><span>Default export scope</span>${sel('csv.scope', s.csv.scope, [['filtered', 'Filtered entries'], ['all', 'All entries']])}</label>
+      </div>
+      ${chk('csv.bom', s.csv.bom, 'UTF-8 BOM, so Excel shows ₹ and accents correctly')}
+      ${chk('csv.extraColumns', s.csv.extraColumns, 'Append extra columns (screen, CPU, contact, colour, issues, verified, timestamp) for lossless re-import. The serial number is never exported to CSV.')}
+    </div>
+    <div class="card set-section"><h2>Price database</h2><p class="muted small">${state.db.length} reference prices.</p><div class="row"><button class="btn sm" data-nav="db">Edit price database</button></div></div>`;
+}
+/** Apply one settings field change with validation; returns false (and reverts) when invalid. */
+function applySetting(input) {
+  const path = input.dataset.setting;
+  let value;
+  if (input.type === 'checkbox') value = input.checked;
+  else if (input.type === 'number') {
+    value = num(input.value);
+    const min = input.min !== '' ? +input.min : -Infinity, max = input.max !== '' ? +input.max : Infinity;
+    if (value == null || Number.isNaN(value) || value < min || value > max) {
+      toast(`Invalid value. Must be a number${min > -Infinity ? ' ≥ ' + min : ''}${max < Infinity ? ' and ≤ ' + max : ''}.`, 'err');
+      input.value = getPath(state.settings, path);
+      return false;
+    }
+  } else value = input.value;
+  setPath(state.settings, path, value);
+  if (path === 'defaultSort') { ui.sort = value; $('#sortSel').value = value; }
+  if (path === 'csv.scope') $('#exportScope').value = value;
+  commit();
+  return true;
+}
+const getPath = (o, p) => p.split('.').reduce((a, k) => a[k], o);
+function setPath(o, p, v) { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; }
+
+/* =====================================================================
+   Entry form (add / edit / duplicate)
+   ===================================================================== */
+const pill = (name, v, label) => `<label class="pill" data-v="${esc(v)}"><input type="radio" name="${name}" value="${esc(v)}"><span>${esc(label)}</span></label>`;
+function buildStaticOptions() {
+  const opt = (v, l) => `<option value="${esc(v)}">${esc(l)}</option>`;
+  $('#f-chip').innerHTML = CHIPS.map(c => pill('chip', c, c)).join('');
+  $('#f-family').innerHTML = FAMILIES.map(f => pill('family', f, 'MacBook ' + f)).join('');
+  $('#f-ram').innerHTML = RAMS.map(r => pill('ram', r, r)).join('');
+  $('#f-ssd').innerHTML = SSDS.map(s => pill('ssd', s, ssdLabel(s))).join('');
+  $('#f-platform').innerHTML = opt('', 'Choose…') + PLATFORMS.map(p => opt(p, p)).join('');
+  const conds = opt('', 'Not specified') + CONDITIONS.map(c => opt(c, c)).join('');
+  $('#f-condition').innerHTML = conds; $('#ev-condition').innerHTML = conds;
+  const wars = WARRANTIES.map(w => opt(w.v, w.label)).join('');
+  $('#f-warranty').innerHTML = wars; $('#ev-warranty').innerHTML = wars;
+  const issues = ISSUE_FLAGS.map(([k, l]) => `<label class="check"><input type="checkbox" name="issue" value="${k}"><span>${esc(l)}</span></label>`).join('');
+  $('#f-issues').innerHTML = issues; $('#ev-issues').innerHTML = issues;
+  // Filters
+  const any = l => opt('', l);
+  $('#fl-chip').innerHTML = any('All chips') + CHIPS.map(c => opt(c, c)).join('');
+  $('#fl-family').innerHTML = any('Air & Pro') + FAMILIES.map(f => opt(f, f)).join('');
+  $('#fl-ram').innerHTML = any('Any RAM') + RAMS.map(r => opt(r, r + 'GB')).join('');
+  $('#fl-ssd').innerHTML = any('Any storage') + SSDS.map(s => opt(s, ssdLabel(s))).join('');
+  $('#fl-platform').innerHTML = any('All sellers') + PLATFORMS.map(p => opt(p, p)).join('');
+  $('#fl-condition').innerHTML = any('Any condition') + CONDITIONS.map(c => opt(c, c)).join('');
+  $('#fl-verdict').innerHTML = any('Any verdict') + VERDICTS.map(v => opt(v, VERDICT_LABEL[v])).join('');
+  $('#sortSel').innerHTML = SORTS.map(([v, l]) => opt(v, 'Sort: ' + l)).join('');
+  // DB form
+  $('#db-chip').innerHTML = CHIPS.map(c => opt(c, c)).join('');
+  $('#db-family').innerHTML = FAMILIES.map(f => opt(f, f)).join('');
+  $('#db-ram').innerHTML = RAMS.map(r => opt(r, r + 'GB')).join('');
+  $('#db-ssd').innerHTML = SSDS.map(s => opt(s, ssdLabel(s))).join('');
+  fillDbSizes();
+}
+const radioVal = (form, name) => { const r = form.querySelector(`input[name="${name}"]:checked`); return r ? r.value : ''; };
+const setRadio = (form, name, v) => form.querySelectorAll(`input[name="${name}"]`).forEach(i => (i.checked = String(i.value) === String(v)));
+/** Update size options and "in DB" dots for the chosen chip/family. */
+function refreshEntryFormOptions() {
+  const F = $('#entryForm');
+  const chip = radioVal(F, 'chip'), fam = radioVal(F, 'family');
+  const sizes = (SIZES[fam] && SIZES[fam][chip]) || [];
+  const cur = F.size.value;
+  F.size.innerHTML = sizes.length ? sizes.map(s => `<option value="${esc(s)}">${esc(fam === 'Air' ? 'MacBook Air ' : 'MacBook Pro ')}${esc(s)}</option>`).join('') : '<option value="">Choose chip &amp; family</option>';
+  if (sizes.includes(cur)) F.size.value = cur;
+  else if (sizes.length) {
+    const dbSize = state.db.find(r => r.chip === chip && r.family === fam);
+    F.size.value = dbSize && sizes.includes(dbSize.size) ? dbSize.size : sizes[0];
+  }
+  const size = F.size.value;
+  $$('#f-ram .pill').forEach(p => p.classList.toggle('in-db', state.db.some(r => r.chip === chip && r.family === fam && r.size === size && r.ram === +p.dataset.v)));
+  const ram = +radioVal(F, 'ram');
+  $$('#f-ssd .pill').forEach(p => p.classList.toggle('in-db', state.db.some(r => r.chip === chip && r.family === fam && r.size === size && r.ram === ram && r.ssd === +p.dataset.v)));
+}
+function readEntryForm() {
+  const F = $('#entryForm');
+  return {
+    chip: radioVal(F, 'chip'), family: radioVal(F, 'family'), size: F.size.value, ram: num(radioVal(F, 'ram')), ssd: num(radioVal(F, 'ssd')),
+    price: num(F.price.value), seller: F.seller.value.trim(), platform: F.platform.value, contact: F.contact.value.trim(),
+    battery: num(F.battery.value), cycles: num(F.cycles.value), condition: F.condition.value, warranty: F.warranty.value || 'none',
+    color: F.color.value.trim(), location: F.location.value.trim(), url: F.url.value.trim(), serial: F.serial.value.trim(),
+    photoRef: F.photoRef.value.trim(), cpu: F.cpu.value.trim(), notes: F.notes.value, repair: F.repair.value.trim(),
+    verified: F.verified.checked, issues: $$('input[name=issue]:checked', F).map(i => i.value)
+  };
+}
+function fillEntryForm(e) {
+  const F = $('#entryForm');
+  F.reset();
+  setRadio(F, 'chip', e.chip || ''); setRadio(F, 'family', e.family || '');
+  refreshEntryFormOptions();
+  if (e.size) F.size.value = e.size;
+  setRadio(F, 'ram', e.ram || ''); setRadio(F, 'ssd', e.ssd || '');
+  const set = (n, v) => { F[n].value = v == null ? '' : v; };
+  set('price', e.price); set('seller', e.seller); set('platform', e.platform || ''); set('contact', e.contact);
+  set('battery', e.battery); set('cycles', e.cycles); set('condition', e.condition || ''); set('warranty', e.warranty || 'none');
+  set('color', e.color); set('location', e.location); set('url', e.url); set('serial', e.serial); set('photoRef', e.photoRef);
+  set('cpu', e.cpu); set('notes', e.notes); set('repair', e.repair);
+  F.verified.checked = !!e.verified;
+  $$('input[name=issue]', F).forEach(i => (i.checked = (e.issues || []).includes(i.value)));
+  $('#f-more').open = !!(e.warranty && e.warranty !== 'none' || e.cycles != null || e.contact || e.color || e.location || e.url || e.serial || e.photoRef || e.notes || e.cpu || e.repair || (e.issues && e.issues.length) || e.verified);
+  refreshEntryFormOptions();
+}
+function openEntryForm(mode, e = {}) {
+  ui.entryMode = mode;
+  ui.editingId = mode === 'edit' ? e.id : null;
+  $('#entryTitle').textContent = mode === 'edit' ? 'Edit market entry' : mode === 'dup' ? 'Duplicate entry' : 'Add market entry';
+  $('#entryMeta').textContent = mode === 'edit' ? `${e.id} · recorded ${localDate(e.ts)} ${localTime(e.ts)}` : 'ID, date and time are recorded automatically';
+  $('#entrySaveAnother').classList.toggle('hidden', mode === 'edit');
+  $('#entrySave').textContent = mode === 'edit' ? 'Save changes' : 'Save entry';
+  fillEntryForm(e);
+  $('#entryErrors').innerHTML = '';
+  updateEntryPreview();
+  openModal('entryModal');
+  setTimeout(() => { const F = $('#entryForm'); (radioVal(F, 'chip') ? F.price : $('#f-chip input')).focus({ preventScroll: true }); }, 60);
+}
+function updateEntryPreview() {
+  const e = readEntryForm();
+  const { errors, warnings } = validateEntry(e);
+  const box = $('#entryPreview');
+  if (!e.chip || !e.family || !e.ram || !e.ssd) { box.innerHTML = '<span class="muted">Pick chip, family, RAM and SSD, then the price, to see the verdict live.</span>'; return; }
+  const ref = findRef(e);
+  if (!ref) { box.innerHTML = `<div class="warnings"><b>${esc(configLabel(e))}</b> is not in the price database. You can still save it, but it gets no verdict.</div>`; return; }
+  if (e.price == null || errors.length) { box.innerHTML = `<b>${esc(configLabel(e))}</b>: ideal ${money(ref.ideal)} · max ${money(ref.max)}`; return; }
+  const r = evaluate(e);
+  box.innerHTML = `<div class="row"><span class="badge v-${r.verdict}">${VERDICT_LABEL[r.verdict]}</span>${r.provisional ? '<span class="tag warn">Unverified</span>' : ''}<b>${esc(configLabel(e))}</b></div>
+    <div class="small muted" style="margin-top:6px">Adjusted ideal ${money(r.adjIdeal)} · adjusted max ${money(r.adjMax)} · ${r.diffIdeal > 0 ? signed(r.diffIdeal) + ' over ideal' : signed(r.diffIdeal) + ' vs ideal'}${r.verdict !== 'REJECT' ? ` · target ${money(r.target)}` : ''}</div>
+    ${warnings.length ? `<div class="small c-amber" style="margin-top:6px">${warnings.map(esc).join('<br>')}</div>` : ''}`;
+}
+function saveEntry(another) {
+  const data = readEntryForm();
+  const { errors } = validateEntry(data);
+  if (errors.length) {
+    $('#entryErrors').innerHTML = `<div class="errors" role="alert"><b>Please fix:</b><ul>${errors.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    $('#entryErrors').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    return;
+  }
+  $('#entryErrors').innerHTML = '';
+  let saved;
+  if (ui.entryMode === 'edit') {
+    const idx = state.entries.findIndex(e => e.id === ui.editingId);
+    if (idx < 0) { toast('That entry no longer exists.', 'err'); closeModal('entryModal'); return; }
+    saved = { ...state.entries[idx], ...data, updatedAt: Date.now() };
+    state.entries[idx] = saved;
+  } else {
+    const now = Date.now();
+    saved = { id: uid('E'), ...data, ts: now, createdAt: new Date(now).toISOString(), updatedAt: null };
+    state.entries.push(saved);
+  }
+  commit();
+  const r = ev(saved);
+  toast(`${ui.entryMode === 'edit' ? 'Updated' : 'Saved'}: ${configLabel(saved)} at ${money(saved.price)} · ${r.verdict ? VERDICT_LABEL[r.verdict] : 'no verdict'}`, r.verdict === 'OVERPRICED' || r.verdict === 'REJECT' ? 'warn' : 'ok');
+  if (another) {
+    // Keep the configuration; clear seller-specific fields for the next offer.
+    const keep = { chip: data.chip, family: data.family, size: data.size, ram: data.ram, ssd: data.ssd, platform: data.platform, location: data.location };
+    ui.entryMode = 'new';
+    fillEntryForm(keep);
+    updateEntryPreview();
+    $('#entryForm').price.focus();
+  } else closeModal('entryModal');
+}
+
+/* =====================================================================
+   Entry actions
+   ===================================================================== */
+const findEntry = id => state.entries.find(e => e.id === id);
+async function deleteEntries(ids) {
+  const n = ids.length;
+  if (!n) return;
+  const one = n === 1 ? findEntry(ids[0]) : null;
+  const ok = await confirmDialog({ title: n === 1 ? 'Delete this entry?' : `Delete ${n} entries?`, message: one ? `<b>${esc(configLabel(one))}</b> at ${money(one.price)} from ${esc(one.seller || one.platform || 'unknown seller')} will be removed permanently.` : `${n} selected entries will be removed permanently. This cannot be undone.`, ok: 'Delete' });
+  if (!ok) return;
+  const set = new Set(ids);
+  state.entries = state.entries.filter(e => !set.has(e.id));
+  state.shortlist = state.shortlist.filter(s => !set.has(s.id));
+  ids.forEach(id => { ui.selected.delete(id); ui.compare.delete(id); });
+  commit();
+  toast(n === 1 ? 'Entry deleted' : `${n} entries deleted`);
+}
+function toggleShortlist(id, forceOn) {
+  const i = state.shortlist.findIndex(s => s.id === id);
+  if (i >= 0 && forceOn !== true) state.shortlist.splice(i, 1);
+  else if (i < 0) state.shortlist.push({ id, note: '', fav: false, addedAt: Date.now() });
+}
+
+/* ----- CSV export / import ----- */
+function exportCsv() {
+  const scope = $('#exportScope').value || state.settings.csv.scope;
+  const list = scope === 'all' ? sortEntries(state.entries) : visibleEntries();
+  if (!list.length) { toast('No entries to export.', 'warn'); return; }
+  const csv = entriesToCsv(list);
+  download(`macbuy-entries-${scope}-${stamp()}.csv`, (state.settings.csv.bom ? '﻿' : '') + csv, 'text/csv;charset=utf-8');
+  toast(`Exported ${list.length} entr${list.length === 1 ? 'y' : 'ies'} to CSV`);
+}
+/** Parse a CSV file into a preview; nothing is changed until the user confirms. */
+function prepareImport(text, filename) {
+  let rows;
+  try { rows = parseCsv(text); } catch (err) { toast('Could not read that CSV file.', 'err'); return; }
+  if (rows.length < 2) { toast('The CSV has no data rows.', 'warn'); return; }
+  const headers = rows[0].map(normHeader);
+  const need = ['chip', 'family', 'ram', 'storage', 'askingprice'];
+  const missing = need.filter(h => !headers.includes(h) && !(h !== 'askingprice' && h !== 'ram' && h !== 'storage' && headers.includes('model')));
+  if (missing.length) { toast('CSV is missing required columns: ' + missing.join(', '), 'err', 6000); return; }
+  const existing = new Set(state.entries.map(e => e.id)), inFile = new Set();
+  const items = rows.slice(1).map((cells, i) => {
+    const rec = {}; headers.forEach((h, j) => (rec[h] = cells[j] == null ? '' : cells[j]));
+    const cand = csvRecordToEntry(rec);
+    const { errors } = validateEntry(cand);
+    let status = 'new';
+    if (errors.length) status = 'invalid';
+    else if (cand.id && (existing.has(cand.id) || inFile.has(cand.id))) status = 'duplicate';
+    if (cand.id) inFile.add(cand.id);
+    return { line: i + 2, cand, errors, status };
+  });
+  ui.pendingImport = { items, filename, mode: 'skip' };
+  renderImportPreview();
+  openModal('importModal');
+}
+function renderImportPreview() {
+  const { items, filename, mode } = ui.pendingImport;
+  const count = s => items.filter(x => x.status === s).length;
+  const shown = items.slice(0, 100);
+  $('#importBody').innerHTML = `
+    <div class="row"><b>${esc(filename)}</b><span class="tag ok">${count('new')} new</span><span class="tag warn">${count('duplicate')} duplicate ID</span><span class="tag bad">${count('invalid')} invalid</span></div>
+    ${count('duplicate') ? `<div class="card tight"><div class="field-label">When an Entry ID already exists:</div>
+      <label class="check"><input type="radio" name="importMode" value="skip" ${mode === 'skip' ? 'checked' : ''}><span><b>Skip</b>: keep what you have</span></label>
+      <label class="check"><input type="radio" name="importMode" value="update" ${mode === 'update' ? 'checked' : ''}><span><b>Update</b>: overwrite matching entries with the CSV values (fields missing from the CSV are kept)</span></label>
+      <label class="check"><input type="radio" name="importMode" value="duplicate" ${mode === 'duplicate' ? 'checked' : ''}><span><b>Duplicate</b>: import as new entries with fresh IDs</span></label></div>` : ''}
+    ${count('invalid') ? '<div class="small c-red">Invalid rows are always skipped.</div>' : ''}
+    <div class="table-wrap"><table class="tbl" id="importTbl"><thead><tr><th>Row</th><th>Status</th><th>ID</th><th>Config</th><th class="r">Price</th><th>Seller</th><th>Problem</th></tr></thead><tbody>
+    ${shown.map(x => `<tr><td>${x.line}</td><td><span class="tag ${x.status === 'new' ? 'ok' : x.status === 'duplicate' ? 'warn' : 'bad'}">${x.status}</span></td><td class="mono">${esc(x.cand.id || '(new)')}</td><td>${x.errors.length ? esc([x.cand.chip, x.cand.family].join(' ')) : esc(configLabel(x.cand))}</td><td class="r num">${Number.isFinite(x.cand.price) ? money(x.cand.price) : '—'}</td><td>${esc(x.cand.seller || x.cand.platform || '')}</td><td class="small">${esc(x.errors.join(' '))}</td></tr>`).join('')}
+    </tbody></table></div>${items.length > shown.length ? `<div class="tiny muted">Showing the first ${shown.length} of ${items.length} rows.</div>` : ''}`;
+  $('#importGo').disabled = !items.some(x => x.status !== 'invalid');
+}
+function confirmImport() {
+  const p = ui.pendingImport; if (!p) return;
+  const mode = p.mode || 'skip';
+  let added = 0, updated = 0, skipped = 0;
+  const stripMeta = c => { const { _has, ...rest } = c; return rest; };
+  for (const x of p.items) {
+    if (x.status === 'invalid') { skipped++; continue; }
+    const c = stripMeta(x.cand);
+    if (x.status === 'duplicate') {
+      if (mode === 'skip') { skipped++; continue; }
+      if (mode === 'update') {
+        const idx = state.entries.findIndex(e => e.id === c.id);
+        if (idx >= 0) {
+          // Only overwrite fields that the CSV actually provides; keep serial and other private fields.
+          const cur = state.entries[idx], has = x.cand._has, merged = { ...cur };
+          const map = { seller: 'seller', platform: 'platform', chip: 'chip', family: 'family', ram: 'ram', storage: 'ssd', askingprice: 'price', batteryhealth: 'battery', cyclecount: 'cycles', condition: 'condition', warranty: 'warranty', location: 'location', listingurl: 'url', notes: 'notes', screen: 'size', model: 'size', cpuconfig: 'cpu', contact: 'contact', colour: 'color', color: 'color', photoreference: 'photoRef', repairhistory: 'repair', issues: 'issues', verified: 'verified' };
+          for (const [h, f] of Object.entries(map)) if (has.has(h)) merged[f] = c[f];
+          if (!has.has('batteryhealth')) merged.battery = cur.battery;
+          merged.updatedAt = Date.now();
+          state.entries[idx] = sanitizeEntry(merged) || cur;
+          updated++; continue;
+        }
+      }
+      c.id = uid('E');
+    }
+    if (!c.id || state.entries.some(e => e.id === c.id)) c.id = uid('E');
+    const clean = sanitizeEntry(c);
+    if (clean) { state.entries.push(clean); added++; } else skipped++;
+  }
+  ui.pendingImport = null;
+  closeModal('importModal');
+  commit();
+  toast(`Import done: ${added} added, ${updated} updated, ${skipped} skipped`);
+}
+
+/* ----- JSON backup / restore ----- */
+function buildBackup() {
+  return {
+    app: 'MacBuy', appVersion: APP_VERSION, exportedAt: new Date().toISOString(),
+    theme: state.settings.theme, budget: state.settings.budget,
+    data: { entries: state.entries, priceDatabase: state.db, shortlist: state.shortlist, settings: state.settings }
+  };
+}
+function backupJson() {
+  download(`macbuy-backup-${stamp()}.json`, JSON.stringify(buildBackup(), null, 2), 'application/json');
+  toast('Backup downloaded. Keep it somewhere safe.');
+}
+/** Validate a backup file and stage it; nothing changes until the user confirms. */
+function prepareRestore(text, filename) {
+  let obj;
+  try { obj = JSON.parse(String(text).replace(/^﻿/, '')); } catch (err) { toast('That file is not valid JSON.', 'err'); return; }
+  const d = obj && obj.data;
+  if (!isObj(obj) || obj.app !== 'MacBuy' || !isObj(d) || !Array.isArray(d.entries)) { toast('This is not a MacBuy backup file.', 'err'); return; }
+  const entries = sanitizeEntries(d.entries);
+  const db = Array.isArray(d.priceDatabase) ? d.priceDatabase.map(sanitizeDbRow).filter(Boolean) : null;
+  const settings = mergeSettings(isObj(d.settings) ? d.settings : {});
+  if (obj.theme === 'dark' || obj.theme === 'light') settings.theme = obj.theme;
+  if (Number(obj.budget) > 0) settings.budget = Number(obj.budget);
+  const shortlist = sanitizeShortlist(d.shortlist, entries);
+  ui.pendingRestore = { entries, db, settings, shortlist, raw: obj };
+  const dropped = d.entries.length - entries.length;
+  const newIds = entries.filter(e => !state.entries.some(x => x.id === e.id)).length;
+  $('#restoreBody').innerHTML = `
+    <div class="kv"><div class="k">File</div><div class="v">${esc(filename)}</div>
+      <div class="k">Created</div><div class="v">${esc(obj.exportedAt ? new Date(obj.exportedAt).toLocaleString('en-IN') : 'unknown')}</div>
+      <div class="k">App version</div><div class="v">${esc(obj.appVersion || '?')}</div>
+      <div class="sep"></div>
+      <div class="k">Market entries</div><div class="v">${entries.length}${dropped ? ` <span class="c-red">(${dropped} invalid skipped)</span>` : ''}</div>
+      <div class="k">Reference prices</div><div class="v">${db ? db.length : 'not included (kept)'}</div>
+      <div class="k">Shortlisted</div><div class="v">${shortlist.length}</div>
+      <div class="k">Budget / theme</div><div class="v">${money(settings.budget)} · ${esc(settings.theme)}</div></div>
+    <div class="notice"><div><b>Replace all data</b> swaps your current ${state.entries.length} entries, price DB, shortlist and settings for this backup.<br><b>Merge</b> adds the ${newIds} entr${newIds === 1 ? 'y' : 'ies'} you don't have yet (and missing reference prices and shortlist items) and keeps your settings.</div></div>`;
+  openModal('restoreModal');
+}
+async function restoreReplace() {
+  const p = ui.pendingRestore; if (!p) return;
+  const ok = await confirmDialog({ title: 'Replace all data?', message: `Your current ${state.entries.length} entries, ${state.db.length} reference prices, shortlist and settings will be replaced by the backup (${p.entries.length} entries). This cannot be undone. Consider downloading a backup of the current data first.`, ok: 'Replace everything' });
+  if (!ok) return;
+  state.entries = p.entries; state.db = p.db || state.db; state.shortlist = p.shortlist; state.settings = p.settings;
+  ui.sort = state.settings.defaultSort; $('#sortSel').value = ui.sort;
+  ui.selected.clear(); ui.compare.clear(); ui.pendingRestore = null;
+  closeModal('restoreModal');
+  commit(); if (ui.view === 'settings') renderSettings();
+  toast(`Restored ${state.entries.length} entries from backup`);
+}
+function restoreMerge() {
+  const p = ui.pendingRestore; if (!p) return;
+  const ids = new Set(state.entries.map(e => e.id));
+  const add = p.entries.filter(e => !ids.has(e.id));
+  state.entries.push(...add);
+  let dbAdded = 0;
+  if (p.db) for (const r of p.db) if (!state.db.some(x => configKey(x) === configKey(r))) { state.db.push({ ...r, id: state.db.some(x => x.id === r.id) ? uid('db') : r.id }); dbAdded++; }
+  for (const s of p.shortlist) if (!state.shortlist.some(x => x.id === s.id)) state.shortlist.push(s);
+  ui.pendingRestore = null;
+  closeModal('restoreModal');
+  commit();
+  toast(`Merged: ${add.length} entries and ${dbAdded} reference prices added`);
+}
+
+/* ----- Price DB edits ----- */
+function saveDbRow() {
+  const F = $('#dbForm');
+  const row = { chip: F.chip.value, family: F.family.value, size: F.size.value, ram: +F.ram.value, ssd: +F.ssd.value, ideal: num(F.ideal.value), max: num(F.max.value) };
+  const errs = [];
+  if (!(SIZES[row.family] && SIZES[row.family][row.chip])) errs.push('Invalid chip/family combination.');
+  else if (!SIZES[row.family][row.chip].includes(row.size)) errs.push('Invalid screen size for this model.');
+  if (!RAMS.includes(row.ram)) errs.push('Invalid RAM.');
+  if (!SSDS.includes(row.ssd)) errs.push('Invalid SSD.');
+  if (row.ideal == null || Number.isNaN(row.ideal) || row.ideal <= 0) errs.push('Ideal must be a positive number.');
+  if (row.max == null || Number.isNaN(row.max) || row.max <= 0) errs.push('Max must be a positive number.');
+  if (!errs.length && row.ideal > row.max) errs.push('Ideal cannot be higher than max.');
+  const clash = state.db.find(r => configKey(r) === configKey(row) && r.id !== ui.dbEditingId);
+  if (clash) errs.push(`${configLabel(row)} already exists. Edit that row instead.`);
+  if (errs.length) { $('#dbErrors').innerHTML = `<div class="errors">${errs.map(esc).join('<br>')}</div>`; return; }
+  if (ui.dbEditingId) {
+    const i = state.db.findIndex(r => r.id === ui.dbEditingId);
+    if (i >= 0) state.db[i] = { ...state.db[i], ...row };
+    toast('Reference price updated');
+  } else {
+    state.db.push({ id: uid('db'), ...row, builtIn: false });
+    toast(`${configLabel(row)} added to the price database`);
+  }
+  resetDbForm();
+  commit();
+}
+
+/* =====================================================================
+   Action dispatch (event delegation keeps every button wired)
+   ===================================================================== */
+const ACTIONS = {
+  addEntry: () => openEntryForm('new', {}),
+  saveEntry: d => saveEntry(!!d.another),
+  closeModal: d => closeModal(d.modal),
+  editEntry: d => { const e = findEntry(d.id); if (e) openEntryForm('edit', e); },
+  dupEntry: d => { const e = findEntry(d.id); if (e) { const { id, ts, createdAt, updatedAt, ...rest } = e; openEntryForm('dup', rest); } },
+  deleteEntry: d => deleteEntries([d.id]),
+  toggleShortlist: d => { const on = state.shortlist.some(s => s.id === d.id); toggleShortlist(d.id); commit(); toast(on ? 'Removed from shortlist' : 'Added to shortlist'); },
+  toggleCompare: d => { ui.compare.has(d.id) ? ui.compare.delete(d.id) : ui.compare.add(d.id); renderAll(); if (ui.compare.size >= 2 && ui.view === 'entries') toast(`${ui.compare.size} entries in Compare`, 'ok', 1800); },
+  toggleFav: d => { const s = state.shortlist.find(x => x.id === d.id); if (s) { s.fav = !s.fav; commit(); } },
+  compareShortlist: () => { ui.compare = new Set(state.shortlist.map(s => s.id)); renderAll(); show('compare'); },
+  clearCompare: () => { ui.compare.clear(); renderAll(); },
+  bulkDelete: () => deleteEntries([...ui.selected]),
+  bulkShortlist: () => { ui.selected.forEach(id => toggleShortlist(id, true)); toast(`${ui.selected.size} entries shortlisted`); commit(); },
+  bulkCompare: () => { ui.compare = new Set(ui.selected); renderAll(); show('compare'); },
+  clearSelection: () => { ui.selected.clear(); renderEntries(); },
+  toggleFilters: () => $('#filters').classList.toggle('hidden'),
+  clearFilters: () => { $$('#filters input, #filters select').forEach(i => (i.value = '')); $('#fl-q').value = ''; readFilters(); renderEntries(); },
+  exportCsv: () => exportCsv(),
+  importCsv: () => $('#csvFile').click(),
+  confirmImport: () => confirmImport(),
+  backupJson: () => backupJson(),
+  restoreJson: () => $('#jsonFile').click(),
+  restoreReplace: () => restoreReplace(),
+  restoreMerge: () => restoreMerge(),
+  toggleTheme: () => { state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark'; commit(); if (ui.view === 'settings') renderSettings(); },
+  openDrawer: () => openDrawer(),
+  closeDrawer: () => closeDrawer(),
+  pick: d => {
+    const f = ui.finder, v = d.step === 'ram' || d.step === 'ssd' ? +d.v : d.v;
+    f[d.step] = v;
+    const order = ['chip', 'family', 'ram', 'ssd'];
+    order.slice(order.indexOf(d.step) + 1).forEach(k => (f[k] = null));
+    f.rowId = null;
+    renderFinder();
+  },
+  finderReset: () => { ui.finder = { chip: null, family: null, ram: null, ssd: null, rowId: null }; renderFinder(); },
+  finderUseRow: d => { ui.finder.rowId = d.id; renderFinder(); },
+  addFromFinder: d => { const r = state.db.find(x => x.id === d.id); if (r) openEntryForm('new', { chip: r.chip, family: r.family, size: r.size, ram: r.ram, ssd: r.ssd }); },
+  filterFromFinder: d => {
+    const r = state.db.find(x => x.id === d.id); if (!r) return;
+    ACTIONS.clearFilters();
+    $('#fl-chip').value = r.chip; $('#fl-family').value = r.family; $('#fl-ram').value = r.ram; $('#fl-ssd').value = r.ssd;
+    $('#filters').classList.remove('hidden'); readFilters(); renderEntries(); show('entries');
+  },
+  saveEvalAsEntry: () => {
+    const ref = finderRef(); if (!ref) return;
+    const i = readEvalForm();
+    openEntryForm('new', { chip: ref.chip, family: ref.family, size: ref.size, ram: ref.ram, ssd: ref.ssd, price: i.price, battery: i.battery, condition: i.condition, warranty: i.warranty, repair: i.repair, verified: i.verified, issues: i.issues });
+  },
+  saveDbRow: () => saveDbRow(),
+  cancelDbEdit: () => resetDbForm(),
+  editDbRow: d => {
+    const r = state.db.find(x => x.id === d.id); if (!r) return;
+    ui.dbEditingId = r.id;
+    const F = $('#dbForm');
+    F.chip.value = r.chip; F.family.value = r.family; fillDbSizes(); F.size.value = r.size; F.ram.value = r.ram; F.ssd.value = r.ssd; F.ideal.value = r.ideal; F.max.value = r.max;
+    $('#dbFormTitle').textContent = 'Edit ' + configLabel(r);
+    $('#dbSave').textContent = 'Save changes';
+    $('#dbCancel').classList.remove('hidden');
+    $('#dbErrors').innerHTML = '';
+    F.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  },
+  deleteDbRow: async d => {
+    const r = state.db.find(x => x.id === d.id); if (!r) return;
+    const n = state.entries.filter(e => findRef(e) === r).length;
+    if (!(await confirmDialog({ title: 'Delete reference price?', message: `<b>${esc(configLabel(r))}</b> (${money(r.ideal)} / ${money(r.max)}) will be removed.${n ? ` ${n} market entr${n === 1 ? 'y' : 'ies'} will show “No reference” until you add it back.` : ''} Market entries themselves are not touched.`, ok: 'Delete' }))) return;
+    state.db = state.db.filter(x => x.id !== r.id);
+    if (ui.dbEditingId === r.id) resetDbForm();
+    commit(); toast('Reference price deleted');
+  },
+  resetDb: async () => {
+    if (!(await confirmDialog({ title: 'Reset price database?', message: `Your ${state.db.length} reference prices will be replaced with the ${DEFAULT_DB_ROWS.length} defaults. Custom rows and edits will be lost. Market entries are not touched.`, ok: 'Reset price DB' }))) return;
+    state.db = defaultDb(); resetDbForm(); commit(); if (ui.view === 'settings') renderSettings(); toast('Price database reset to defaults');
+  },
+  resetSettings: async () => {
+    if (!(await confirmDialog({ title: 'Reset settings?', message: 'Budget, theme, currency display, adjustments, default sort and CSV preferences go back to defaults. Entries and prices are not touched.', ok: 'Reset settings' }))) return;
+    state.settings = clone(DEFAULT_SETTINGS); ui.sort = state.settings.defaultSort; $('#sortSel').value = ui.sort; $('#exportScope').value = state.settings.csv.scope;
+    commit(); renderSettings(); toast('Settings reset');
+  },
+  clearEntries: async () => {
+    if (!state.entries.length) { toast('There are no entries to clear.', 'warn'); return; }
+    if (!(await confirmDialog({ title: 'Clear all market entries?', message: `All ${state.entries.length} market entries and the shortlist will be deleted. The price database and settings stay. Export a CSV or JSON backup first if you might need them.`, ok: 'Clear entries' }))) return;
+    state.entries = []; state.shortlist = []; ui.selected.clear(); ui.compare.clear(); commit(); toast('All entries cleared');
+  },
+  clearAll: async () => {
+    if (!(await confirmDialog({ title: 'Clear ALL data?', message: `This deletes every market entry (${state.entries.length}), the shortlist, your price database edits and settings from this browser. <b>This cannot be undone.</b> Download a JSON backup first if you might need anything.`, ok: 'Delete everything' }))) return;
+    try { Object.values(KEYS).forEach(k => localStorage.removeItem(k)); } catch (e) { /* storage unavailable */ }
+    state.entries = []; state.shortlist = []; state.db = defaultDb(); state.settings = clone(DEFAULT_SETTINGS);
+    ui.selected.clear(); ui.compare.clear(); ui.sort = state.settings.defaultSort; $('#sortSel').value = ui.sort;
+    commit(); renderSettings(); toast('All data cleared. Defaults restored.');
+  },
+  downloadCorrupt: () => { download(`macbuy-unreadable-${stamp()}.json`, JSON.stringify(Object.fromEntries(Object.entries(storage.corrupt).map(([k, v]) => [KEYS[k], v])), null, 2), 'application/json'); },
+  dismissCorrupt: () => { storage.corrupt = {}; renderBanner(); }
+};
+
+function bindEvents() {
+  document.addEventListener('click', e => {
+    const nav = e.target.closest('[data-nav]');
+    if (nav) { e.preventDefault(); show(nav.dataset.nav); return; }
+    const a = e.target.closest('[data-action]');
+    if (!a || a.disabled) return;
+    const fn = ACTIONS[a.dataset.action];
+    if (fn) { e.preventDefault(); fn(a.dataset, a, e); }
+  });
+  // Close a modal by tapping its backdrop (not for confirm, which must be answered).
+  $$('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m && m.id !== 'confirmModal') closeModal(m.id); }));
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if ($('#confirmModal').classList.contains('open')) { $('#confirmCancel').click(); return; }
+    const open = $$('.modal.open').pop(); if (open) closeModal(open.id); else closeDrawer();
+  });
+  // Entry form: live preview & dependent options
+  const F = $('#entryForm');
+  F.addEventListener('change', e => { if (['chip', 'family', 'size', 'ram'].includes(e.target.name)) refreshEntryFormOptions(); updateEntryPreview(); });
+  F.addEventListener('input', updateEntryPreview);
+  F.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') { e.preventDefault(); saveEntry(false); } });
+  // Evaluator
+  $('#evalForm').addEventListener('input', renderEvalResult);
+  $('#evalForm').addEventListener('change', renderEvalResult);
+  // Filters & sort: update only the table so inputs keep focus
+  const onFilter = () => { readFilters(); renderEntries(); };
+  $('#filters').addEventListener('input', onFilter);
+  $('#filters').addEventListener('change', onFilter);
+  $('#fl-q').addEventListener('input', onFilter);
+  $('#sortSel').addEventListener('change', e => { ui.sort = e.target.value; renderEntries(); });
+  // Row selection
+  $('#entriesTable').addEventListener('change', e => {
+    const t = e.target;
+    if (t.classList.contains('rowsel')) { t.checked ? ui.selected.add(t.dataset.id) : ui.selected.delete(t.dataset.id); renderEntries(); }
+    if (t.id === 'selAll' || t.id === 'selAllMobile') { const vis = visibleEntries(); vis.forEach(x => (t.checked ? ui.selected.add(x.id) : ui.selected.delete(x.id))); renderEntries(); }
+  });
+  // Compare picker
+  $('#compareView').addEventListener('change', e => {
+    if (!e.target.classList.contains('cmp-pick')) return;
+    e.target.checked ? ui.compare.add(e.target.dataset.id) : ui.compare.delete(e.target.dataset.id);
+    renderCompare(); renderNav();
+    const p = $('#cmpPicker'); if (p) p.open = true;
+  });
+  // Shortlist notes save on change (blur)
+  $('#shortlistView').addEventListener('change', e => {
+    if (!e.target.classList.contains('sl-note')) return;
+    const s = state.shortlist.find(x => x.id === e.target.dataset.id);
+    if (s) { s.note = e.target.value; persist(); toast('Note saved', 'ok', 1500); }
+  });
+  // Budget on dashboard
+  $('#dashBudget').addEventListener('change', e => {
+    const v = num(e.target.value);
+    if (v == null || Number.isNaN(v) || v <= 0) { toast('Budget must be a positive number.', 'err'); e.target.value = state.settings.budget; return; }
+    state.settings.budget = v; commit(); toast('Budget set to ' + money(v));
+  });
+  // Settings
+  $('#settingsForm').addEventListener('change', e => { if (e.target.dataset.setting) applySetting(e.target); });
+  // DB form
+  $('#db-chip').addEventListener('change', fillDbSizes);
+  $('#db-family').addEventListener('change', fillDbSizes);
+  // Files
+  $('#csvFile').addEventListener('change', async e => { const f = e.target.files[0]; e.target.value = ''; if (f) prepareImport(await f.text(), f.name); });
+  $('#jsonFile').addEventListener('change', async e => { const f = e.target.files[0]; e.target.value = ''; if (f) prepareRestore(await f.text(), f.name); });
+  $('#importBody').addEventListener('change', e => { if (e.target.name === 'importMode' && ui.pendingImport) { ui.pendingImport.mode = e.target.value; renderImportPreview(); } });
+  window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+  // Another tab changed the data: reload it rather than overwrite it later.
+  window.addEventListener('storage', e => { if (Object.values(KEYS).includes(e.key)) { loadState(); renderAll(); toast('Data updated from another tab', 'warn'); } });
+}
+
+/* =====================================================================
+   Boot
+   ===================================================================== */
+function init() {
+  loadState();
+  buildStaticOptions();
+  $('#sortSel').value = ui.sort;
+  $('#exportScope').value = state.settings.csv.scope;
+  readFilters();
+  bindEvents();
+  renderAll();
+  show(location.hash.slice(1) || 'dashboard');
+  if (!storage.available) setSaveStatus(false, 'Storage unavailable');
+  else setSaveStatus(true, 'Saved locally');
+}
+// Pure functions exposed for testing and power users (read-only use).
+window.MacBuy = { version: APP_VERSION, evaluate, findRef, computeAdjustments, parseCsv, entriesToCsv, validateEntry, state };
+init();
+})();
+</script>
+</body>
+</html>
