@@ -371,6 +371,7 @@ a { color: inherit; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 1000px) { .cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+.lab-cards { margin-top: 48px; }
 .card {
   display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: var(--r-lg);
   background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow-1), var(--chamfer);

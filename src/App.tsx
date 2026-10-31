@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Home from './pages/Home'
+import Lab from './pages/Lab'
 import NotFound from './pages/NotFound'
 import Work from './pages/Work'
 
@@ -35,6 +36,7 @@ export default function App() {
               </Suspense>
             }
           />
+          <Route path="lab" element={<Lab />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
