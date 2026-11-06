@@ -12,5 +12,12 @@
     "tags": ["vanilla-js", "canvas", "offline"],
     "href": "/lab/mouse-tracker/",
     "kind": "tool"
+  },
+  {
+    "title": "Void",
+    "description": "A black screen with white icons: a minimal launcher for your links, notes, calls and WhatsApp. Installable, offline, no backend.",
+    "tags": ["vanilla-js", "pwa", "offline"],
+    "href": "/lab/void/",
+    "kind": "tool"
   }
 ]
