@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Mouse Tracker: draws your cursor's path live with distance, speed and clicks, a heatmap view and PNG export.">
+<title>Mouse Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a84ff'/%3E%3Cpath d='M22 14l22 20-10 1 6 13-5 2-6-13-7 7z' fill='white'/%3E%3C/svg%3E">
+<style>
+:root{--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+:root,[data-theme=dark]{--bg:#0a0a0c;--surface:rgba(21,21,24,.92);--surface-2:#1d1d21;--border:rgba(255,255,255,.1);--text:#f5f5f7;--muted:#9a9aa2;--accent:#0a84ff;--green:#30d158;--red:#ff453a;--shadow:0 10px 40px rgba(0,0,0,.5)}
+[data-theme=light]{--bg:#f5f5f7;--surface:rgba(255,255,255,.94);--surface-2:#ececf0;--border:rgba(0,0,0,.1);--text:#1d1d1f;--muted:#6e6e73;--accent:#0071e3;--green:#248a3d;--red:#d70015;--shadow:0 10px 40px rgba(0,0,0,.12)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:14px/1.4 var(--font)}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.panel{position:fixed;top:12px;left:12px;width:300px;max-height:calc(100% - 24px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:10}
+.head{display:flex;align-items:center;gap:8px;padding:12px 14px}
+.head h1{font-size:15px;margin:0;flex:1}
+.head a{color:var(--muted);text-decoration:none;font-size:12px}
+.body{padding:0 14px 14px}
+.panel.collapsed .body{display:none}
+.status{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
+.moving .dot{background:var(--green)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.stat{background:var(--surface-2);border-radius:10px;padding:7px 9px}
+.stat b{display:block;font:600 14px var(--mono)}
+.stat span{font-size:11px;color:var(--muted)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+button,select{font:inherit;font-size:12px;color:var(--text);background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:6px 9px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.icon{padding:4px 8px}
+label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+input[type=color]{width:28px;height:24px;border:0;padding:0;background:none;cursor:pointer}
+input[type=range]{width:80px}
+details{margin-top:6px;font-size:12px}
+summary{cursor:pointer;color:var(--muted)}
+#history{font:11px var(--mono);max-height:160px;overflow:auto;margin-top:6px;color:var(--muted)}
+.keys{font-size:11px;color:var(--muted);margin-top:8px}
+kbd{font:11px var(--mono);background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:0 4px}
+@media (max-width:600px){.panel{top:auto;bottom:12px;left:12px;right:12px;width:auto;max-height:55%}.keys{display:none}}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div class="panel" id="panel">
+  <div class="head">
+    <h1>Mouse Tracker</h1>
+    <a href="/lab/">← Lab</a>
+    <button class="icon" id="themeBtn" title="Toggle theme">◐</button>
+    <button class="icon" id="collapseBtn" title="Collapse panel">–</button>
+  </div>
+  <div class="body">
+    <div class="status" id="status"><span class="dot"></span><span id="statusText">No movement detected</span></div>
+    <div class="grid">
+      <div class="stat"><b id="sXY">0, 0</b><span>X, Y</span></div>
+      <div class="stat"><b id="sDist">0 px</b><span id="sMetres">≈ 0 m</span></div>
+      <div class="stat"><b id="sSpeed">0</b><span>px/s now</span></div>
+      <div class="stat"><b id="sTop">0</b><span>px/s top</span></div>
+      <div class="stat"><b id="sClicks">0</b><span>clicks (L / R)</span></div>
+      <div class="stat"><b id="sIdle">0s</b><span>idle</span></div>
+      <div class="stat"><b id="sSession">0:00</b><span>session</span></div>
+      <div class="stat"><b id="sLast">Never</b><span>last movement</span></div>
+    </div>
+    <div class="row">
+      <button id="pathBtn" class="on">Path</button>
+      <button id="heatBtn">Heatmap</button>
+      <select id="trailSel" title="Trail">
+        <option value="persist">Keep trail</option>
+        <option value="fade">Fade trail</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Colour <input type="color" id="colour" value="#0a84ff"></label>
+      <label>Width <input type="range" id="width" min="1" max="12" value="2"></label>
+    </div>
+    <div class="row">
+      <button id="pauseBtn">Pause</button>
+      <button id="clearBtn">Clear</button>
+      <button id="pngBtn">Save PNG</button>
+    </div>
+    <details>
+      <summary>Movement history</summary>
+      <div id="history"></div>
+    </details>
+    <div class="keys"><kbd>Space</kbd> pause · <kbd>C</kbd> clear · <kbd>H</kbd> heatmap · <kbd>S</kbd> save</div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $('canvas'), ctx = canvas.getContext('2d');
+const FADE_MS = 3000, MAX_POINTS = 100000, CELL = 10, HISTORY_MAX = 20;
+
+// All drawing is replayed from these, so resize, mode switches and PNG export stay exact.
+let points = [];   // {x, y, t, c, w, start}  start = first point of a stroke
+let clicks = [];   // {x, y, t, right}
+let heat = null, heatW = 0, heatH = 0, heatMax = 0;
+
+const state = {
+  mode: 'path', trail: 'persist', paused: false,
+  colour: '#0a84ff', width: 2,
+  distance: 0, speed: 0, topSpeed: 0, left: 0, right: 0,
+  lastX: null, lastY: null, lastT: 0, lastMove: 0, lastLog: 0,
+  sessionStart: Date.now(), newStroke: true,
+};
+
+/* ---------- theme ---------- */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('mt_theme', t); } catch (e) {}
+  redraw();
+}
+try { const t = localStorage.getItem('mt_theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+/* ---------- canvas sizing ---------- */
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  heatW = Math.ceil(innerWidth / CELL);
+  heatH = Math.ceil(innerHeight / CELL);
+  heat = new Float32Array(heatW * heatH);
+  heatMax = 0;
+  points.forEach((p, i) => p.start ? addHeat(p.x, p.y, 1) : heatLine(points[i - 1], p));
+  redraw();
+}
+
+/* ---------- heatmap ---------- */
+function addHeat(x, y, weight) {
+  const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL);
+  if (cx < 0 || cy < 0 || cx >= heatW || cy >= heatH) return;
+  const v = (heat[cy * heatW + cx] += weight);
+  if (v > heatMax) heatMax = v;
+}
+
+// Fast moves leave gaps between events, so fill cells along the segment.
+function heatLine(a, b) {
+  const steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / CELL));
+  for (let k = 1; k <= steps; k++) addHeat(a.x + (b.x - a.x) * k / steps, a.y + (b.y - a.y) * k / steps, 1 / steps);
+}
+
+// Blue → green → yellow → red ramp for a 0..1 value.
+function ramp(v) {
+  const stops = [[10, 132, 255], [48, 209, 88], [255, 214, 10], [255, 69, 58]];
+  const s = Math.min(v, 0.999) * (stops.length - 1), i = Math.floor(s), f = s - i;
+  return stops[i].map((c, k) => Math.round(c + (stops[i + 1][k] - c) * f));
+}
+
+function drawHeat(target) {
+  if (!heatMax) return;
+  const off = document.createElement('canvas');
+  off.width = heatW; off.height = heatH;
+  const octx = off.getContext('2d'), img = octx.createImageData(heatW, heatH);
+  for (let i = 0; i < heat.length; i++) {
+    if (!heat[i]) continue;
+    const v = Math.sqrt(heat[i] / heatMax), [r, g, b] = ramp(v);
+    img.data.set([r, g, b, Math.round(60 + 195 * v)], i * 4);
+  }
+  octx.putImageData(img, 0, 0);
+  target.imageSmoothingEnabled = true;
+  target.drawImage(off, 0, 0, heatW * CELL, heatH * CELL); // upscaling smooths the cells
+}
+
+/* ---------- path drawing ---------- */
+function drawSegment(target, a, b, alpha) {
+  target.globalAlpha = alpha;
+  target.strokeStyle = b.c;
+  target.lineWidth = b.w;
+  target.lineCap = 'round';
+  target.beginPath();
+  target.moveTo(a.x, a.y);
+  target.lineTo(b.x, b.y);
+  target.stroke();
+}
+
+function drawClick(target, c, alpha) {
+  target.globalAlpha = alpha;
+  target.fillStyle = c.right ? css('--red') : css('--green');
+  target.beginPath();
+  target.arc(c.x, c.y, 5, 0, Math.PI * 2);
+  target.fill();
+}
+
+function drawPath(target, now) {
+  const fade = state.trail === 'fade';
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i];
+    if (p.start) continue;
+    const age = now - p.t;
+    if (fade && age > FADE_MS) continue;
+    drawSegment(target, points[i - 1], p, fade ? 1 - age / FADE_MS : 1);
+  }
+  clicks.forEach(c => {
+    const age = now - c.t;
+    if (!fade || age < FADE_MS) drawClick(target, c, fade ? 1 - age / FADE_MS : 1);
+  });
+  target.globalAlpha = 1;
+}
+
+function redraw() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  if (state.mode === 'heat') drawHeat(ctx);
+  else drawPath(ctx, Date.now());
+}
+
+// Fade mode needs a frame loop; persist mode draws incrementally and only redraws on demand.
+function loop() {
+  if (state.mode === 'path' && state.trail === 'fade') redraw();
+  requestAnimationFrame(loop);
+}
+
+/* ---------- tracking ---------- */
+function addHistory(x, y, now) {
+  if (now - state.lastLog < 200) return; // throttle so the log stays readable
+  state.lastLog = now;
+  const el = document.createElement('div');
+  el.textContent = `${new Date(now).toLocaleTimeString()} → X:${Math.round(x)}, Y:${Math.round(y)}`;
+  $('history').prepend(el);
+  while ($('history').children.length > HISTORY_MAX) $('history').lastChild.remove();
+}
+
+function onMove(e) {
+  if (state.paused) return;
+  const x = e.clientX, y = e.clientY, now = Date.now();
+  const p = { x, y, t: now, c: state.colour, w: state.width, start: state.newStroke };
+
+  if (!state.newStroke && state.lastX !== null) {
+    const d = Math.hypot(x - state.lastX, y - state.lastY), dt = (now - state.lastT) / 1000;
+    state.distance += d;
+    if (dt > 0) {
+      // Smoothed so a single jittery event doesn't spike the reading.
+      state.speed = state.speed * 0.7 + (d / dt) * 0.3;
+      state.topSpeed = Math.max(state.topSpeed, state.speed);
+    }
+    if (state.mode === 'path' && state.trail === 'persist') drawSegment(ctx, points[points.length - 1], p, 1);
+  }
+
+  p.start ? addHeat(x, y, 1) : heatLine(points[points.length - 1], p);
+  points.push(p);
+  if (points.length > MAX_POINTS) { points.shift(); points[0].start = true; }
+  if (state.mode === 'heat') redraw();
+
+  state.newStroke = false;
+  state.lastX = x; state.lastY = y; state.lastT = now; state.lastMove = now;
+  $('sXY').textContent = `${Math.round(x)}, ${Math.round(y)}`;
+  $('sLast').textContent = new Date(now).toLocaleTimeString();
+  addHistory(x, y, now);
+}
+
+function breakStroke() { state.newStroke = true; }
+
+function onDown(e) {
+  if (state.paused || e.target !== canvas || e.pointerType === 'touch') return;
+  const c = { x: e.clientX, y: e.clientY, t: Date.now(), right: e.button === 2 };
+  clicks.push(c);
+  c.right ? state.right++ : state.left++;
+  if (state.mode === 'path' && state.trail === 'persist') { drawClick(ctx, c, 1); ctx.globalAlpha = 1; }
+}
+
+/* ---------- stats ---------- */
+const fmtTime = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+// px → metres assumes the CSS reference of 96 px per inch, so it is only a rough figure.
+const pxToMetres = px => px / 96 * 0.0254;
+
+function updateStats() {
+  const now = Date.now(), idle = state.lastMove ? now - state.lastMove : now - state.sessionStart;
+  const moving = !state.paused && state.lastMove && idle < 1000;
+  if (idle > 150) state.speed = 0;
+  // Dwell: while the pointer rests, keep warming its heatmap cell.
+  if (!state.paused && !state.newStroke && state.lastX !== null && idle > 250) {
+    addHeat(state.lastX, state.lastY, 1);
+    if (state.mode === 'heat') redraw();
+  }
+  $('status').classList.toggle('moving', !!moving);
+  $('statusText').textContent = state.paused ? 'Paused' : moving ? 'Movement detected' : 'No movement detected';
+  $('sDist').textContent = `${Math.round(state.distance).toLocaleString()} px`;
+  $('sMetres').textContent = `≈ ${pxToMetres(state.distance).toFixed(2)} m`;
+  $('sSpeed').textContent = Math.round(state.speed).toLocaleString();
+  $('sTop').textContent = Math.round(state.topSpeed).toLocaleString();
+  $('sClicks').textContent = `${state.left + state.right} (${state.left} / ${state.right})`;
+  $('sIdle').textContent = `${Math.floor(idle / 1000)}s`;
+  $('sSession').textContent = fmtTime(now - state.sessionStart);
+}
+
+/* ---------- controls ---------- */
+function setMode(m) {
+  state.mode = m;
+  $('pathBtn').classList.toggle('on', m === 'path');
+  $('heatBtn').classList.toggle('on', m === 'heat');
+  redraw();
+}
+
+function togglePause() {
+  state.paused = !state.paused;
+  $('pauseBtn').textContent = state.paused ? 'Resume' : 'Pause';
+  $('pauseBtn').classList.toggle('on', state.paused);
+  breakStroke();
+  updateStats();
+}
+
+function clearAll() {
+  points = []; clicks = [];
+  heat.fill(0); heatMax = 0;
+  Object.assign(state, { distance: 0, speed: 0, topSpeed: 0, left: 0, right: 0, lastMove: 0, sessionStart: Date.now() });
+  breakStroke();
+  $('history').innerHTML = '';
+  $('sLast').textContent = 'Never';
+  redraw(); updateStats();
+}
+
+function savePng() {
+  const dpr = window.devicePixelRatio || 1, out = document.createElement('canvas');
+  out.width = canvas.width; out.height = canvas.height;
+  const o = out.getContext('2d');
+  o.fillStyle = css('--bg');
+  o.fillRect(0, 0, out.width, out.height);
+  o.setTransform(dpr, 0, 0, dpr, 0, 0);
+  state.mode === 'heat' ? drawHeat(o) : drawPath(o, Date.now());
+  out.toBlob(blob => {
+    const a = document.createElement('a'), stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    a.href = URL.createObjectURL(blob);
+    a.download = `mouse-${state.mode === 'heat' ? 'heatmap' : 'trail'}-${stamp}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+}
+
+$('pathBtn').onclick = () => setMode('path');
+$('heatBtn').onclick = () => setMode('heat');
+$('trailSel').onchange = e => { state.trail = e.target.value; redraw(); };
+$('colour').oninput = e => { state.colour = e.target.value; };
+$('width').oninput = e => { state.width = +e.target.value; };
+$('pauseBtn').onclick = togglePause;
+$('clearBtn').onclick = clearAll;
+$('pngBtn').onclick = savePng;
+$('themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+$('collapseBtn').onclick = () => {
+  const c = $('panel').classList.toggle('collapsed');
+  $('collapseBtn').textContent = c ? '+' : '–';
+};
+
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, select') || e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === ' ') { e.preventDefault(); togglePause(); }
+  else if (k === 'c') clearAll();
+  else if (k === 'h') setMode(state.mode === 'heat' ? 'path' : 'heat');
+  else if (k === 's') savePng();
+});
+
+document.addEventListener('pointermove', onMove);
+document.addEventListener('pointerdown', onDown);
+document.addEventListener('pointerup', e => { if (e.pointerType === 'touch') breakStroke(); });
+document.addEventListener('pointerleave', breakStroke);
+document.documentElement.addEventListener('mouseleave', breakStroke);
+canvas.addEventListener('contextmenu', e => e.preventDefault()); // so right-clicks can be counted
+addEventListener('resize', resize);
+
+resize();
+setInterval(updateStats, 250);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

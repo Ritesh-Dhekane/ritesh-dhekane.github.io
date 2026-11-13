@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ritesh-dhekane.github.io/sitemap.xml
+Sitemap: https://ritesh-dhekane.github.io/2am-notes-pro/sitemap.xml
+Sitemap: https://ritesh-dhekane.github.io/streakline/sitemap.xml
+Sitemap: https://ritesh-dhekane.github.io/relay/sitemap.xml
+Sitemap: https://ritesh-dhekane.github.io/resume-builder/sitemap.xml
